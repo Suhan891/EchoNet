@@ -42,7 +42,7 @@ export class ProfileService {
     });
 
     const ext = extname(avatar.originalname);
-    const fileName = `${profile.name}-avatar-${ext}`;
+    const fileName = `${profile.name}-avatar`;  // Extension name is removed because cloudinary considers and stores-> sample.jpg.jpg (So removed)
 
     const upload = await this.cloudService.uploadedAvatar(avatar, fileName);
 
