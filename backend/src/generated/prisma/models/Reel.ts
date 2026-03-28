@@ -28,6 +28,7 @@ export type ReelMinAggregateOutputType = {
   id: string | null
   profileId: string | null
   videoUrl: string | null
+  cloudId: string | null
   caption: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -37,6 +38,7 @@ export type ReelMaxAggregateOutputType = {
   id: string | null
   profileId: string | null
   videoUrl: string | null
+  cloudId: string | null
   caption: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -46,6 +48,7 @@ export type ReelCountAggregateOutputType = {
   id: number
   profileId: number
   videoUrl: number
+  cloudId: number
   caption: number
   createdAt: number
   updatedAt: number
@@ -57,6 +60,7 @@ export type ReelMinAggregateInputType = {
   id?: true
   profileId?: true
   videoUrl?: true
+  cloudId?: true
   caption?: true
   createdAt?: true
   updatedAt?: true
@@ -66,6 +70,7 @@ export type ReelMaxAggregateInputType = {
   id?: true
   profileId?: true
   videoUrl?: true
+  cloudId?: true
   caption?: true
   createdAt?: true
   updatedAt?: true
@@ -75,6 +80,7 @@ export type ReelCountAggregateInputType = {
   id?: true
   profileId?: true
   videoUrl?: true
+  cloudId?: true
   caption?: true
   createdAt?: true
   updatedAt?: true
@@ -157,6 +163,7 @@ export type ReelGroupByOutputType = {
   id: string
   profileId: string
   videoUrl: string
+  cloudId: string
   caption: string | null
   createdAt: Date
   updatedAt: Date
@@ -187,6 +194,7 @@ export type ReelWhereInput = {
   id?: Prisma.StringFilter<"Reel"> | string
   profileId?: Prisma.StringFilter<"Reel"> | string
   videoUrl?: Prisma.StringFilter<"Reel"> | string
+  cloudId?: Prisma.StringFilter<"Reel"> | string
   caption?: Prisma.StringNullableFilter<"Reel"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Reel"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reel"> | Date | string
@@ -199,6 +207,7 @@ export type ReelOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
+  cloudId?: Prisma.SortOrder
   caption?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -214,6 +223,7 @@ export type ReelWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ReelWhereInput | Prisma.ReelWhereInput[]
   profileId?: Prisma.StringFilter<"Reel"> | string
   videoUrl?: Prisma.StringFilter<"Reel"> | string
+  cloudId?: Prisma.StringFilter<"Reel"> | string
   caption?: Prisma.StringNullableFilter<"Reel"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Reel"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reel"> | Date | string
@@ -226,6 +236,7 @@ export type ReelOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
+  cloudId?: Prisma.SortOrder
   caption?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -241,6 +252,7 @@ export type ReelScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Reel"> | string
   profileId?: Prisma.StringWithAggregatesFilter<"Reel"> | string
   videoUrl?: Prisma.StringWithAggregatesFilter<"Reel"> | string
+  cloudId?: Prisma.StringWithAggregatesFilter<"Reel"> | string
   caption?: Prisma.StringNullableWithAggregatesFilter<"Reel"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Reel"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Reel"> | Date | string
@@ -249,6 +261,7 @@ export type ReelScalarWhereWithAggregatesInput = {
 export type ReelCreateInput = {
   id?: string
   videoUrl: string
+  cloudId: string
   caption?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -261,6 +274,7 @@ export type ReelUncheckedCreateInput = {
   id?: string
   profileId: string
   videoUrl: string
+  cloudId: string
   caption?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -271,6 +285,7 @@ export type ReelUncheckedCreateInput = {
 export type ReelUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -283,6 +298,7 @@ export type ReelUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -294,6 +310,7 @@ export type ReelCreateManyInput = {
   id?: string
   profileId: string
   videoUrl: string
+  cloudId: string
   caption?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -302,6 +319,7 @@ export type ReelCreateManyInput = {
 export type ReelUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -311,6 +329,7 @@ export type ReelUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -330,6 +349,7 @@ export type ReelCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
+  cloudId?: Prisma.SortOrder
   caption?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -339,6 +359,7 @@ export type ReelMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
+  cloudId?: Prisma.SortOrder
   caption?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -348,6 +369,7 @@ export type ReelMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   videoUrl?: Prisma.SortOrder
+  cloudId?: Prisma.SortOrder
   caption?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -435,6 +457,7 @@ export type ReelUpdateOneWithoutCommentsNestedInput = {
 export type ReelCreateWithoutProfileInput = {
   id?: string
   videoUrl: string
+  cloudId: string
   caption?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -445,6 +468,7 @@ export type ReelCreateWithoutProfileInput = {
 export type ReelUncheckedCreateWithoutProfileInput = {
   id?: string
   videoUrl: string
+  cloudId: string
   caption?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -485,6 +509,7 @@ export type ReelScalarWhereInput = {
   id?: Prisma.StringFilter<"Reel"> | string
   profileId?: Prisma.StringFilter<"Reel"> | string
   videoUrl?: Prisma.StringFilter<"Reel"> | string
+  cloudId?: Prisma.StringFilter<"Reel"> | string
   caption?: Prisma.StringNullableFilter<"Reel"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Reel"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Reel"> | Date | string
@@ -493,6 +518,7 @@ export type ReelScalarWhereInput = {
 export type ReelCreateWithoutLikesInput = {
   id?: string
   videoUrl: string
+  cloudId: string
   caption?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -504,6 +530,7 @@ export type ReelUncheckedCreateWithoutLikesInput = {
   id?: string
   profileId: string
   videoUrl: string
+  cloudId: string
   caption?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -529,6 +556,7 @@ export type ReelUpdateToOneWithWhereWithoutLikesInput = {
 export type ReelUpdateWithoutLikesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -540,6 +568,7 @@ export type ReelUncheckedUpdateWithoutLikesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -549,6 +578,7 @@ export type ReelUncheckedUpdateWithoutLikesInput = {
 export type ReelCreateWithoutCommentsInput = {
   id?: string
   videoUrl: string
+  cloudId: string
   caption?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -560,6 +590,7 @@ export type ReelUncheckedCreateWithoutCommentsInput = {
   id?: string
   profileId: string
   videoUrl: string
+  cloudId: string
   caption?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -585,6 +616,7 @@ export type ReelUpdateToOneWithWhereWithoutCommentsInput = {
 export type ReelUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -596,6 +628,7 @@ export type ReelUncheckedUpdateWithoutCommentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -605,6 +638,7 @@ export type ReelUncheckedUpdateWithoutCommentsInput = {
 export type ReelCreateManyProfileInput = {
   id?: string
   videoUrl: string
+  cloudId: string
   caption?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -613,6 +647,7 @@ export type ReelCreateManyProfileInput = {
 export type ReelUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -623,6 +658,7 @@ export type ReelUpdateWithoutProfileInput = {
 export type ReelUncheckedUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -633,6 +669,7 @@ export type ReelUncheckedUpdateWithoutProfileInput = {
 export type ReelUncheckedUpdateManyWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -682,6 +719,7 @@ export type ReelSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   profileId?: boolean
   videoUrl?: boolean
+  cloudId?: boolean
   caption?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -695,6 +733,7 @@ export type ReelSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   profileId?: boolean
   videoUrl?: boolean
+  cloudId?: boolean
   caption?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -705,6 +744,7 @@ export type ReelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   profileId?: boolean
   videoUrl?: boolean
+  cloudId?: boolean
   caption?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -715,12 +755,13 @@ export type ReelSelectScalar = {
   id?: boolean
   profileId?: boolean
   videoUrl?: boolean
+  cloudId?: boolean
   caption?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ReelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "videoUrl" | "caption" | "createdAt" | "updatedAt", ExtArgs["result"]["reel"]>
+export type ReelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "videoUrl" | "cloudId" | "caption" | "createdAt" | "updatedAt", ExtArgs["result"]["reel"]>
 export type ReelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.Reel$likesArgs<ExtArgs>
@@ -745,6 +786,7 @@ export type $ReelPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: string
     profileId: string
     videoUrl: string
+    cloudId: string
     caption: string | null
     createdAt: Date
     updatedAt: Date
@@ -1177,6 +1219,7 @@ export interface ReelFieldRefs {
   readonly id: Prisma.FieldRef<"Reel", 'String'>
   readonly profileId: Prisma.FieldRef<"Reel", 'String'>
   readonly videoUrl: Prisma.FieldRef<"Reel", 'String'>
+  readonly cloudId: Prisma.FieldRef<"Reel", 'String'>
   readonly caption: Prisma.FieldRef<"Reel", 'String'>
   readonly createdAt: Prisma.FieldRef<"Reel", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Reel", 'DateTime'>

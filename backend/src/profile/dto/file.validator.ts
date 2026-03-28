@@ -10,7 +10,7 @@ export class MyCustomImageValidator extends FileValidator {
     return file.size <= maxSize && allowedTypes.includes(file.mimetype);
   }
 
-  buildErrorMessage(file: Express.Multer.File): string {
+  buildErrorMessage(): string {
     return 'File must be a PNG/JPG and smaller than 500KB';
   }
 }

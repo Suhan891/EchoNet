@@ -38,6 +38,7 @@ export type PostPhotoMinAggregateOutputType = {
   id: string | null
   postId: string | null
   imageUrl: string | null
+  cloudId: string | null
   order: number | null
 }
 
@@ -45,6 +46,7 @@ export type PostPhotoMaxAggregateOutputType = {
   id: string | null
   postId: string | null
   imageUrl: string | null
+  cloudId: string | null
   order: number | null
 }
 
@@ -52,6 +54,7 @@ export type PostPhotoCountAggregateOutputType = {
   id: number
   postId: number
   imageUrl: number
+  cloudId: number
   order: number
   _all: number
 }
@@ -69,6 +72,7 @@ export type PostPhotoMinAggregateInputType = {
   id?: true
   postId?: true
   imageUrl?: true
+  cloudId?: true
   order?: true
 }
 
@@ -76,6 +80,7 @@ export type PostPhotoMaxAggregateInputType = {
   id?: true
   postId?: true
   imageUrl?: true
+  cloudId?: true
   order?: true
 }
 
@@ -83,6 +88,7 @@ export type PostPhotoCountAggregateInputType = {
   id?: true
   postId?: true
   imageUrl?: true
+  cloudId?: true
   order?: true
   _all?: true
 }
@@ -177,6 +183,7 @@ export type PostPhotoGroupByOutputType = {
   id: string
   postId: string
   imageUrl: string
+  cloudId: string
   order: number
   _count: PostPhotoCountAggregateOutputType | null
   _avg: PostPhotoAvgAggregateOutputType | null
@@ -207,6 +214,7 @@ export type PostPhotoWhereInput = {
   id?: Prisma.StringFilter<"PostPhoto"> | string
   postId?: Prisma.StringFilter<"PostPhoto"> | string
   imageUrl?: Prisma.StringFilter<"PostPhoto"> | string
+  cloudId?: Prisma.StringFilter<"PostPhoto"> | string
   order?: Prisma.IntFilter<"PostPhoto"> | number
   savedPosts?: Prisma.SavePostListRelationFilter
   post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
@@ -216,6 +224,7 @@ export type PostPhotoOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  cloudId?: Prisma.SortOrder
   order?: Prisma.SortOrder
   savedPosts?: Prisma.SavePostOrderByRelationAggregateInput
   post?: Prisma.PostOrderByWithRelationInput
@@ -228,6 +237,7 @@ export type PostPhotoWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PostPhotoWhereInput | Prisma.PostPhotoWhereInput[]
   postId?: Prisma.StringFilter<"PostPhoto"> | string
   imageUrl?: Prisma.StringFilter<"PostPhoto"> | string
+  cloudId?: Prisma.StringFilter<"PostPhoto"> | string
   order?: Prisma.IntFilter<"PostPhoto"> | number
   savedPosts?: Prisma.SavePostListRelationFilter
   post?: Prisma.XOR<Prisma.PostScalarRelationFilter, Prisma.PostWhereInput>
@@ -237,6 +247,7 @@ export type PostPhotoOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  cloudId?: Prisma.SortOrder
   order?: Prisma.SortOrder
   _count?: Prisma.PostPhotoCountOrderByAggregateInput
   _avg?: Prisma.PostPhotoAvgOrderByAggregateInput
@@ -252,12 +263,14 @@ export type PostPhotoScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"PostPhoto"> | string
   postId?: Prisma.StringWithAggregatesFilter<"PostPhoto"> | string
   imageUrl?: Prisma.StringWithAggregatesFilter<"PostPhoto"> | string
+  cloudId?: Prisma.StringWithAggregatesFilter<"PostPhoto"> | string
   order?: Prisma.IntWithAggregatesFilter<"PostPhoto"> | number
 }
 
 export type PostPhotoCreateInput = {
   id?: string
   imageUrl: string
+  cloudId: string
   order?: number
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutPostInput
   post: Prisma.PostCreateNestedOneWithoutPostPhotoInput
@@ -267,6 +280,7 @@ export type PostPhotoUncheckedCreateInput = {
   id?: string
   postId: string
   imageUrl: string
+  cloudId: string
   order?: number
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutPostInput
 }
@@ -274,6 +288,7 @@ export type PostPhotoUncheckedCreateInput = {
 export type PostPhotoUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   savedPosts?: Prisma.SavePostUpdateManyWithoutPostNestedInput
   post?: Prisma.PostUpdateOneRequiredWithoutPostPhotoNestedInput
@@ -283,6 +298,7 @@ export type PostPhotoUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutPostNestedInput
 }
@@ -291,12 +307,14 @@ export type PostPhotoCreateManyInput = {
   id?: string
   postId: string
   imageUrl: string
+  cloudId: string
   order?: number
 }
 
 export type PostPhotoUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -304,6 +322,7 @@ export type PostPhotoUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -321,6 +340,7 @@ export type PostPhotoCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  cloudId?: Prisma.SortOrder
   order?: Prisma.SortOrder
 }
 
@@ -332,6 +352,7 @@ export type PostPhotoMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  cloudId?: Prisma.SortOrder
   order?: Prisma.SortOrder
 }
 
@@ -339,6 +360,7 @@ export type PostPhotoMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  cloudId?: Prisma.SortOrder
   order?: Prisma.SortOrder
 }
 
@@ -410,6 +432,7 @@ export type PostPhotoUpdateOneRequiredWithoutSavedPostsNestedInput = {
 export type PostPhotoCreateWithoutPostInput = {
   id?: string
   imageUrl: string
+  cloudId: string
   order?: number
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutPostInput
 }
@@ -417,6 +440,7 @@ export type PostPhotoCreateWithoutPostInput = {
 export type PostPhotoUncheckedCreateWithoutPostInput = {
   id?: string
   imageUrl: string
+  cloudId: string
   order?: number
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutPostInput
 }
@@ -454,12 +478,14 @@ export type PostPhotoScalarWhereInput = {
   id?: Prisma.StringFilter<"PostPhoto"> | string
   postId?: Prisma.StringFilter<"PostPhoto"> | string
   imageUrl?: Prisma.StringFilter<"PostPhoto"> | string
+  cloudId?: Prisma.StringFilter<"PostPhoto"> | string
   order?: Prisma.IntFilter<"PostPhoto"> | number
 }
 
 export type PostPhotoCreateWithoutSavedPostsInput = {
   id?: string
   imageUrl: string
+  cloudId: string
   order?: number
   post: Prisma.PostCreateNestedOneWithoutPostPhotoInput
 }
@@ -468,6 +494,7 @@ export type PostPhotoUncheckedCreateWithoutSavedPostsInput = {
   id?: string
   postId: string
   imageUrl: string
+  cloudId: string
   order?: number
 }
 
@@ -490,6 +517,7 @@ export type PostPhotoUpdateToOneWithWhereWithoutSavedPostsInput = {
 export type PostPhotoUpdateWithoutSavedPostsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   post?: Prisma.PostUpdateOneRequiredWithoutPostPhotoNestedInput
 }
@@ -498,18 +526,21 @@ export type PostPhotoUncheckedUpdateWithoutSavedPostsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type PostPhotoCreateManyPostInput = {
   id?: string
   imageUrl: string
+  cloudId: string
   order?: number
 }
 
 export type PostPhotoUpdateWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   savedPosts?: Prisma.SavePostUpdateManyWithoutPostNestedInput
 }
@@ -517,6 +548,7 @@ export type PostPhotoUpdateWithoutPostInput = {
 export type PostPhotoUncheckedUpdateWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutPostNestedInput
 }
@@ -524,6 +556,7 @@ export type PostPhotoUncheckedUpdateWithoutPostInput = {
 export type PostPhotoUncheckedUpdateManyWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -562,6 +595,7 @@ export type PostPhotoSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   id?: boolean
   postId?: boolean
   imageUrl?: boolean
+  cloudId?: boolean
   order?: boolean
   savedPosts?: boolean | Prisma.PostPhoto$savedPostsArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
@@ -572,6 +606,7 @@ export type PostPhotoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   id?: boolean
   postId?: boolean
   imageUrl?: boolean
+  cloudId?: boolean
   order?: boolean
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["postPhoto"]>
@@ -580,6 +615,7 @@ export type PostPhotoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   id?: boolean
   postId?: boolean
   imageUrl?: boolean
+  cloudId?: boolean
   order?: boolean
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["postPhoto"]>
@@ -588,10 +624,11 @@ export type PostPhotoSelectScalar = {
   id?: boolean
   postId?: boolean
   imageUrl?: boolean
+  cloudId?: boolean
   order?: boolean
 }
 
-export type PostPhotoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "postId" | "imageUrl" | "order", ExtArgs["result"]["postPhoto"]>
+export type PostPhotoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "postId" | "imageUrl" | "cloudId" | "order", ExtArgs["result"]["postPhoto"]>
 export type PostPhotoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   savedPosts?: boolean | Prisma.PostPhoto$savedPostsArgs<ExtArgs>
   post?: boolean | Prisma.PostDefaultArgs<ExtArgs>
@@ -614,6 +651,7 @@ export type $PostPhotoPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     id: string
     postId: string
     imageUrl: string
+    cloudId: string
     order: number
   }, ExtArgs["result"]["postPhoto"]>
   composites: {}
@@ -1043,6 +1081,7 @@ export interface PostPhotoFieldRefs {
   readonly id: Prisma.FieldRef<"PostPhoto", 'String'>
   readonly postId: Prisma.FieldRef<"PostPhoto", 'String'>
   readonly imageUrl: Prisma.FieldRef<"PostPhoto", 'String'>
+  readonly cloudId: Prisma.FieldRef<"PostPhoto", 'String'>
   readonly order: Prisma.FieldRef<"PostPhoto", 'Int'>
 }
     

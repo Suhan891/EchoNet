@@ -140,6 +140,7 @@ export const PostPhotoScalarFieldEnum = {
   id: 'id',
   postId: 'postId',
   imageUrl: 'imageUrl',
+  cloudId: 'cloudId',
   order: 'order'
 } as const
 
@@ -159,6 +160,7 @@ export const ReelScalarFieldEnum = {
   id: 'id',
   profileId: 'profileId',
   videoUrl: 'videoUrl',
+  cloudId: 'cloudId',
   caption: 'caption',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -182,6 +184,7 @@ export const StoryMediaScalarFieldEnum = {
   id: 'id',
   storyId: 'storyId',
   mediaUrl: 'mediaUrl',
+  cloudId: 'cloudId',
   mediaType: 'mediaType',
   order: 'order'
 } as const
