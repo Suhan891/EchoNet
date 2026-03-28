@@ -8,6 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGaurd } from './common/gaurds/jwt-auth';
 import { ProfileGaurd } from './profile/gaurds/profile.gaurd';
 import { ConfigModule } from '@nestjs/config';
+import { FollowModule } from './follow/follow.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ConfigModule } from '@nestjs/config';
     PrismaModule,
     AuthModule,
     ProfileModule,
+    FollowModule,
   ],
   controllers: [AppController],
   providers: [

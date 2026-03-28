@@ -84,7 +84,7 @@ model Follow {
   follower     Profile  @relation("followings", fields: [followerId], references: [id])
   following    Profile  @relation("followers", fields: [followingId], references: [id])
 
-  @@index([followerId, followingId])
+  @@unique([followerId, followingId])
 }
 
 model Post {

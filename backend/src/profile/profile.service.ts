@@ -6,7 +6,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProfileDto, profileDto } from './dto/profile.dto';
 import { extname } from 'node:path';
-import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
+import { CloudinaryService } from './cloudinary.service';
 import { UpdateProfileDto } from './dto/profile.dto';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class ProfileService {
     });
     if (existingProfile)
       return new ForbiddenException(
-        'Name already exists. Please select a new name',
+        'Name already exists. Please provide a new name',
       );
 
     const profile = await this.prisma.profile.create({
