@@ -9,6 +9,13 @@ import { JwtAuthGaurd } from './common/gaurds/jwt-auth';
 import { ProfileGaurd } from './profile/gaurds/profile.gaurd';
 import { ConfigModule } from '@nestjs/config';
 import { FollowModule } from './follow/follow.module';
+import { PostsModule } from './posts/posts.module';
+import { StoryModule } from './story/story.module';
+import { ReelsModule } from './reels/reels.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { Request } from 'express';
+import { authUserDto } from './auth/tokens/token.dto';
+import { UserThrottlerGaurd } from './common/gaurds/throtler.gaurd';
 
 @Module({
   imports: [
@@ -17,6 +24,20 @@ import { FollowModule } from './follow/follow.module';
     AuthModule,
     ProfileModule,
     FollowModule,
+    PostsModule,
+    StoryModule,
+    ReelsModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+        skipIf: (context) => {
+          const request = context.switchToHttp().getRequest<Request>();
+          const user = request.user as authUserDto;
+          return user.role === 'ADMIN';
+        },
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [
@@ -28,6 +49,10 @@ import { FollowModule } from './follow/follow.module';
     {
       provide: APP_GUARD,
       useClass: ProfileGaurd,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: UserThrottlerGaurd,
     },
   ],
 })
