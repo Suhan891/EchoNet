@@ -108,6 +108,7 @@ model PostPhoto {
   postId    String
 
   imageUrl String
+  cloudId String
   order Int @default(0)
 
   savedPosts SavePost[]
@@ -132,6 +133,7 @@ model Reel {
   profile   Profile @relation(fields: [profileId], references: [id])
 
   videoUrl String
+  cloudId String
   caption  String?
 
   likes Likes[]
@@ -164,6 +166,7 @@ model StoryMedia {
   storyId    String
 
   mediaUrl String
+  cloudId String
   mediaType Media
   order Int @default(0)
 
