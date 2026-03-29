@@ -19,7 +19,6 @@ export class CloudinaryStoryService {
     profileName: string,
   ) {
     return new Promise<UploadApiResponse>((resolve, reject) => {
-      // 1. Define the stream and fix the syntax (notice the closing ')' after the config object)
       const uploadStream = this.cloudinary.uploader.upload_stream(
         {
           folder: `social_media/story/${profileName}`,
@@ -40,7 +39,6 @@ export class CloudinaryStoryService {
         },
       );
 
-      // 2. Use the correct variable name (uploadStream) to pipe the buffer
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
   }
@@ -51,7 +49,6 @@ export class CloudinaryStoryService {
     profileName: string,
   ) {
     return new Promise<UploadApiResponse>((resolve, reject) => {
-      // 1. Define the stream and fix the syntax (notice the closing ')' after the config object)
       const uploadStream = this.cloudinary.uploader.upload_stream(
         {
           folder: `social_media/story/${profileName}`,
@@ -76,7 +73,6 @@ export class CloudinaryStoryService {
         },
       );
 
-      // 2. Use the correct variable name (uploadStream) to pipe the buffer
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
   }
@@ -95,7 +91,7 @@ export class CloudinaryStoryService {
           resource_type: 'video',
           // Merging of below img with current audio
           transformation: [
-            { width: 1080, height: 1350, crop: 'fill' }, // Set standard story size
+            { width: 1080, height: 1350, crop: 'fill' },
             { underlay: imgPublicId.replace(/\//g, ':') },
             { flags: 'layer_apply' },
             { duration: '15.0', crop: 'trim' }, // Trim to 15s
@@ -116,5 +112,4 @@ export class CloudinaryStoryService {
       streamifier.createReadStream(audioFile.buffer).pipe(uploadStream);
     });
   }
-  
 }
