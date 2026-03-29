@@ -7,13 +7,13 @@ import {
 import * as streamifier from 'streamifier';
 
 @Injectable()
-export class CloudinaryPostService {
+export class CloudinaryReelService {
   constructor(
     @Inject('CLOUDINARY')
     private cloudinary: typeof cloud,
   ) {}
 
-  uploadVideoStory(file: Express.Multer.File, filename: string) {
+  uploadVideoReel(file: Express.Multer.File, filename: string) {
     return new Promise<UploadApiResponse>((resolve, reject) => {
       // 1. Define the stream and fix the syntax (notice the closing ')' after the config object)
       const uploadStream = this.cloudinary.uploader.upload_stream(
@@ -43,5 +43,9 @@ export class CloudinaryPostService {
       // 2. Use the correct variable name (uploadStream) to pipe the buffer
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
+  }
+
+  async deleteReel(publicId: string): Promise<any> {
+    return this.cloudinary.uploader.destroy(publicId);
   }
 }
