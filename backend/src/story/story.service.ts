@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryStoryService } from './cloudinary.service';
 import {
@@ -28,6 +32,7 @@ export class StoryService {
     ];
 
     const orderSteps = fileOrder.split(',');
+    let totalFiles = orderSteps.length;
 
     const sortedStoryMedia: StoryMediaDto[] = orderSteps.map((step) => {
       if (step.includes('+')) {
@@ -37,6 +42,7 @@ export class StoryService {
           image: allFiles.find((f) => f.originalname === imgName),
           audio: allFiles.find((f) => f.originalname === audName),
         };
+        totalFiles++;
       }
       const file = allFiles.find((f) => f.originalname === step);
       return {
@@ -44,6 +50,14 @@ export class StoryService {
         file,
       };
     });
+
+    if (
+      allFiles.length !== totalFiles ||
+      sortedStoryMedia.length !== totalFiles
+    )
+      throw new BadRequestException(
+        'All the files with correct name were not provided',
+      );
 
     const story = await this.prisma.story.create({
       data: {
