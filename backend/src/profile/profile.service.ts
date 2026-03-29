@@ -5,9 +5,10 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProfileDto, profileDto } from './dto/profile.dto';
-import { extname } from 'node:path';
 import { CloudinaryService } from './cloudinary.service';
 import { UpdateProfileDto } from './dto/profile.dto';
+import { authUserDto } from 'src/auth/tokens/token.dto';
+import { Role } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class ProfileService {
@@ -17,7 +18,7 @@ export class ProfileService {
   ) {}
 
   async createProfile(
-    userId: string,
+    user: authUserDto,
     profileData: CreateProfileDto,
     avatar: Express.Multer.File,
   ) {
@@ -29,9 +30,12 @@ export class ProfileService {
         'Name already exists. Please provide a new name',
       );
 
+    if (user.profile && user.profile?.length >= 10)
+      throw new BadRequestException('You have exceeded Creation of Profile');
+
     const profile = await this.prisma.profile.create({
       data: {
-        userId,
+        userId: user.userId,
         name: profileData.name,
         bio: profileData.bio,
       },
@@ -41,13 +45,12 @@ export class ProfileService {
       },
     });
 
-    const ext = extname(avatar.originalname);
-    const fileName = `${profile.name}-avatar`;  // Extension name is removed because cloudinary considers and stores-> sample.jpg.jpg (So removed)
+    const fileName = `${profile.name}-avatar`; // Extension name is removed because cloudinary considers and stores-> sample.jpg.jpg (So removed)
 
     const upload = await this.cloudService.uploadedAvatar(avatar, fileName);
 
     await this.prisma.profile.updateMany({
-      where: { userId },
+      where: { userId: user.userId },
       data: { isActive: false },
     });
 
@@ -121,12 +124,19 @@ export class ProfileService {
     });
   }
 
-  async removeProfile(profileData: profileDto) {
-    if (profileData.isActive !== false)
+  async removeProfile(
+    currentprofile: profileDto,
+    profileId: string,
+    user: authUserDto,
+  ) {
+    if (user.role !== Role.ADMIN && !user.profile?.includes({ id: profileId }))
+      throw new BadRequestException('You are not allowed to delete');
+
+    if (user.role !== Role.ADMIN && currentprofile.id === profileId)
       throw new BadRequestException('Deactivate your profile to delete');
 
     return this.prisma.profile.delete({
-      where: { id: profileData.id },
+      where: { id: profileId },
       select: { name: true },
     });
   }

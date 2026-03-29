@@ -5,10 +5,7 @@ export interface refreshDto {
   sub: string;
   tokenVersion: number;
 }
-export enum Role {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
-}
+export type Role = 'USER' | 'ADMIN';
 export interface accessDto {
   sub: string;
   role: string;
@@ -18,8 +15,12 @@ export interface passResetDto {
   userId: string;
 }
 
+export interface UserProfile {
+  id: string;
+}
 export interface authUserDto {
   // After authentication
   userId: string;
-  role: string;
+  role: Role;
+  profile?: UserProfile[];
 }

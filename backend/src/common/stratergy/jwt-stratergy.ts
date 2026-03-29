@@ -32,6 +32,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         isEmailVerified: true,
         isActive: true,
         role: true,
+        profile: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
@@ -45,6 +50,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     if (user.isActive !== true)
       throw new BadGatewayException('Your account is not yet active');
-    return { userId: user.id, role: payload.role };
+
+    return {
+      userId: user.id,
+      role: user.role,
+      profile: user.profile,
+    };
   }
 }

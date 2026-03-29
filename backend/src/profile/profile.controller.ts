@@ -5,6 +5,8 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -37,8 +39,7 @@ export class ProfileController {
     @UploadedFile(new AvatarValidationPipe()) avatar: Express.Multer.File,
     @CurrentUser() user: authUserDto,
   ) {
-    const userId = user.userId;
-    return await this.profileService.createProfile(userId, profilData, avatar);
+    return await this.profileService.createProfile(user, profilData, avatar);
   }
 
   @Post('update-avatar')
@@ -72,11 +73,15 @@ export class ProfileController {
     return await this.profileService.activateProfile(userId, profile);
   }
 
-  @Post('remove-profile')
+  @Put('remove-profile')
   @ResponseMessage('Profile Deleted Successfully')
   @NoAccount()
-  async deleteProfile(@currentProfile() profile: profileDto) {
-    return await this.profileService.removeProfile(profile);
+  async deleteProfile(
+    @currentProfile() profile: profileDto,
+    @Query('profileId', ParseUUIDPipe, ValidateProfileExists) profileId: string,
+    @CurrentUser() user: authUserDto,
+  ) {
+    return await this.profileService.removeProfile(profile, profileId, user);
   }
 
   @Get('others-profile')
