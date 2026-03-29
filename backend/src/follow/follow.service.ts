@@ -7,6 +7,9 @@ export class FollowService {
   constructor(private prisma: PrismaService) {}
 
   async create(profile: profileDto, profileId: string) {
+    if (profile.id === profileId)
+      throw new BadRequestException(' You cannot follow yourself');
+
     const existingFollow = await this.prisma.follow.findUnique({
       where: {
         followerId_followingId: {
@@ -32,6 +35,8 @@ export class FollowService {
   }
 
   async remove(followId: string) {
+    // aslso removal of saved post
+    
     return this.prisma.follow.delete({
       where: { id: followId },
       select: { id: true },

@@ -7,13 +7,13 @@ import {
 import * as streamifier from 'streamifier';
 
 @Injectable()
-export class CloudinaryPostService {
+export class CloudinaryStoryService {
   constructor(
     @Inject('CLOUDINARY')
     private cloudinary: typeof cloud,
   ) {}
 
-  uploadImageStory(
+  async uploadImageStory(
     file: Express.Multer.File,
     filename: string,
     profileName: string,
@@ -45,7 +45,7 @@ export class CloudinaryPostService {
     });
   }
 
-  uploadVideoStory(
+  async uploadVideoStory(
     file: Express.Multer.File,
     filename: string,
     profileName: string,
@@ -81,7 +81,7 @@ export class CloudinaryPostService {
     });
   }
 
-  uploadAudioAndMerge(
+  async uploadAudioAndMerge(
     audioFile: Express.Multer.File,
     imgPublicId: string,
     fileName: string,

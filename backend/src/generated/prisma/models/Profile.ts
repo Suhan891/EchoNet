@@ -216,7 +216,7 @@ export type ProfileWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   posts?: Prisma.PostListRelationFilter
-  story?: Prisma.StoryListRelationFilter
+  story?: Prisma.XOR<Prisma.StoryNullableScalarRelationFilter, Prisma.StoryWhereInput> | null
   reels?: Prisma.ReelListRelationFilter
   savedPosts?: Prisma.SavePostListRelationFilter
   storiesViewed?: Prisma.StoryViewsListRelationFilter
@@ -240,7 +240,7 @@ export type ProfileOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   posts?: Prisma.PostOrderByRelationAggregateInput
-  story?: Prisma.StoryOrderByRelationAggregateInput
+  story?: Prisma.StoryOrderByWithRelationInput
   reels?: Prisma.ReelOrderByRelationAggregateInput
   savedPosts?: Prisma.SavePostOrderByRelationAggregateInput
   storiesViewed?: Prisma.StoryViewsOrderByRelationAggregateInput
@@ -267,7 +267,7 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   posts?: Prisma.PostListRelationFilter
-  story?: Prisma.StoryListRelationFilter
+  story?: Prisma.XOR<Prisma.StoryNullableScalarRelationFilter, Prisma.StoryWhereInput> | null
   reels?: Prisma.ReelListRelationFilter
   savedPosts?: Prisma.SavePostListRelationFilter
   storiesViewed?: Prisma.StoryViewsListRelationFilter
@@ -320,7 +320,7 @@ export type ProfileCreateInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
@@ -343,7 +343,7 @@ export type ProfileUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
@@ -366,7 +366,7 @@ export type ProfileUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
@@ -389,7 +389,7 @@ export type ProfileUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
@@ -693,7 +693,7 @@ export type ProfileCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
@@ -715,7 +715,7 @@ export type ProfileUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
@@ -779,7 +779,7 @@ export type ProfileCreateWithoutFollowingsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
@@ -801,7 +801,7 @@ export type ProfileUncheckedCreateWithoutFollowingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
@@ -828,7 +828,7 @@ export type ProfileCreateWithoutFollowersInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
@@ -850,7 +850,7 @@ export type ProfileUncheckedCreateWithoutFollowersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
@@ -888,7 +888,7 @@ export type ProfileUpdateWithoutFollowingsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
@@ -910,7 +910,7 @@ export type ProfileUncheckedUpdateWithoutFollowingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
@@ -943,7 +943,7 @@ export type ProfileUpdateWithoutFollowersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
@@ -965,7 +965,7 @@ export type ProfileUncheckedUpdateWithoutFollowersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
@@ -986,7 +986,7 @@ export type ProfileCreateWithoutPostsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
@@ -1008,7 +1008,7 @@ export type ProfileUncheckedCreateWithoutPostsInput = {
   cloudId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
@@ -1046,7 +1046,7 @@ export type ProfileUpdateWithoutPostsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
@@ -1068,7 +1068,7 @@ export type ProfileUncheckedUpdateWithoutPostsInput = {
   cloudId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
@@ -1091,7 +1091,7 @@ export type ProfileCreateWithoutSavedPostsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
   sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput
@@ -1113,7 +1113,7 @@ export type ProfileUncheckedCreateWithoutSavedPostsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
   sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput
@@ -1151,7 +1151,7 @@ export type ProfileUpdateWithoutSavedPostsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
   sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput
@@ -1173,7 +1173,7 @@ export type ProfileUncheckedUpdateWithoutSavedPostsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
   sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput
@@ -1195,7 +1195,7 @@ export type ProfileCreateWithoutReelsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
   sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput
@@ -1217,7 +1217,7 @@ export type ProfileUncheckedCreateWithoutReelsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
   sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput
@@ -1255,7 +1255,7 @@ export type ProfileUpdateWithoutReelsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
   sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput
@@ -1277,7 +1277,7 @@ export type ProfileUncheckedUpdateWithoutReelsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
   sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput
@@ -1403,7 +1403,7 @@ export type ProfileCreateWithoutStoriesViewedInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   sentNotifications?: Prisma.NotificationCreateNestedManyWithoutSenderInput
@@ -1425,7 +1425,7 @@ export type ProfileUncheckedCreateWithoutStoriesViewedInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   sentNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutSenderInput
@@ -1463,7 +1463,7 @@ export type ProfileUpdateWithoutStoriesViewedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   sentNotifications?: Prisma.NotificationUpdateManyWithoutSenderNestedInput
@@ -1485,7 +1485,7 @@ export type ProfileUncheckedUpdateWithoutStoriesViewedInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   sentNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutSenderNestedInput
@@ -1507,7 +1507,7 @@ export type ProfileCreateWithoutPofileLikesInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
@@ -1529,7 +1529,7 @@ export type ProfileUncheckedCreateWithoutPofileLikesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
@@ -1567,7 +1567,7 @@ export type ProfileUpdateWithoutPofileLikesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
@@ -1589,7 +1589,7 @@ export type ProfileUncheckedUpdateWithoutPofileLikesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
@@ -1611,7 +1611,7 @@ export type ProfileCreateWithoutProfileCommentesInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
@@ -1633,7 +1633,7 @@ export type ProfileUncheckedCreateWithoutProfileCommentesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
@@ -1671,7 +1671,7 @@ export type ProfileUpdateWithoutProfileCommentesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
@@ -1693,7 +1693,7 @@ export type ProfileUncheckedUpdateWithoutProfileCommentesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
@@ -1715,7 +1715,7 @@ export type ProfileCreateWithoutReceivedNotificationsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
@@ -1737,7 +1737,7 @@ export type ProfileUncheckedCreateWithoutReceivedNotificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
@@ -1764,7 +1764,7 @@ export type ProfileCreateWithoutSentNotificationsInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProfileInput
   posts?: Prisma.PostCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
@@ -1786,7 +1786,7 @@ export type ProfileUncheckedCreateWithoutSentNotificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
-  story?: Prisma.StoryUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
@@ -1824,7 +1824,7 @@ export type ProfileUpdateWithoutReceivedNotificationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
@@ -1846,7 +1846,7 @@ export type ProfileUncheckedUpdateWithoutReceivedNotificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
@@ -1879,7 +1879,7 @@ export type ProfileUpdateWithoutSentNotificationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
@@ -1901,7 +1901,7 @@ export type ProfileUncheckedUpdateWithoutSentNotificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
@@ -1933,7 +1933,7 @@ export type ProfileUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
@@ -1955,7 +1955,7 @@ export type ProfileUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
-  story?: Prisma.StoryUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
@@ -1985,7 +1985,6 @@ export type ProfileUncheckedUpdateManyWithoutUserInput = {
 
 export type ProfileCountOutputType = {
   posts: number
-  story: number
   reels: number
   savedPosts: number
   storiesViewed: number
@@ -1999,7 +1998,6 @@ export type ProfileCountOutputType = {
 
 export type ProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   posts?: boolean | ProfileCountOutputTypeCountPostsArgs
-  story?: boolean | ProfileCountOutputTypeCountStoryArgs
   reels?: boolean | ProfileCountOutputTypeCountReelsArgs
   savedPosts?: boolean | ProfileCountOutputTypeCountSavedPostsArgs
   storiesViewed?: boolean | ProfileCountOutputTypeCountStoriesViewedArgs
@@ -2026,13 +2024,6 @@ export type ProfileCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
  */
 export type ProfileCountOutputTypeCountPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PostWhereInput
-}
-
-/**
- * ProfileCountOutputType without action
- */
-export type ProfileCountOutputTypeCountStoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.StoryWhereInput
 }
 
 /**
@@ -2190,7 +2181,7 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     posts: Prisma.$PostPayload<ExtArgs>[]
-    story: Prisma.$StoryPayload<ExtArgs>[]
+    story: Prisma.$StoryPayload<ExtArgs> | null
     reels: Prisma.$ReelPayload<ExtArgs>[]
     savedPosts: Prisma.$SavePostPayload<ExtArgs>[]
     storiesViewed: Prisma.$StoryViewsPayload<ExtArgs>[]
@@ -2607,7 +2598,7 @@ export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   posts<T extends Prisma.Profile$postsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$postsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  story<T extends Prisma.Profile$storyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$storyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  story<T extends Prisma.Profile$storyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$storyArgs<ExtArgs>>): Prisma.Prisma__StoryClient<runtime.Types.Result.GetResult<Prisma.$StoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   reels<T extends Prisma.Profile$reelsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$reelsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   savedPosts<T extends Prisma.Profile$savedPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$savedPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavePostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   storiesViewed<T extends Prisma.Profile$storiesViewedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$storiesViewedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StoryViewsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3096,11 +3087,6 @@ export type Profile$storyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.StoryInclude<ExtArgs> | null
   where?: Prisma.StoryWhereInput
-  orderBy?: Prisma.StoryOrderByWithRelationInput | Prisma.StoryOrderByWithRelationInput[]
-  cursor?: Prisma.StoryWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.StoryScalarFieldEnum | Prisma.StoryScalarFieldEnum[]
 }
 
 /**

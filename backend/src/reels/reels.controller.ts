@@ -7,6 +7,7 @@ import {
   Put,
   Query,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ReelsService } from './reels.service';
 import { ReelDataDto } from './dto/reel-data';
@@ -19,6 +20,7 @@ import { ReelExistsPipe } from './pipes/reel.exists';
 import type { ReelDto } from './pipes/reelId.dto';
 import { CurrentUser } from 'src/auth/gaurds/refresh.decorator';
 import type { authUserDto } from 'src/auth/tokens/token.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('reels')
 export class ReelsController {
@@ -27,6 +29,7 @@ export class ReelsController {
   @Post('create')
   @ResponseMessage('Reeel created')
   @Throttle({ default: { ttl: 24 * 60 * 60 * 1000, limit: 3 } })
+  @UseInterceptors(FilesInterceptor('reelMedia', 1))
   async createReel(
     @Body() reelData: ReelDataDto,
     @UploadedFile(

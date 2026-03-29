@@ -198,16 +198,16 @@ export type StoryOrderByWithRelationInput = {
 
 export type StoryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  profileId?: string
   AND?: Prisma.StoryWhereInput | Prisma.StoryWhereInput[]
   OR?: Prisma.StoryWhereInput[]
   NOT?: Prisma.StoryWhereInput | Prisma.StoryWhereInput[]
-  profileId?: Prisma.StringFilter<"Story"> | string
   expiresAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   storyMedia?: Prisma.StoryMediaListRelationFilter
-}, "id">
+}, "id" | "profileId">
 
 export type StoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -290,14 +290,9 @@ export type StoryUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type StoryListRelationFilter = {
-  every?: Prisma.StoryWhereInput
-  some?: Prisma.StoryWhereInput
-  none?: Prisma.StoryWhereInput
-}
-
-export type StoryOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
+export type StoryNullableScalarRelationFilter = {
+  is?: Prisma.StoryWhereInput | null
+  isNot?: Prisma.StoryWhereInput | null
 }
 
 export type StoryCountOrderByAggregateInput = {
@@ -329,46 +324,36 @@ export type StoryScalarRelationFilter = {
   isNot?: Prisma.StoryWhereInput
 }
 
-export type StoryCreateNestedManyWithoutProfileInput = {
-  create?: Prisma.XOR<Prisma.StoryCreateWithoutProfileInput, Prisma.StoryUncheckedCreateWithoutProfileInput> | Prisma.StoryCreateWithoutProfileInput[] | Prisma.StoryUncheckedCreateWithoutProfileInput[]
-  connectOrCreate?: Prisma.StoryCreateOrConnectWithoutProfileInput | Prisma.StoryCreateOrConnectWithoutProfileInput[]
-  createMany?: Prisma.StoryCreateManyProfileInputEnvelope
-  connect?: Prisma.StoryWhereUniqueInput | Prisma.StoryWhereUniqueInput[]
+export type StoryCreateNestedOneWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.StoryCreateWithoutProfileInput, Prisma.StoryUncheckedCreateWithoutProfileInput>
+  connectOrCreate?: Prisma.StoryCreateOrConnectWithoutProfileInput
+  connect?: Prisma.StoryWhereUniqueInput
 }
 
-export type StoryUncheckedCreateNestedManyWithoutProfileInput = {
-  create?: Prisma.XOR<Prisma.StoryCreateWithoutProfileInput, Prisma.StoryUncheckedCreateWithoutProfileInput> | Prisma.StoryCreateWithoutProfileInput[] | Prisma.StoryUncheckedCreateWithoutProfileInput[]
-  connectOrCreate?: Prisma.StoryCreateOrConnectWithoutProfileInput | Prisma.StoryCreateOrConnectWithoutProfileInput[]
-  createMany?: Prisma.StoryCreateManyProfileInputEnvelope
-  connect?: Prisma.StoryWhereUniqueInput | Prisma.StoryWhereUniqueInput[]
+export type StoryUncheckedCreateNestedOneWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.StoryCreateWithoutProfileInput, Prisma.StoryUncheckedCreateWithoutProfileInput>
+  connectOrCreate?: Prisma.StoryCreateOrConnectWithoutProfileInput
+  connect?: Prisma.StoryWhereUniqueInput
 }
 
-export type StoryUpdateManyWithoutProfileNestedInput = {
-  create?: Prisma.XOR<Prisma.StoryCreateWithoutProfileInput, Prisma.StoryUncheckedCreateWithoutProfileInput> | Prisma.StoryCreateWithoutProfileInput[] | Prisma.StoryUncheckedCreateWithoutProfileInput[]
-  connectOrCreate?: Prisma.StoryCreateOrConnectWithoutProfileInput | Prisma.StoryCreateOrConnectWithoutProfileInput[]
-  upsert?: Prisma.StoryUpsertWithWhereUniqueWithoutProfileInput | Prisma.StoryUpsertWithWhereUniqueWithoutProfileInput[]
-  createMany?: Prisma.StoryCreateManyProfileInputEnvelope
-  set?: Prisma.StoryWhereUniqueInput | Prisma.StoryWhereUniqueInput[]
-  disconnect?: Prisma.StoryWhereUniqueInput | Prisma.StoryWhereUniqueInput[]
-  delete?: Prisma.StoryWhereUniqueInput | Prisma.StoryWhereUniqueInput[]
-  connect?: Prisma.StoryWhereUniqueInput | Prisma.StoryWhereUniqueInput[]
-  update?: Prisma.StoryUpdateWithWhereUniqueWithoutProfileInput | Prisma.StoryUpdateWithWhereUniqueWithoutProfileInput[]
-  updateMany?: Prisma.StoryUpdateManyWithWhereWithoutProfileInput | Prisma.StoryUpdateManyWithWhereWithoutProfileInput[]
-  deleteMany?: Prisma.StoryScalarWhereInput | Prisma.StoryScalarWhereInput[]
+export type StoryUpdateOneWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.StoryCreateWithoutProfileInput, Prisma.StoryUncheckedCreateWithoutProfileInput>
+  connectOrCreate?: Prisma.StoryCreateOrConnectWithoutProfileInput
+  upsert?: Prisma.StoryUpsertWithoutProfileInput
+  disconnect?: Prisma.StoryWhereInput | boolean
+  delete?: Prisma.StoryWhereInput | boolean
+  connect?: Prisma.StoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StoryUpdateToOneWithWhereWithoutProfileInput, Prisma.StoryUpdateWithoutProfileInput>, Prisma.StoryUncheckedUpdateWithoutProfileInput>
 }
 
-export type StoryUncheckedUpdateManyWithoutProfileNestedInput = {
-  create?: Prisma.XOR<Prisma.StoryCreateWithoutProfileInput, Prisma.StoryUncheckedCreateWithoutProfileInput> | Prisma.StoryCreateWithoutProfileInput[] | Prisma.StoryUncheckedCreateWithoutProfileInput[]
-  connectOrCreate?: Prisma.StoryCreateOrConnectWithoutProfileInput | Prisma.StoryCreateOrConnectWithoutProfileInput[]
-  upsert?: Prisma.StoryUpsertWithWhereUniqueWithoutProfileInput | Prisma.StoryUpsertWithWhereUniqueWithoutProfileInput[]
-  createMany?: Prisma.StoryCreateManyProfileInputEnvelope
-  set?: Prisma.StoryWhereUniqueInput | Prisma.StoryWhereUniqueInput[]
-  disconnect?: Prisma.StoryWhereUniqueInput | Prisma.StoryWhereUniqueInput[]
-  delete?: Prisma.StoryWhereUniqueInput | Prisma.StoryWhereUniqueInput[]
-  connect?: Prisma.StoryWhereUniqueInput | Prisma.StoryWhereUniqueInput[]
-  update?: Prisma.StoryUpdateWithWhereUniqueWithoutProfileInput | Prisma.StoryUpdateWithWhereUniqueWithoutProfileInput[]
-  updateMany?: Prisma.StoryUpdateManyWithWhereWithoutProfileInput | Prisma.StoryUpdateManyWithWhereWithoutProfileInput[]
-  deleteMany?: Prisma.StoryScalarWhereInput | Prisma.StoryScalarWhereInput[]
+export type StoryUncheckedUpdateOneWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.StoryCreateWithoutProfileInput, Prisma.StoryUncheckedCreateWithoutProfileInput>
+  connectOrCreate?: Prisma.StoryCreateOrConnectWithoutProfileInput
+  upsert?: Prisma.StoryUpsertWithoutProfileInput
+  disconnect?: Prisma.StoryWhereInput | boolean
+  delete?: Prisma.StoryWhereInput | boolean
+  connect?: Prisma.StoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StoryUpdateToOneWithWhereWithoutProfileInput, Prisma.StoryUpdateWithoutProfileInput>, Prisma.StoryUncheckedUpdateWithoutProfileInput>
 }
 
 export type StoryCreateNestedOneWithoutStoryMediaInput = {
@@ -406,36 +391,31 @@ export type StoryCreateOrConnectWithoutProfileInput = {
   create: Prisma.XOR<Prisma.StoryCreateWithoutProfileInput, Prisma.StoryUncheckedCreateWithoutProfileInput>
 }
 
-export type StoryCreateManyProfileInputEnvelope = {
-  data: Prisma.StoryCreateManyProfileInput | Prisma.StoryCreateManyProfileInput[]
-  skipDuplicates?: boolean
-}
-
-export type StoryUpsertWithWhereUniqueWithoutProfileInput = {
-  where: Prisma.StoryWhereUniqueInput
+export type StoryUpsertWithoutProfileInput = {
   update: Prisma.XOR<Prisma.StoryUpdateWithoutProfileInput, Prisma.StoryUncheckedUpdateWithoutProfileInput>
   create: Prisma.XOR<Prisma.StoryCreateWithoutProfileInput, Prisma.StoryUncheckedCreateWithoutProfileInput>
+  where?: Prisma.StoryWhereInput
 }
 
-export type StoryUpdateWithWhereUniqueWithoutProfileInput = {
-  where: Prisma.StoryWhereUniqueInput
+export type StoryUpdateToOneWithWhereWithoutProfileInput = {
+  where?: Prisma.StoryWhereInput
   data: Prisma.XOR<Prisma.StoryUpdateWithoutProfileInput, Prisma.StoryUncheckedUpdateWithoutProfileInput>
 }
 
-export type StoryUpdateManyWithWhereWithoutProfileInput = {
-  where: Prisma.StoryScalarWhereInput
-  data: Prisma.XOR<Prisma.StoryUpdateManyMutationInput, Prisma.StoryUncheckedUpdateManyWithoutProfileInput>
+export type StoryUpdateWithoutProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  storyMedia?: Prisma.StoryMediaUpdateManyWithoutStoryNestedInput
 }
 
-export type StoryScalarWhereInput = {
-  AND?: Prisma.StoryScalarWhereInput | Prisma.StoryScalarWhereInput[]
-  OR?: Prisma.StoryScalarWhereInput[]
-  NOT?: Prisma.StoryScalarWhereInput | Prisma.StoryScalarWhereInput[]
-  id?: Prisma.StringFilter<"Story"> | string
-  profileId?: Prisma.StringFilter<"Story"> | string
-  expiresAt?: Prisma.DateTimeFilter<"Story"> | Date | string
-  createdAt?: Prisma.DateTimeFilter<"Story"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Story"> | Date | string
+export type StoryUncheckedUpdateWithoutProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  storyMedia?: Prisma.StoryMediaUncheckedUpdateManyWithoutStoryNestedInput
 }
 
 export type StoryCreateWithoutStoryMediaInput = {
@@ -481,36 +461,6 @@ export type StoryUpdateWithoutStoryMediaInput = {
 export type StoryUncheckedUpdateWithoutStoryMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type StoryCreateManyProfileInput = {
-  id?: string
-  expiresAt: Date | string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type StoryUpdateWithoutProfileInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  storyMedia?: Prisma.StoryMediaUpdateManyWithoutStoryNestedInput
-}
-
-export type StoryUncheckedUpdateWithoutProfileInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  storyMedia?: Prisma.StoryMediaUncheckedUpdateManyWithoutStoryNestedInput
-}
-
-export type StoryUncheckedUpdateManyWithoutProfileInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string

@@ -54,7 +54,7 @@ model Profile {
   cloudId String?
 
   posts      Post[]
-  story    Story[]
+  story    Story?
   reels      Reel[]
   savedPosts SavePost[]
   storiesViewed StoryViews[]
@@ -146,7 +146,7 @@ model Reel {
 model Story {
   id String @id @default(uuid())
 
-  profileId String
+  profileId String @unique
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime

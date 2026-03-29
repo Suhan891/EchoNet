@@ -1,12 +1,12 @@
 import { FileValidator, Injectable } from '@nestjs/common';
 
 @Injectable()
-export class PostMediaValidatorPipe extends FileValidator {
+export class ReelMediaValidatorPipe extends FileValidator {
   isValid(file: Express.Multer.File): boolean {
     if (!file) return false;
 
-    const maxSize = 500 * 1024; // 5kb
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    const maxSize = 20 * 1024 * 1024;
+    const allowedTypes = ['video/mp4', 'video/quicktime'];
 
     // If EITHER fails, return false
     if (file.size > maxSize || !allowedTypes.includes(file.mimetype)) {
@@ -17,6 +17,6 @@ export class PostMediaValidatorPipe extends FileValidator {
   }
 
   buildErrorMessage(): string {
-    return 'Each file must be a PNG/JPG and smaller than 500KB';
+    return 'Video must be a MP4/quicktime and smaller than 20mb';
   }
 }
