@@ -89,6 +89,58 @@ export class ReelsService {
           profileId: profile.id,
         },
       },
+      select: {
+        id: true,
+        videoUrl: true,
+        caption: true,
+        profile: {
+          select: {
+            name: true,
+            avatarUrl: true,
+          },
+        },
+        likes: {
+          select: {
+            id: true,
+          },
+        },
+        comments: {
+          select: {
+            id: true,
+            profileId: true,
+            content: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getReel(reelId: string) {
+    return this.prismaService.reel.findFirst({
+      where: { id: reelId },
+      select: {
+        id: true,
+        videoUrl: true,
+        caption: true,
+        profile: {
+          select: {
+            name: true,
+            avatarUrl: true,
+          },
+        },
+        likes: {
+          select: {
+            id: true,
+          },
+        },
+        comments: {
+          select: {
+            id: true,
+            profileId: true,
+            content: true,
+          },
+        },
+      },
     });
   }
 }
