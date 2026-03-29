@@ -91,9 +91,10 @@ export class StoryService {
     storyId: string,
   ) {
     const uploadPromise = sortedStoryMedia.map(async (item) => {
+      let order = 1;
       if (item.type === StoryMediaType.IMAGE) {
         const file = item.file as Express.Multer.File;
-        const fileName = crypto.randomUUID();
+        const fileName = `${crypto.randomUUID()}-${order}`;
         return await this.cloudService.uploadImageStory(
           file,
           fileName,
@@ -102,7 +103,7 @@ export class StoryService {
       }
       if (item.type === StoryMediaType.VIDEO) {
         const file = item.file as Express.Multer.File;
-        const fileName = crypto.randomUUID();
+        const fileName = `${crypto.randomUUID()}-${order}`;
         return await this.cloudService.uploadVideoStory(
           file,
           fileName,
@@ -120,7 +121,7 @@ export class StoryService {
 
         const audioFile = item.audio as Express.Multer.File;
         const imgPublicId = imgUpload.public_id;
-        const fileName = crypto.randomUUID();
+        const fileName = `${crypto.randomUUID()}-${order}`;
         return await this.cloudService.uploadAudioAndMerge(
           audioFile,
           imgPublicId,
@@ -128,6 +129,7 @@ export class StoryService {
           profileName,
         );
       }
+      order++;
     });
     const uploads = await Promise.all(uploadPromise);
     if (!uploads)
