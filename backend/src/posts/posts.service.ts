@@ -52,7 +52,7 @@ export class PostsService {
     const profileName = post.profile.name;
     let filename = '';
     for (let i = 0; i < postMedia.length; i++) {
-      filename = `${Date.now().toString()}-${i + 1}`;
+      filename = `${crypto.randomUUID()}-${i + 1}`;
       const upload = await this.cloudService.uploadPost(
         postMedia[i],
         filename,
@@ -122,5 +122,87 @@ export class PostsService {
         id: true,
       },
     });
+  }
+
+  async getAllPost(profile: profileDto) {
+    return await this.prisma.post.findMany({
+      where: {
+        NOT: {
+          profileId: profile.id,
+        },
+      },
+      select: {
+        id: true,
+        caption: true,
+        postPhoto: {
+          select: {
+            id: true,
+            imageUrl: true,
+            order: true,
+          },
+        },
+        profile: {
+          select: {
+            name: true,
+            avatarUrl: true,
+            followers: {
+              select: {
+                followerId: true,
+              },
+            },
+          },
+        },
+        comments: {
+          select: {
+            id: true,
+            content: true,
+          },
+        },
+        likes: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getPost(postId: string) {
+    return await this.prisma.post.findFirst({
+      where: { id: postId },
+      select: {
+        id: true,
+        caption: true,
+        postPhoto: {
+          select: {
+            id: true,
+            imageUrl: true,
+            order: true,
+          },
+        },
+        profile: {
+          select: {
+            name: true,
+            avatarUrl: true,
+            followers: {
+              select: {
+                followerId: true,
+              },
+            },
+          },
+        },
+        comments: {
+          select: {
+            id: true,
+            content: true,
+          },
+        },
+        likes: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
   }
 }
