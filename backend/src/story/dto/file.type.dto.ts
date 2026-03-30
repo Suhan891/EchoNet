@@ -31,3 +31,9 @@ interface MediaFile {
 
 // 3. Combine them into a Union Type
 export type StoryMediaDto = CombinedMedia | MediaFile;
+
+export interface CreateStoryMediaEvent {
+  sortedStoryMedia: StoryMediaDto[];
+  profileName: string;
+  storyId: string;
+}

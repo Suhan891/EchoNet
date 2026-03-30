@@ -9,15 +9,18 @@ import {
   StoryMediaDto,
   FileValidateDto,
   StoryMediaType,
+  CreateStoryMediaEvent,
 } from './dto/file.type.dto';
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { Media } from 'src/generated/prisma/enums';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class StoryService {
   constructor(
     private prisma: PrismaService,
     private cloudService: CloudinaryStoryService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async createStory(
@@ -37,12 +40,12 @@ export class StoryService {
     const sortedStoryMedia: StoryMediaDto[] = orderSteps.map((step) => {
       if (step.includes('+')) {
         const [imgName, audName] = step.split('+');
+        totalFiles++;
         return {
           type: 'combined',
           image: allFiles.find((f) => f.originalname === imgName),
           audio: allFiles.find((f) => f.originalname === audName),
         };
-        totalFiles++;
       }
       const file = allFiles.find((f) => f.originalname === step);
       return {
@@ -68,28 +71,23 @@ export class StoryService {
     });
     const profileName = profile.name;
     const storyId = story.id;
-    const result = await this.createStoryMedia(
+
+    const payload: CreateStoryMediaEvent = {
       sortedStoryMedia,
       profileName,
       storyId,
-    );
+    };
 
-    if (!result)
-      throw new InternalServerErrorException(
-        'No Story Media Creation data returned returned',
-      );
+    this.eventEmitter.emit('story-media.create', payload);
 
     return {
       storyId: story.id,
-      storyMedia: result,
+      stories: totalFiles,
     };
   }
 
-  private async createStoryMedia(
-    sortedStoryMedia: StoryMediaDto[],
-    profileName: string,
-    storyId: string,
-  ) {
+  async createStoryMedia(request: CreateStoryMediaEvent) {
+    const { sortedStoryMedia, profileName, storyId } = request;
     const uploadPromise = sortedStoryMedia.map(async (item) => {
       let order = 1;
       if (item.type === StoryMediaType.IMAGE) {

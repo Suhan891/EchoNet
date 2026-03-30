@@ -26,7 +26,12 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
         host: 'localhost',
         port: 6379,
       },
+      defaultJobOptions: {
+        removeOnFail: false,
+        removeOnComplete: true,
+      },
     }),
+    BullModule.registerQueue({ name: 'stories' }, { name: 'email' }),
     PrismaModule,
     AuthModule,
     ProfileModule,
