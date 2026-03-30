@@ -1,0 +1,19 @@
+
+services:
+  redis: 
+    image: redis:7
+    container_name: redis_social_media
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+  
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight_social_media
+    ports:
+      - "5540:5540"
+    restart: unless-stopped
+volumes:
+  redis_data:
