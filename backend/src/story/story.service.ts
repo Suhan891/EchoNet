@@ -14,6 +14,7 @@ import {
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { Media } from 'src/generated/prisma/enums';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { StoryMediaDataDto } from './dto/story.usage.dto';
 
 @Injectable()
 export class StoryService {
@@ -62,12 +63,38 @@ export class StoryService {
         'All the files with correct name were not provided',
       );
 
+    const existingStory = await this.prisma.story.findFirst({
+      where: { profileId: profile.id },
+      select: { expiresAt: true, id: true },
+    });
+    if (
+      existingStory?.expiresAt &&
+      existingStory.expiresAt > new Date(Date.now())
+    )
+      throw new BadRequestException('Story already exists');
+
+    if (
+      existingStory?.expiresAt &&
+      existingStory.expiresAt < new Date(Date.now())
+    ) {
+      const storyIdEvent = existingStory?.id;
+      // const res = await this.eventEmitter.emitAsync(
+      //   'story.delete',
+      //   storyIdEvent,
+      // );
+      // if (!res)
+      //   throw new InternalServerErrorException(
+      //     'Job of deletion did not proceed',
+      //   );
+      await this.deleteStory(storyIdEvent);
+    }
+
     const story = await this.prisma.story.create({
       data: {
         profileId: profile.id,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
-      select: { id: true },
+      select: { id: true, expiresAt: true },
     });
     const profileName = profile.name;
     const storyId = story.id;
@@ -84,6 +111,13 @@ export class StoryService {
       storyId: story.id,
       stories: totalFiles,
     };
+  }
+
+  async getStoryMedia(profile: profileDto, storyMedia: StoryMediaDataDto) {
+    if (profile.id === storyMedia.story.profileId)
+      return this.OwnStory(storyMedia);
+    const profileId = profile.id;
+    return this.OthersStory(profileId, storyMedia);
   }
 
   async createStoryMedia(request: CreateStoryMediaEvent) {
@@ -154,5 +188,80 @@ export class StoryService {
     });
 
     return await Promise.all(createStoryMediaPromise);
+  }
+
+  async deleteStory(storyId: string): Promise<string> {
+    const storyMedias = await this.prisma.storyMedia.findMany({
+      where: { storyId },
+      select: {
+        cloudId: true,
+      },
+    });
+
+    const deletePromises = storyMedias.map(async (media) => {
+      const publicId = media.cloudId;
+
+      if (publicId) {
+        await this.cloudService.deleteStory(publicId);
+      }
+    });
+    await Promise.all(deletePromises);
+
+    const story = await this.prisma.story.delete({
+      where: { id: storyId },
+      select: { id: true },
+    });
+    return story.id;
+  }
+
+  private async OwnStory(storyMedia: StoryMediaDataDto) {
+    return await this.prisma.storyMedia.findFirst({
+      where: { id: storyMedia.id },
+      select: {
+        mediaType: true,
+        mediaUrl: true,
+        order: true,
+        likes: {
+          select: {
+            id: true,
+            profileId: true,
+          },
+        },
+        storyViews: {
+          select: {
+            id: true,
+            viewer: {
+              select: {
+                name: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  private async OthersStory(profileId: string, storyMedia: StoryMediaDataDto) {
+    const existingStoryView = await this.prisma.storyViews.count({
+      where: { storyMediaId: storyMedia.id, viewerId: profileId },
+    });
+
+    if (!existingStoryView) {
+      const payload = {
+        storyMediaId: storyMedia.id,
+        viewerId: profileId,
+      };
+      this.eventEmitter.emit('story.view', payload);
+    }
+
+    return await this.prisma.storyMedia.findFirst({
+      where: { id: storyMedia.id },
+      select: {
+        mediaType: true,
+        mediaUrl: true,
+        order: true,
+      },
+    });
   }
 }

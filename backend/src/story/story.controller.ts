@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
+  ParseUUIDPipe,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -13,6 +16,8 @@ import { StoryMediaValidation } from './pipes/files.validate';
 import type { FileValidateDto } from './dto/file.type.dto';
 import { currentProfile } from 'src/profile/decorator/get-profile';
 import { ResponseMessage } from 'src/common/decorators/response-message';
+import { ValidateStoryExists } from './pipes/existing-story';
+import type { StoryDto, StoryMediaDataDto } from './dto/story.usage.dto';
 
 @Controller('story')
 export class StoryController {
@@ -34,5 +39,32 @@ export class StoryController {
     @Body('fileOrder') fileOrder: string, // Frontend sends: "img1.jpg,vid1.mp4,img2.jpg,img3.jpg+audio.mp4,vid2.mp4"
   ) {
     return this.storyService.createStory(files, fileOrder, profile);
+  }
+
+  // @Post('view')
+  // @ResponseMessage('Story Media Received')
+  // async viewStory(
+  //   @Query('storyId', ParseUUIDPipe, ValidateStoryExists) story: StoryDto,
+  //   @currentProfile() profile: profileDto,
+  // ) {
+  //   return await this.storyService.getStory(profile, story);
+  // }
+
+  @Get('get-ids')
+  @ResponseMessage('Story Media Id"s Received')
+  getStoryMediaId(
+    @Query('storyId', ParseUUIDPipe, ValidateStoryExists) story: StoryDto,
+  ) {
+    return story;
+  }
+
+  @Get('view-media')
+  @ResponseMessage('Story Media Id Data Received')
+  async getStoryMedia(
+    @Query('storyId', ParseUUIDPipe, ValidateStoryExists)
+    storyMedia: StoryMediaDataDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    return await this.storyService.getStoryMedia(profile, storyMedia);
   }
 }

@@ -112,4 +112,8 @@ export class CloudinaryStoryService {
       streamifier.createReadStream(audioFile.buffer).pipe(uploadStream);
     });
   }
+
+  async deleteStory(publicId: string): Promise<any> {
+    return this.cloudinary.uploader.destroy(publicId);
+  }
 }

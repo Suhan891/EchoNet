@@ -8,12 +8,6 @@ export const StoryMediaType = {
   VIDEO: 'video',
   COMBINED: 'combined',
 };
-// export interface CreateStoryMediaDto {
-//   type: 'image' | 'video' | 'combined';
-//   image?: Express.Multer.File,
-//   audio?: Express.Multer.File,
-//   file?: Express.Multer.File,
-// }
 export interface CombinedMedia {
   type: 'combined';
   image: Express.Multer.File | undefined;
