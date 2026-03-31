@@ -30,14 +30,17 @@ export class GlobaExceptionFilter implements ExceptionFilter {
 
       if (typeof res === 'string') message = res;
       else {
-        // If response is an object
         const errorBody = res as ExceptionResponse;
         errorResponse = errorBody.error;
         if (Array.isArray(errorBody.message))
-          // Class Validator return in Array if many error
           message = errorBody.message[0] || message;
         else message = errorBody.message || message;
       }
+    } else {
+      // To handle unexpected code crash or Db errors
+      console.error(exception);
+      message = (exception as Error).message;
+      errorResponse = exception as Error;
     }
 
     // Logged the error
