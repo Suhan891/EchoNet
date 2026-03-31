@@ -29,6 +29,7 @@ export type CommentsMinAggregateOutputType = {
   profileId: string | null
   postId: string | null
   reelId: string | null
+  parentComment: string | null
   content: string | null
   createdAt: Date | null
 }
@@ -38,6 +39,7 @@ export type CommentsMaxAggregateOutputType = {
   profileId: string | null
   postId: string | null
   reelId: string | null
+  parentComment: string | null
   content: string | null
   createdAt: Date | null
 }
@@ -47,6 +49,7 @@ export type CommentsCountAggregateOutputType = {
   profileId: number
   postId: number
   reelId: number
+  parentComment: number
   content: number
   createdAt: number
   _all: number
@@ -58,6 +61,7 @@ export type CommentsMinAggregateInputType = {
   profileId?: true
   postId?: true
   reelId?: true
+  parentComment?: true
   content?: true
   createdAt?: true
 }
@@ -67,6 +71,7 @@ export type CommentsMaxAggregateInputType = {
   profileId?: true
   postId?: true
   reelId?: true
+  parentComment?: true
   content?: true
   createdAt?: true
 }
@@ -76,6 +81,7 @@ export type CommentsCountAggregateInputType = {
   profileId?: true
   postId?: true
   reelId?: true
+  parentComment?: true
   content?: true
   createdAt?: true
   _all?: true
@@ -158,6 +164,7 @@ export type CommentsGroupByOutputType = {
   profileId: string
   postId: string | null
   reelId: string | null
+  parentComment: string | null
   content: string
   createdAt: Date
   _count: CommentsCountAggregateOutputType | null
@@ -188,6 +195,7 @@ export type CommentsWhereInput = {
   profileId?: Prisma.StringFilter<"Comments"> | string
   postId?: Prisma.StringNullableFilter<"Comments"> | string | null
   reelId?: Prisma.StringNullableFilter<"Comments"> | string | null
+  parentComment?: Prisma.StringNullableFilter<"Comments"> | string | null
   content?: Prisma.StringFilter<"Comments"> | string
   createdAt?: Prisma.DateTimeFilter<"Comments"> | Date | string
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
@@ -200,6 +208,7 @@ export type CommentsOrderByWithRelationInput = {
   profileId?: Prisma.SortOrder
   postId?: Prisma.SortOrderInput | Prisma.SortOrder
   reelId?: Prisma.SortOrderInput | Prisma.SortOrder
+  parentComment?: Prisma.SortOrderInput | Prisma.SortOrder
   content?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   profile?: Prisma.ProfileOrderByWithRelationInput
@@ -215,6 +224,7 @@ export type CommentsWhereUniqueInput = Prisma.AtLeast<{
   profileId?: Prisma.StringFilter<"Comments"> | string
   postId?: Prisma.StringNullableFilter<"Comments"> | string | null
   reelId?: Prisma.StringNullableFilter<"Comments"> | string | null
+  parentComment?: Prisma.StringNullableFilter<"Comments"> | string | null
   content?: Prisma.StringFilter<"Comments"> | string
   createdAt?: Prisma.DateTimeFilter<"Comments"> | Date | string
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
@@ -227,6 +237,7 @@ export type CommentsOrderByWithAggregationInput = {
   profileId?: Prisma.SortOrder
   postId?: Prisma.SortOrderInput | Prisma.SortOrder
   reelId?: Prisma.SortOrderInput | Prisma.SortOrder
+  parentComment?: Prisma.SortOrderInput | Prisma.SortOrder
   content?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.CommentsCountOrderByAggregateInput
@@ -242,12 +253,14 @@ export type CommentsScalarWhereWithAggregatesInput = {
   profileId?: Prisma.StringWithAggregatesFilter<"Comments"> | string
   postId?: Prisma.StringNullableWithAggregatesFilter<"Comments"> | string | null
   reelId?: Prisma.StringNullableWithAggregatesFilter<"Comments"> | string | null
+  parentComment?: Prisma.StringNullableWithAggregatesFilter<"Comments"> | string | null
   content?: Prisma.StringWithAggregatesFilter<"Comments"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Comments"> | Date | string
 }
 
 export type CommentsCreateInput = {
   id?: string
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutProfileCommentesInput
@@ -260,12 +273,14 @@ export type CommentsUncheckedCreateInput = {
   profileId: string
   postId?: string | null
   reelId?: string | null
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
 }
 
 export type CommentsUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutProfileCommentesNestedInput
@@ -278,6 +293,7 @@ export type CommentsUncheckedUpdateInput = {
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -287,12 +303,14 @@ export type CommentsCreateManyInput = {
   profileId: string
   postId?: string | null
   reelId?: string | null
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
 }
 
 export type CommentsUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -302,6 +320,7 @@ export type CommentsUncheckedUpdateManyInput = {
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -321,6 +340,7 @@ export type CommentsCountOrderByAggregateInput = {
   profileId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   reelId?: Prisma.SortOrder
+  parentComment?: Prisma.SortOrder
   content?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -330,6 +350,7 @@ export type CommentsMaxOrderByAggregateInput = {
   profileId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   reelId?: Prisma.SortOrder
+  parentComment?: Prisma.SortOrder
   content?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -339,6 +360,7 @@ export type CommentsMinOrderByAggregateInput = {
   profileId?: Prisma.SortOrder
   postId?: Prisma.SortOrder
   reelId?: Prisma.SortOrder
+  parentComment?: Prisma.SortOrder
   content?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -471,6 +493,7 @@ export type CommentsUncheckedUpdateManyWithoutReelNestedInput = {
 
 export type CommentsCreateWithoutProfileInput = {
   id?: string
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
   post?: Prisma.PostCreateNestedOneWithoutCommentsInput
@@ -481,6 +504,7 @@ export type CommentsUncheckedCreateWithoutProfileInput = {
   id?: string
   postId?: string | null
   reelId?: string | null
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
 }
@@ -519,12 +543,14 @@ export type CommentsScalarWhereInput = {
   profileId?: Prisma.StringFilter<"Comments"> | string
   postId?: Prisma.StringNullableFilter<"Comments"> | string | null
   reelId?: Prisma.StringNullableFilter<"Comments"> | string | null
+  parentComment?: Prisma.StringNullableFilter<"Comments"> | string | null
   content?: Prisma.StringFilter<"Comments"> | string
   createdAt?: Prisma.DateTimeFilter<"Comments"> | Date | string
 }
 
 export type CommentsCreateWithoutPostInput = {
   id?: string
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutProfileCommentesInput
@@ -535,6 +561,7 @@ export type CommentsUncheckedCreateWithoutPostInput = {
   id?: string
   profileId: string
   reelId?: string | null
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
 }
@@ -567,6 +594,7 @@ export type CommentsUpdateManyWithWhereWithoutPostInput = {
 
 export type CommentsCreateWithoutReelInput = {
   id?: string
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutProfileCommentesInput
@@ -577,6 +605,7 @@ export type CommentsUncheckedCreateWithoutReelInput = {
   id?: string
   profileId: string
   postId?: string | null
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
 }
@@ -611,12 +640,14 @@ export type CommentsCreateManyProfileInput = {
   id?: string
   postId?: string | null
   reelId?: string | null
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
 }
 
 export type CommentsUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   post?: Prisma.PostUpdateOneWithoutCommentsNestedInput
@@ -627,6 +658,7 @@ export type CommentsUncheckedUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -635,6 +667,7 @@ export type CommentsUncheckedUpdateManyWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -643,12 +676,14 @@ export type CommentsCreateManyPostInput = {
   id?: string
   profileId: string
   reelId?: string | null
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
 }
 
 export type CommentsUpdateWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutProfileCommentesNestedInput
@@ -659,6 +694,7 @@ export type CommentsUncheckedUpdateWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   reelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -667,6 +703,7 @@ export type CommentsUncheckedUpdateManyWithoutPostInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   reelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -675,12 +712,14 @@ export type CommentsCreateManyReelInput = {
   id?: string
   profileId: string
   postId?: string | null
+  parentComment?: string | null
   content: string
   createdAt?: Date | string
 }
 
 export type CommentsUpdateWithoutReelInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutProfileCommentesNestedInput
@@ -691,6 +730,7 @@ export type CommentsUncheckedUpdateWithoutReelInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -699,6 +739,7 @@ export type CommentsUncheckedUpdateManyWithoutReelInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   postId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -710,6 +751,7 @@ export type CommentsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   profileId?: boolean
   postId?: boolean
   reelId?: boolean
+  parentComment?: boolean
   content?: boolean
   createdAt?: boolean
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
@@ -722,6 +764,7 @@ export type CommentsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   profileId?: boolean
   postId?: boolean
   reelId?: boolean
+  parentComment?: boolean
   content?: boolean
   createdAt?: boolean
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
@@ -734,6 +777,7 @@ export type CommentsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   profileId?: boolean
   postId?: boolean
   reelId?: boolean
+  parentComment?: boolean
   content?: boolean
   createdAt?: boolean
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
@@ -746,11 +790,12 @@ export type CommentsSelectScalar = {
   profileId?: boolean
   postId?: boolean
   reelId?: boolean
+  parentComment?: boolean
   content?: boolean
   createdAt?: boolean
 }
 
-export type CommentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "postId" | "reelId" | "content" | "createdAt", ExtArgs["result"]["comments"]>
+export type CommentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "postId" | "reelId" | "parentComment" | "content" | "createdAt", ExtArgs["result"]["comments"]>
 export type CommentsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   post?: boolean | Prisma.Comments$postArgs<ExtArgs>
@@ -779,6 +824,7 @@ export type $CommentsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     profileId: string
     postId: string | null
     reelId: string | null
+    parentComment: string | null
     content: string
     createdAt: Date
   }, ExtArgs["result"]["comments"]>
@@ -1211,6 +1257,7 @@ export interface CommentsFieldRefs {
   readonly profileId: Prisma.FieldRef<"Comments", 'String'>
   readonly postId: Prisma.FieldRef<"Comments", 'String'>
   readonly reelId: Prisma.FieldRef<"Comments", 'String'>
+  readonly parentComment: Prisma.FieldRef<"Comments", 'String'>
   readonly content: Prisma.FieldRef<"Comments", 'String'>
   readonly createdAt: Prisma.FieldRef<"Comments", 'DateTime'>
 }

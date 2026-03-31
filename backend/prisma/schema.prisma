@@ -225,6 +225,8 @@ model Comments {
   reelId String?
   reel Reel? @relation(fields: [reelId], references: [id], onDelete: Cascade)
 
+  parentComment String? // To enable multi layer reply in a single comment
+
   content String
 
   createdAt DateTime @default(now())

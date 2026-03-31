@@ -17,6 +17,8 @@ import { authUserDto } from './auth/tokens/token.dto';
 import { UserThrottlerGaurd } from './common/gaurds/throtler.gaurd';
 import { BullModule } from '@nestjs/bullmq';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { LikeModule } from './like/like.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       },
     ]),
     EventEmitterModule.forRoot(),
+    LikeModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [
