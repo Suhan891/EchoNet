@@ -9,7 +9,7 @@ import {
 import { LikeService } from './like.service';
 import { ValidateRequestPipe } from './pipes/validate.request';
 import { currentProfile } from 'src/profile/decorator/get-profile';
-import { profileDto } from 'src/profile/dto/profile.dto';
+import type { profileDto } from 'src/profile/dto/profile.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Controller('like')

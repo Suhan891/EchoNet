@@ -11,7 +11,8 @@ import { currentProfile } from 'src/profile/decorator/get-profile';
 import type { profileDto } from 'src/profile/dto/profile.dto';
 import { ValidateProfileExists } from 'src/profile/pipes/existing.profile';
 import { FollowService } from './follow.service';
-import { ValidateFollowExists } from './follow.pipe';
+import { ValidateFollowPipe } from './pipes/follow.exists';
+import type { followDto } from './dto/validate-follow.dto';
 
 @Controller('follow')
 export class FollowController {
@@ -29,10 +30,9 @@ export class FollowController {
   @Put('remove')
   @ResponseMessage('Follow deleted  successfull')
   async remove(
-    @Param('id', ParseUUIDPipe, ValidateFollowExists) followId: string,
-    //@currentProfile() profile: profileDto,
+    @Param('id', ParseUUIDPipe, ValidateFollowPipe) follow: followDto,
   ) {
-    return await this.followService.remove(followId);
+    return await this.followService.remove(follow);
   }
 
   @Get('followers')

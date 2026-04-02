@@ -103,17 +103,15 @@ export class PostsService {
         followingId: postCreatorId.post.profile.id,
       },
     });
-    const isFollower = await this.prisma.follow.count({
-      where: {
-        followerId: postCreatorId.post.profile.id,
-        followingId: profile.id,
-      },
-    });
+    // const isFollower = await this.prisma.follow.count({
+    //   where: {
+    //     followerId: postCreatorId.post.profile.id,
+    //     followingId: profile.id,
+    //   },
+    // });
 
-    if (!isFollower && !isFollowing)
-      throw new BadRequestException(
-        'Be a follower or following profile to save it',
-      );
+    if (!isFollowing)
+      throw new BadRequestException('You must be following to save the post');
 
     return await this.prisma.postPhoto.findFirst({
       where: { id: postPhotoId },
