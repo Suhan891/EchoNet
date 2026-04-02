@@ -3,3 +3,8 @@ export interface RequestDto {
   profileId: string;
   name: string;
 }
+
+export interface LikeDTo {
+  id: string;
+  profileId: string;
+}
