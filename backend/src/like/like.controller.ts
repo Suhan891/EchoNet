@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  Body,
   Controller,
   Param,
   ParseUUIDPipe,
