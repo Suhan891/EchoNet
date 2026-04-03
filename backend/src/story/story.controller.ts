@@ -18,6 +18,7 @@ import { currentProfile } from 'src/profile/decorator/get-profile';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 import { ValidateStoryExists } from './pipes/existing-story';
 import type { StoryDto, StoryMediaDataDto } from './dto/story.usage.dto';
+import { ValidateStoryMediaPipe } from './pipes/existing-storymedia';
 
 @Controller('story')
 export class StoryController {
@@ -61,7 +62,7 @@ export class StoryController {
   @Get('view-media')
   @ResponseMessage('Story Media Id Data Received')
   async getStoryMedia(
-    @Query('storyId', ParseUUIDPipe, ValidateStoryExists)
+    @Query('storyId', ParseUUIDPipe, ValidateStoryMediaPipe)
     storyMedia: StoryMediaDataDto,
     @currentProfile() profile: profileDto,
   ) {

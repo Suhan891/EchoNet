@@ -15,6 +15,7 @@ import { profileDto } from 'src/profile/dto/profile.dto';
 import { Media } from 'src/generated/prisma/enums';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { StoryMediaDataDto } from './dto/story.usage.dto';
+import { AppCacheService } from 'src/common/caching/redis.cache';
 
 @Injectable()
 export class StoryService {
@@ -22,6 +23,7 @@ export class StoryService {
     private prisma: PrismaService,
     private cloudService: CloudinaryStoryService,
     private readonly eventEmitter: EventEmitter2,
+    private cacheService: AppCacheService,
   ) {}
 
   async createStory(
@@ -114,10 +116,13 @@ export class StoryService {
   }
 
   async getStoryMedia(profile: profileDto, storyMedia: StoryMediaDataDto) {
+    const key = `story:${storyMedia.story.id}:meia:${storyMedia.id}:profile:${profile.id}`;
+    const cachedStory = await this.cacheService.get(key);
+    if (cachedStory) return cachedStory;
     if (profile.id === storyMedia.story.profileId)
-      return this.OwnStory(storyMedia);
+      return this.OwnStory(storyMedia, key);
     const profileId = profile.id;
-    return this.OthersStory(profileId, storyMedia);
+    return this.OthersStory(profileId, storyMedia, key);
   }
 
   async createStoryMedia(request: CreateStoryMediaEvent) {
@@ -211,11 +216,15 @@ export class StoryService {
       where: { id: storyId },
       select: { id: true },
     });
+
+    const key = `story:${storyId}`;
+    await this.cacheService.delByPattern(key);
+
     return story.id;
   }
 
-  private async OwnStory(storyMedia: StoryMediaDataDto) {
-    return await this.prisma.storyMedia.findFirst({
+  private async OwnStory(storyMedia: StoryMediaDataDto, key: string) {
+    const storyMediaData = await this.prisma.storyMedia.findFirst({
       where: { id: storyMedia.id },
       select: {
         mediaType: true,
@@ -240,9 +249,14 @@ export class StoryService {
         },
       },
     });
+    await this.cacheService.set<typeof storyMediaData>(key, storyMediaData);
   }
 
-  private async OthersStory(profileId: string, storyMedia: StoryMediaDataDto) {
+  private async OthersStory(
+    profileId: string,
+    storyMedia: StoryMediaDataDto,
+    key: string,
+  ) {
     const existingStoryView = await this.prisma.storyViews.count({
       where: { storyMediaId: storyMedia.id, viewerId: profileId },
     });
@@ -255,7 +269,7 @@ export class StoryService {
       this.eventEmitter.emit('story.view', payload);
     }
 
-    return await this.prisma.storyMedia.findFirst({
+    const storyMediaData = await this.prisma.storyMedia.findFirst({
       where: { id: storyMedia.id },
       select: {
         mediaType: true,
@@ -263,5 +277,6 @@ export class StoryService {
         order: true,
       },
     });
+    await this.cacheService.set<typeof storyMediaData>(key, storyMediaData);
   }
 }

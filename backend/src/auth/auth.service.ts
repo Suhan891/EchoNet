@@ -18,8 +18,7 @@ import { verifyDto } from './dto/verify-email.dto';
 import { ProfileService } from 'src/profile/profile.service';
 import { LoginDto, RefreshAccessDto, resetDto } from './dto/login.dto';
 import { authUserDto } from './tokens/token.dto';
-
-// import { type User, Prisma } from '@prisma/client';
+import { AppCacheService } from 'src/common/caching/redis.cache';
 
 @Injectable()
 export class AuthService {
@@ -28,6 +27,7 @@ export class AuthService {
     private mailService: EmailService,
     private tokenService: JwtCreate,
     private profileService: ProfileService,
+    private cacheService: AppCacheService,
   ) {}
 
   async register(registerData: RegisterDto) {
@@ -76,11 +76,15 @@ export class AuthService {
     profileData: CreateProfileDto,
     avatar: Express.Multer.File,
   ) {
-    const userId = user.id;
-    await this.profileService.createProfile(userId, profileData, avatar);
+    const reqUser = {
+      userId: user.id,
+      role: user.role,
+      name: user.name,
+    };
+    await this.profileService.createProfile(reqUser, profileData, avatar);
 
     return await this.prisma.user.update({
-      where: { id: userId },
+      where: { id: reqUser.userId },
       data: { isEmailVerified: true },
       select: {
         isEmailVerified: true,
@@ -114,7 +118,10 @@ export class AuthService {
   }
 
   async myself(user: authUserDto) {
-    return this.prisma.user.findFirst({
+    const key = `user:${user.userId}`;
+    const cachedData = await this.cacheService.get(key);
+    if (cachedData) return cachedData;
+    const authUser = await this.prisma.user.findFirst({
       where: { id: user.userId },
       select: {
         username: true,
@@ -129,6 +136,8 @@ export class AuthService {
         },
       },
     });
+    await this.cacheService.set<typeof authUser>(key, authUser, 1000 * 60 * 10); // Save with userId for 10 min
+    return authUser;
   }
 
   async refreshHandler(user: RefreshAccessDto) {
@@ -143,6 +152,8 @@ export class AuthService {
   }
 
   async logout(user: RefreshAccessDto) {
+    const key = `user:${user.id}`;
+    await this.cacheService.delete(key);
     return await this.prisma.user.update({
       where: { id: user.id },
       data: { isActive: false },
@@ -190,8 +201,6 @@ export class AuthService {
 
     return updatedUser;
   }
-
-  // Later confirming resetpassword confirmation checking
 
   private async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);

@@ -27,6 +27,8 @@ export class UserExistsPipe implements PipeTransform {
       select: {
         id: true,
         isEmailVerified: true,
+        name: true,
+        role: true,
       },
     });
 

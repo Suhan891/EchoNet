@@ -2,7 +2,7 @@ import { BadGatewayException, PipeTransform } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { StoryMediaDataDto } from '../dto/story.usage.dto';
 
-export class ValidateStoryExists implements PipeTransform {
+export class ValidateStoryMediaPipe implements PipeTransform {
   constructor(private prisma: PrismaService) {}
 
   async transform(storyMediaId: string): Promise<StoryMediaDataDto> {
@@ -14,6 +14,7 @@ export class ValidateStoryExists implements PipeTransform {
         mediaUrl: true,
         story: {
           select: {
+            id: true,
             profileId: true,
           },
         },

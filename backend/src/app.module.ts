@@ -19,10 +19,19 @@ import { BullModule } from '@nestjs/bullmq';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { LikeModule } from './like/like.module';
 import { CommentModule } from './comment/comment.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    CacheModule.register({
+      isGlobal: true,
+      store: redisStore as any,
+      host: 'localhost',
+      port: 6379,
+      ttl: 60, // default
+    }),
     BullModule.forRoot({
       connection: {
         host: 'localhost',
@@ -67,6 +76,10 @@ import { CommentModule } from './comment/comment.module';
       provide: APP_GUARD,
       useClass: UserThrottlerGaurd,
     },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: CacheInterceptor,
+    // },
   ],
 })
 export class AppModule {}

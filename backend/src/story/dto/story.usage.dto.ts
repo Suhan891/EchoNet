@@ -13,6 +13,7 @@ export interface StoryMediaDataDto {
   mediaUrl: string;
   story: {
     profileId: string;
+    id: string;
   };
 }
 export interface StoryViewEvent {

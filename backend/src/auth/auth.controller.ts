@@ -20,12 +20,11 @@ import { ActivateMe, NoAccount } from './decorators/no-account';
 import { LoginDto, RefreshAccessDto, resetDto } from './dto/login.dto';
 import { TokenCreation } from './token.interceptor';
 import { RefreshGaurd } from './gaurds/refresh-access.gaurd';
-import { Request } from 'express';
 import { CurrentUser } from './gaurds/refresh.decorator';
 import type { authUserDto } from './tokens/token.dto';
 
 @Controller('auth')
-@NoAccount() // Calling of decorator
+@NoAccount(true) // Calling of decorator
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -74,7 +73,7 @@ export class AuthController {
   }
 
   @Post('me')
-  @ActivateMe()
+  @ActivateMe(false)
   @ResponseMessage('Received all user details')
   async me(@CurrentUser() user: authUserDto) {
     return this.authService.myself(user);
