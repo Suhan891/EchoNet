@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   ParseFilePipe,
   ParseUUIDPipe,
   Post,
@@ -21,6 +22,7 @@ import type { ReelDto } from './pipes/reelId.dto';
 import { CurrentUser } from 'src/auth/gaurds/refresh.decorator';
 import type { authUserDto } from 'src/auth/tokens/token.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { FindReelQueryDto } from './dto/pagination-filter.dto';
 
 @Controller('reels')
 export class ReelsController {
@@ -41,6 +43,15 @@ export class ReelsController {
     @currentProfile() profile: profileDto,
   ) {
     return await this.reelService.create(reelData, reelMedia, profile);
+  }
+
+  @Get('all')
+  @ResponseMessage('All reel data fetched')
+  async getReels(
+    @Query() reelQuery: FindReelQueryDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    return await this.reelService.getAllReel(profile, reelQuery);
   }
 
   @Put('remove')

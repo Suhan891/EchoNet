@@ -184,16 +184,27 @@ export class PostsService {
   }
 
   async getAllPost(profile: profileDto, paginatedData: FindPostQueryDto) {
-    const key = `post:profile:${profile.id}:page:${paginatedData.page ?? 1}:limit:${paginatedData.limit ?? 10}`;
+    const page = paginatedData.page ?? 1;
+    const limit = paginatedData.limit ?? 10;
+    const key = `post:profile:${profile.id}:page:${page}:limit:${limit}`;
     const cachedPosts = await this.cacheService.get(key);
     const isFiltering = !!paginatedData.name;
     if (!isFiltering) return cachedPosts;
-    let skip = 0;
-    if (paginatedData.page && paginatedData.limit)
-      skip = (paginatedData.page - 1) * paginatedData.limit;
+
+    const skip = (page - 1) * limit;
+    let totalPosts = 0;
+    if (isFiltering)
+      totalPosts = await this.prisma.post.count({
+        where: {
+          NOT: {
+            profileId: profile.id,
+          },
+        },
+      });
+
     const posts = await this.prisma.post.findMany({
       skip: isFiltering ? undefined : skip,
-      take: isFiltering ? undefined : (paginatedData.limit ?? 10),
+      take: isFiltering ? undefined : limit,
       where: {
         NOT: {
           profileId: profile.id,
@@ -241,8 +252,22 @@ export class PostsService {
         },
       },
     });
-    await this.cacheService.set<typeof posts>(key, posts);
-    return posts;
+    const totalPages = Math.ceil(totalPosts / limit);
+    const result = {
+      posts,
+      meta: isFiltering
+        ? null
+        : {
+            currentPage: page,
+            currentReels: limit,
+            totalPages,
+            totalItems: totalPosts,
+            hasPreviousPage: page > 1,
+            hasNextPage: page < totalPages,
+          },
+    };
+    if (!isFiltering) await this.cacheService.set<typeof posts>(key, posts);
+    return result;
   }
 
   async getPost(post: PostDto) {

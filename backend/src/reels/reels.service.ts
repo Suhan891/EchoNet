@@ -10,12 +10,15 @@ import { CloudinaryReelService } from './cloudinary.service';
 import { ReelDto } from './pipes/reelId.dto';
 import { authUserDto } from 'src/auth/tokens/token.dto';
 import { Role } from 'src/generated/prisma/enums';
+import { FindReelQueryDto } from './dto/pagination-filter.dto';
+import { AppCacheService } from 'src/common/caching/redis.cache';
 
 @Injectable()
 export class ReelsService {
   constructor(
     private prismaService: PrismaService,
     private cloudService: CloudinaryReelService,
+    private cacheService: AppCacheService,
   ) {}
 
   async create(
@@ -82,12 +85,27 @@ export class ReelsService {
     });
   }
 
-  async getAllReel(profile: profileDto) {
-    return await this.prismaService.reel.findMany({
+  async getAllReel(profile: profileDto, queryData: FindReelQueryDto) {
+    const page = queryData.page ?? 1;
+    const limit = queryData.limit ?? 10;
+    const key = `reel:global:page:${page}:limit:${limit}`;
+    const cachedReel = await this.cacheService.get(key);
+    const isFiltering = !!queryData.caption;
+    if (!isFiltering) return cachedReel;
+
+    const skip = (page - 1) * limit;
+    let totalReels = 0;
+    if (!isFiltering) totalReels = await this.prismaService.reel.count();
+    const reels = await this.prismaService.reel.findMany({
+      skip: isFiltering ? undefined : skip,
+      take: isFiltering ? undefined : limit,
       where: {
-        NOT: {
-          profileId: profile.id,
-        },
+        caption: isFiltering
+          ? { contains: queryData.caption, mode: 'insensitive' }
+          : undefined,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
       select: {
         id: true,
@@ -113,6 +131,22 @@ export class ReelsService {
         },
       },
     });
+    const totalPages = Math.ceil(totalReels / limit);
+    const result = {
+      reels,
+      meta: isFiltering
+        ? null
+        : {
+            currentPage: page,
+            currentReels: limit,
+            totalPages,
+            totalItems: totalReels,
+            hasPreviousPage: page > 1,
+            hasNextPage: page < totalPages,
+          },
+    };
+    if (!isFiltering) await this.cacheService.set<typeof result>(key, result);
+    return result;
   }
 
   async getReel(reelId: string) {
