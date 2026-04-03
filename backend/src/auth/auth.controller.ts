@@ -9,7 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { RegisterDto, RegisterResponseDTO } from './dto/register.dto';
+import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 import { UserExistsPipe } from './pipes/user-exists';
@@ -24,15 +24,13 @@ import { CurrentUser } from './gaurds/refresh.decorator';
 import type { authUserDto } from './tokens/token.dto';
 
 @Controller('auth')
-@NoAccount(true) // Calling of decorator
+@NoAccount(true)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
   @ResponseMessage('User Registered. Please Verify Your Email')
-  async register(
-    @Body() registerData: RegisterDto,
-  ): Promise<RegisterResponseDTO> {
+  async register(@Body() registerData: RegisterDto) {
     return this.authService.register(registerData);
   }
 

@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -22,6 +23,7 @@ import { PostsPhotoExistsPipe } from './pipes/photo-post.exists';
 import { PostExistsPipe } from './pipes/post.exists.pipe';
 import type { PostDto, SavedPostDto } from './dto/posts.dto';
 import { SavedPostExistsPipe } from './pipes/savedPost.exists.pipe';
+import { FindPostQueryDto } from './dto/pagination-filtering.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -79,8 +81,17 @@ export class PostsController {
     return await this.postService.savePost(profile, postPhotoId);
   }
 
+  @Get('post-all')
+  @ResponseMessage('Paginated post data sent')
+  async getAllPost(
+    @Query() paginatedData: FindPostQueryDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    return this.postService.getAllPost(profile, paginatedData);
+  }
+
   @Get('posts-saved')
-  @ResponseMessage('Got Saved Post')
+  @ResponseMessage('Retrieved Save Posts')
   async getSavedPost(@currentProfile() profile: profileDto) {
     return this.postService.getSavedPosts(profile);
   }

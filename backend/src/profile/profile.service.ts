@@ -24,8 +24,9 @@ export class ProfileService {
     profileData: CreateProfileDto,
     avatar: Express.Multer.File,
   ) {
+    const name = profileData.name.toLowerCase();
     const existingProfile = await this.prisma.profile.findUnique({
-      where: { name: profileData.name },
+      where: { name },
     });
     if (existingProfile)
       return new ForbiddenException(
@@ -38,7 +39,7 @@ export class ProfileService {
     const profile = await this.prisma.profile.create({
       data: {
         userId: user.userId,
-        name: profileData.name,
+        name,
         bio: profileData.bio,
       },
       select: {

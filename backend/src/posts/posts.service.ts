@@ -9,6 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryPostService } from './cloudinary.service';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { PostDto, SavedPostDto } from './dto/posts.dto';
+import { FindPostQueryDto } from './dto/pagination-filtering.dto';
 
 @Injectable()
 export class PostsService {
@@ -79,6 +80,8 @@ export class PostsService {
       result.photos.push(postPhoto);
     }
 
+    const key = `post`;
+    await this.cacheService.delByPattern(key);
     return result;
   }
 
@@ -127,8 +130,8 @@ export class PostsService {
         'You are not allowed to delete others profile post',
       );
 
-    const key = `post:${post.id}`;
-    await this.cacheService.delete(key);
+    const key = `post`;
+    await this.cacheService.delByPattern(key);
 
     return await this.prisma.post.delete({
       where: { id: post.id },
@@ -180,12 +183,29 @@ export class PostsService {
     return savedPosts;
   }
 
-  async getAllPost(profile: profileDto) {
-    return await this.prisma.post.findMany({
+  async getAllPost(profile: profileDto, paginatedData: FindPostQueryDto) {
+    const key = `post:profile:${profile.id}:page:${paginatedData.page ?? 1}:limit:${paginatedData.limit ?? 10}`;
+    const cachedPosts = await this.cacheService.get(key);
+    const isFiltering = !!paginatedData.name;
+    if (!isFiltering) return cachedPosts;
+    let skip = 0;
+    if (paginatedData.page && paginatedData.limit)
+      skip = (paginatedData.page - 1) * paginatedData.limit;
+    const posts = await this.prisma.post.findMany({
+      skip: isFiltering ? undefined : skip,
+      take: isFiltering ? undefined : (paginatedData.limit ?? 10),
       where: {
         NOT: {
           profileId: profile.id,
         },
+        profile: {
+          name: isFiltering
+            ? { contains: paginatedData.name, mode: 'insensitive' }
+            : undefined,
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
       select: {
         id: true,
@@ -221,6 +241,8 @@ export class PostsService {
         },
       },
     });
+    await this.cacheService.set<typeof posts>(key, posts);
+    return posts;
   }
 
   async getPost(post: PostDto) {
