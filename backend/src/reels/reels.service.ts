@@ -6,18 +6,18 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ReelDataDto } from './dto/reel-data';
 import { profileDto } from 'src/profile/dto/profile.dto';
-import { CloudinaryReelService } from './cloudinary.service';
 import { ReelDto } from './pipes/reelId.dto';
 import { authUserDto } from 'src/auth/tokens/token.dto';
 import { Role } from 'src/generated/prisma/enums';
 import { FindReelQueryDto } from './dto/pagination-filter.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
+import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 
 @Injectable()
 export class ReelsService {
   constructor(
     private prismaService: PrismaService,
-    private cloudService: CloudinaryReelService,
+    private cloudService: CloudinaryService,
     private cacheService: AppCacheService,
   ) {}
 
@@ -58,7 +58,7 @@ export class ReelsService {
       throw new UnauthorizedException('You are not allowed to delete');
 
     const publicId = reel.cloudId;
-    await this.cloudService.deleteReel(publicId);
+    await this.cloudService.delete(publicId);
     return await this.prismaService.reel.delete({
       where: { id: reel.id },
       select: { id: true },

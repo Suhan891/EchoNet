@@ -6,16 +6,16 @@ import {
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { CreatePostDto } from './dto/create.post';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CloudinaryPostService } from './cloudinary.service';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { PostDto, SavedPostDto } from './dto/posts.dto';
 import { FindPostQueryDto } from './dto/pagination-filtering.dto';
+import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     private prisma: PrismaService,
-    private cloudService: CloudinaryPostService,
+    private cloudService: CloudinaryService,
     private cacheService: AppCacheService,
   ) {}
   async createPost(
@@ -130,6 +130,15 @@ export class PostsService {
         'You are not allowed to delete others profile post',
       );
 
+    const postMedias = await this.prisma.postPhoto.findMany({
+      where: { postId: post.id },
+      select: { id: true, cloudId: true },
+    });
+
+    const cloudDel = postMedias.map(async (media) => {
+      await this.cloudService.delete(media.cloudId);
+    });
+    await Promise.all(cloudDel);
     const key = `post`;
     await this.cacheService.delByPattern(key);
 

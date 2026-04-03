@@ -4,7 +4,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CloudinaryStoryService } from './cloudinary.service';
 import {
   StoryMediaDto,
   FileValidateDto,
@@ -16,12 +15,13 @@ import { Media } from 'src/generated/prisma/enums';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { StoryMediaDataDto } from './dto/story.usage.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
+import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 
 @Injectable()
 export class StoryService {
   constructor(
     private prisma: PrismaService,
-    private cloudService: CloudinaryStoryService,
+    private cloudService: CloudinaryService,
     private readonly eventEmitter: EventEmitter2,
     private cacheService: AppCacheService,
   ) {}
@@ -207,7 +207,7 @@ export class StoryService {
       const publicId = media.cloudId;
 
       if (publicId) {
-        await this.cloudService.deleteStory(publicId);
+        await this.cloudService.delete(publicId);
       }
     });
     await Promise.all(deletePromises);

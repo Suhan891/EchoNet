@@ -20,6 +20,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { LikeModule } from './like/like.module';
 import { CommentModule } from './comment/comment.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { CommonModule } from './common/common.module';
 import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
@@ -64,6 +65,7 @@ import * as redisStore from 'cache-manager-redis-store';
     EventEmitterModule.forRoot(),
     LikeModule,
     CommentModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [

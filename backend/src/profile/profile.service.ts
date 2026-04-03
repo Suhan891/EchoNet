@@ -5,11 +5,11 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProfileDto, profileDto } from './dto/profile.dto';
-import { CloudinaryService } from './cloudinary.service';
 import { UpdateProfileDto } from './dto/profile.dto';
 import { authUserDto } from 'src/auth/tokens/token.dto';
 import { Role } from 'src/generated/prisma/enums';
 import { AppCacheService } from 'src/common/caching/redis.cache';
+import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 
 @Injectable()
 export class ProfileService {
