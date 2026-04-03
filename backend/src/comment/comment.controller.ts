@@ -17,6 +17,7 @@ import type { profileDto } from 'src/profile/dto/profile.dto';
 import type { CreateCommmentDto } from './dto/create.dto';
 import { ValidateCommentPipe } from './pipes/existing.comment';
 import type { CommentDTo } from './dto/request.dto';
+import { ValidateReplyPipe } from './pipes/validate.reply.comment';
 
 @Controller('comment')
 export class CommentController {
@@ -48,10 +49,39 @@ export class CommentController {
     return await this.commentService.create(request);
   }
 
+  @Put('update')
+  @ResponseMessage('Reply updated')
+  async update(
+    @Param('commentId', ParseUUIDPipe, ValidateCommentPipe) comment: CommentDTo,
+    @Body() commentBody: CreateCommmentDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    const content = commentBody.content;
+    return await this.commentService.update(profile, comment, content);
+  }
+
+  @Put('reply')
+  @ResponseMessage('Replied Successfully')
+  async reply(
+    @Param('commentId', ParseUUIDPipe) commentId: string,
+    @Body() commentBody: CreateCommmentDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    if (!commentId)
+      throw new BadGatewayException('ParentCommentId is required to proceed');
+    const request = {
+      parentId: commentId,
+      profileId: profile.id,
+      content: commentBody.content,
+    };
+    const data = await new ValidateReplyPipe(this.prisma).transform(request);
+    return await this.commentService.reply(data);
+  }
+
   @Put('remove')
-  @ResponseMessage('Like removed successfully')
+  @ResponseMessage('Comment removed successfully')
   async remove(
-    @Param('likeId', ParseUUIDPipe, ValidateCommentPipe) comment: CommentDTo,
+    @Param('commentId', ParseUUIDPipe, ValidateCommentPipe) comment: CommentDTo,
     @currentProfile() profile: profileDto,
   ) {
     return await this.commentService.remove(profile, comment);

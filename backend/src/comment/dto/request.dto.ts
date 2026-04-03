@@ -5,7 +5,9 @@ export interface RequestDto {
 }
 export interface existingCommentDto {
   id: string;
-  parentComment: string | null;
+  parentComment?: {
+    id: string;
+  } | null;
 }
 
 export interface CommentDataDto {
@@ -17,4 +19,12 @@ export interface CommentDataDto {
 export interface CommentDTo {
   id: string;
   profileId: string;
+}
+
+export interface ReplyCommentDto {
+  parentId: string;
+  profileId: string;
+  postId?: string;
+  reelId?: string;
+  content: string;
 }

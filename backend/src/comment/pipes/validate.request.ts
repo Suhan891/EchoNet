@@ -33,7 +33,11 @@ export class ValidateRequestPipe implements PipeTransform {
       },
       select: {
         id: true,
-        parentComment: true,
+        parentComment: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
@@ -54,7 +58,11 @@ export class ValidateRequestPipe implements PipeTransform {
       },
       select: {
         id: true,
-        parentComment: true,
+        parentComment: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
@@ -64,7 +72,7 @@ export class ValidateRequestPipe implements PipeTransform {
 
   private isExistingComment(data: existingCommentDto[]): boolean {
     data.map((comment) => {
-      if (comment.parentComment) return true;
+      if (comment?.parentComment) return true;
     });
 
     return false;

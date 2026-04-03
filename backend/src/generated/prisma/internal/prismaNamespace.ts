@@ -1555,7 +1555,7 @@ export const CommentsScalarFieldEnum = {
   profileId: 'profileId',
   postId: 'postId',
   reelId: 'reelId',
-  parentComment: 'parentComment',
+  parentId: 'parentId',
   content: 'content',
   createdAt: 'createdAt'
 } as const

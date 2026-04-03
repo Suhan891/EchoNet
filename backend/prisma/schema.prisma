@@ -51,22 +51,22 @@ model Profile {
 
   bio       String?
   avatarUrl String?
-  cloudId String?
+  cloudId   String?
 
-  posts      Post[]
-  story    Story?
-  reels      Reel[]
-  savedPosts SavePost[]
+  posts         Post[]
+  story         Story?
+  reels         Reel[]
+  savedPosts    SavePost[]
   storiesViewed StoryViews[]
 
-  sentNotifications Notification[] @relation("Sender")
+  sentNotifications     Notification[] @relation("Sender")
   receivedNotifications Notification[] @relation("Receiver")
 
   followers  Follow[] @relation("followers")
   followings Follow[] @relation("followings")
 
   // Whenever this profile likes other post, reel, story media or writes comment
-  pofileLikes Likes[]
+  pofileLikes      Likes[]
   profileCommentes Comments[]
 
   createdAt DateTime @default(now())
@@ -74,15 +74,15 @@ model Profile {
 }
 
 model Follow {
-  id           String   @id @default(uuid())
+  id String @id @default(uuid())
 
-  followerId   String
-  followingId  String
+  followerId  String
+  followingId String
 
-  createdAt    DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  follower     Profile  @relation("followings", fields: [followerId], references: [id])
-  following    Profile  @relation("followers", fields: [followingId], references: [id])
+  follower  Profile @relation("followings", fields: [followerId], references: [id])
+  following Profile @relation("followers", fields: [followingId], references: [id])
 
   @@unique([followerId, followingId])
 }
@@ -93,10 +93,10 @@ model Post {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
-  caption String?
+  caption   String?
   postPhoto PostPhoto[]
 
-  likes Likes[]
+  likes    Likes[]
   comments Comments[]
 
   createdAt DateTime @default(now())
@@ -104,12 +104,12 @@ model Post {
 }
 
 model PostPhoto {
-  id        String   @id @default(uuid())
-  postId    String
+  id     String @id @default(uuid())
+  postId String
 
   imageUrl String
-  cloudId String
-  order Int @default(0)
+  cloudId  String
+  order    Int    @default(0)
 
   savedPosts SavePost[]
 
@@ -117,13 +117,13 @@ model PostPhoto {
 }
 
 model SavePost {
-  id        String   @id @default(uuid())
-  postPhotoId    String
+  id          String @id @default(uuid())
+  postPhotoId String
 
-  profileId String  // It will be the id of the user who saves
+  profileId String // It will be the id of the user who saves
 
-  post PostPhoto @relation(fields: [postPhotoId], references: [id], onDelete: Cascade)
-  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  post    PostPhoto @relation(fields: [postPhotoId], references: [id], onDelete: Cascade)
+  profile Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
 model Reel {
@@ -133,10 +133,10 @@ model Reel {
   profile   Profile @relation(fields: [profileId], references: [id])
 
   videoUrl String
-  cloudId String
+  cloudId  String
   caption  String?
 
-  likes Likes[]
+  likes    Likes[]
   comments Comments[]
 
   createdAt DateTime @default(now())
@@ -146,7 +146,7 @@ model Reel {
 model Story {
   id String @id @default(uuid())
 
-  profileId String @unique
+  profileId String  @unique
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime
@@ -161,50 +161,51 @@ enum Media {
   IMG
   VIDEO
 }
-model StoryMedia {
-  id        String   @id @default(uuid())
-  storyId    String
 
-  mediaUrl String
-  cloudId String
+model StoryMedia {
+  id      String @id @default(uuid())
+  storyId String
+
+  mediaUrl  String
+  cloudId   String
   mediaType Media
-  order Int @default(0)
+  order     Int    @default(0)
 
   storyViews StoryViews[]
-  likes Likes[]
+  likes      Likes[]
 
   story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
 }
 
-model StoryViews {  // this will run is background to save who all saw it
+model StoryViews {
   id String @id @default(uuid())
 
   storyMediaId String
   storyMedia   StoryMedia @relation(fields: [storyMediaId], references: [id], onDelete: Cascade)
 
   viewerId String
-  viewer Profile @relation(fields: [viewerId], references: [id])
+  viewer   Profile @relation(fields: [viewerId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([storyMediaId, viewerId])  // To prevent multiple views marking
+  @@unique([storyMediaId, viewerId]) // To prevent multiple views marking
 }
 
 model Likes {
   id String @id @default(uuid())
 
   profileId String
-  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   postId String?
-  post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   reelId String?
-  reel Reel? @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  reel   Reel?   @relation(fields: [reelId], references: [id], onDelete: Cascade)
 
   storyMediaId String?
-  storyMedia StoryMedia? @relation(fields: [storyMediaId], references: [id], onDelete: Cascade)
+  storyMedia   StoryMedia? @relation(fields: [storyMediaId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
@@ -217,15 +218,18 @@ model Comments {
   id String @id @default(uuid())
 
   profileId String
-  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   postId String?
-  post Post? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post   Post?   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   reelId String?
-  reel Reel? @relation(fields: [reelId], references: [id], onDelete: Cascade)
+  reel   Reel?   @relation(fields: [reelId], references: [id], onDelete: Cascade)
 
-  parentComment String? // To enable multi layer reply in a single comment
+  replies Comments[] @relation("CommentToComment") // to handle reply 
+
+  parentId String?
+  parentComment Comments? @relation("CommentToComment",fields: [parentId], references: [id], onDelete: Cascade)
 
   content String
 
@@ -238,19 +242,20 @@ enum Purpose {
   MESSAGE // Later messaging with websocket to be done
   FOLLOW
 }
+
 model Notification {
   id String @id @default(uuid())
 
   receiverId String
-  senderId String
+  senderId   String
 
-  receiver  Profile @relation("Receiver" ,fields: [receiverId], references: [id], onDelete: Cascade)
-  sender Profile @relation("Sender",fields: [senderId], references: [id])
+  receiver Profile @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  sender   Profile @relation("Sender", fields: [senderId], references: [id])
 
-  purpose Purpose 
+  purpose Purpose
   message String
 
-  isRead Boolean @default(false)
+  isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
   @@index([receiverId])
