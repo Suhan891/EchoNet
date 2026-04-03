@@ -7,12 +7,15 @@ import { profileDto } from 'src/profile/dto/profile.dto';
 import { CreatePostDto } from './dto/create.post';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryPostService } from './cloudinary.service';
+import { AppCacheService } from 'src/common/caching/redis.cache';
+import { PostDto, SavedPostDto } from './dto/posts.dto';
 
 @Injectable()
 export class PostsService {
   constructor(
     private prisma: PrismaService,
     private cloudService: CloudinaryPostService,
+    private cacheService: AppCacheService,
   ) {}
   async createPost(
     profile: profileDto,
@@ -103,15 +106,11 @@ export class PostsService {
         followingId: postCreatorId.post.profile.id,
       },
     });
-    // const isFollower = await this.prisma.follow.count({
-    //   where: {
-    //     followerId: postCreatorId.post.profile.id,
-    //     followingId: profile.id,
-    //   },
-    // });
-
     if (!isFollowing)
       throw new BadRequestException('You must be following to save the post');
+
+    const key = `saved-posts:${profile.id}`;
+    await this.cacheService.delete(key);
 
     return await this.prisma.postPhoto.findFirst({
       where: { id: postPhotoId },
@@ -120,6 +119,65 @@ export class PostsService {
         id: true,
       },
     });
+  }
+
+  async deletePost(post: PostDto, profile: profileDto) {
+    if (post.profileId !== profile.id)
+      throw new BadRequestException(
+        'You are not allowed to delete others profile post',
+      );
+
+    const key = `post:${post.id}`;
+    await this.cacheService.delete(key);
+
+    return await this.prisma.post.delete({
+      where: { id: post.id },
+      select: { id: true },
+    });
+  }
+
+  async deleteSavedPost(savedPost: SavedPostDto, profile: profileDto) {
+    if (savedPost.profileId !== profile.id)
+      throw new BadRequestException(
+        'You are not allowed to delete others profile post',
+      );
+
+    const key = `saved-posts:${profile.id}`;
+    await this.cacheService.delete(key);
+    return await this.prisma.savePost.delete({
+      where: { id: savedPost.id },
+      select: { id: true },
+    });
+  }
+
+  async getSavedPosts(profile: profileDto) {
+    const key = `saved-posts:${profile.id}`;
+    const cachedData = await this.cacheService.get(key);
+    if (cachedData) return cachedData;
+    const savedPosts = await this.prisma.savePost.findMany({
+      where: { profileId: profile.id },
+      select: {
+        id: true,
+        post: {
+          select: {
+            imageUrl: true,
+            post: {
+              select: {
+                profile: {
+                  select: {
+                    avatarUrl: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    if (savedPosts)
+      await this.cacheService.set<typeof savedPosts>(key, savedPosts);
+    return savedPosts;
   }
 
   async getAllPost(profile: profileDto) {
@@ -165,9 +223,12 @@ export class PostsService {
     });
   }
 
-  async getPost(postId: string) {
-    return await this.prisma.post.findFirst({
-      where: { id: postId },
+  async getPost(post: PostDto) {
+    const key = `post:${post.id}`;
+    const cachedData = await this.cacheService.get(key);
+    if (cachedData) return cachedData;
+    const postData = await this.prisma.post.findFirst({
+      where: { id: post.id },
       select: {
         id: true,
         caption: true,
@@ -193,6 +254,7 @@ export class PostsService {
           select: {
             id: true,
             content: true,
+            parentId: true,
           },
         },
         likes: {
@@ -202,5 +264,7 @@ export class PostsService {
         },
       },
     });
+    await this.cacheService.set<typeof postData>(key, postData, 600);
+    return postData;
   }
 }

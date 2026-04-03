@@ -9,12 +9,14 @@ import { CloudinaryService } from './cloudinary.service';
 import { UpdateProfileDto } from './dto/profile.dto';
 import { authUserDto } from 'src/auth/tokens/token.dto';
 import { Role } from 'src/generated/prisma/enums';
+import { AppCacheService } from 'src/common/caching/redis.cache';
 
 @Injectable()
 export class ProfileService {
   constructor(
     private prisma: PrismaService,
     private cloudService: CloudinaryService,
+    private cacheService: AppCacheService,
   ) {}
 
   async createProfile(
@@ -135,6 +137,9 @@ export class ProfileService {
     if (user.role !== Role.ADMIN && currentprofile.id === profileId)
       throw new BadRequestException('Deactivate your profile to delete');
 
+    const key = `profile:${profileId}`;
+    await this.cacheService.delete(key);
+
     return this.prisma.profile.delete({
       where: { id: profileId },
       select: { name: true },
@@ -142,7 +147,10 @@ export class ProfileService {
   }
 
   async getProfile(profileId: string) {
-    return this.prisma.profile.findFirst({
+    const key = `profile:${profileId}`;
+    const cachedProfile = await this.cacheService.get(key);
+    if (cachedProfile) return cachedProfile;
+    const profile = this.prisma.profile.findFirst({
       where: { id: profileId },
       select: {
         avatarUrl: true,
@@ -152,51 +160,16 @@ export class ProfileService {
         // Also story will be sent Frontend will handle if not following, but user cannnot see if he is not folllowing him
         story: {
           select: {
-            storyMedia: {
-              select: {
-                id: true,
-              },
-            },
+            id: true,
           },
         },
         posts: {
           select: {
             id: true,
-            postPhoto: {
-              select: {
-                id: true,
-                imageUrl: true,
-                order: true,
-              },
-            },
-            likes: {
-              select: {
-                id: true,
-              },
-            },
-            comments: {
-              select: {
-                id: true,
-              },
-            },
           },
         },
       },
     });
-  }
-
-  async allProfiles(userId: string) {
-    return this.prisma.profile.findMany({
-      where: {
-        NOT: {
-          userId,
-        },
-      },
-      select: {
-        avatarUrl: true,
-        name: true,
-        id: true,
-      },
-    });
+    await this.cacheService.set<typeof profile>(key, profile);
   }
 }

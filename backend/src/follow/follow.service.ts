@@ -2,10 +2,14 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { followDto } from './dto/validate-follow.dto';
+import { AppCacheService } from 'src/common/caching/redis.cache';
 
 @Injectable()
 export class FollowService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cacheService: AppCacheService,
+  ) {}
 
   async create(profile: profileDto, profileId: string) {
     if (profile.id === profileId)
@@ -37,6 +41,9 @@ export class FollowService {
 
   async remove(follow: followDto) {
     await this.existingSavePost(follow);
+
+    const key = `saved-posts:${follow.followerId}`;
+    await this.cacheService.delete(key);
 
     return await this.prisma.follow.delete({
       where: { id: follow.followerId },
