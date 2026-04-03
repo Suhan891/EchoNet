@@ -78,7 +78,7 @@ export class AuthService {
     const reqUser = {
       userId: user.id,
       role: user.role,
-      name: user.name,
+      name: user.username,
     };
     await this.profileService.createProfile(reqUser, profileData, avatar);
 

@@ -174,8 +174,8 @@ export class ProfileService {
     if (user.role !== Role.ADMIN && currentprofile.id === profileId)
       throw new BadRequestException('Deactivate your profile to delete');
 
-    const key = `profile:${profileId}`;
-    await this.cacheService.delete(key);
+    const key = `profile`;
+    await this.cacheService.delByPattern(key);
 
     return this.prisma.profile.delete({
       where: { id: profileId },
@@ -194,7 +194,7 @@ export class ProfileService {
         name: true,
         id: true,
         bio: true,
-        // Also story will be sent Frontend will handle if not following, but user cannnot see if he is not folllowing him
+        // Only story id would be passed if following then only will be allowed
         story: {
           select: {
             id: true,
@@ -208,5 +208,30 @@ export class ProfileService {
       },
     });
     await this.cacheService.set<typeof profile>(key, profile);
+  }
+
+  async getAllProfile(profile: profileDto) {
+    const key = `profile:global:${profile.id}`;
+    const cachedProfile = await this.cacheService.get(key);
+    if (cachedProfile) return cachedProfile;
+    const profiles = await this.prisma.profile.findMany({
+      where: {
+        NOT: {
+          id: profile.id,
+        },
+      },
+      select: {
+        id: true,
+        avatarUrl: true,
+        name: true,
+        followers: {
+          select: {
+            followerId: true,
+          },
+        },
+      },
+    });
+    await this.cacheService.set<typeof profiles>(key, profiles);
+    return profiles;
   }
 }

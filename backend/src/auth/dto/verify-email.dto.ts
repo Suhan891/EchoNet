@@ -4,5 +4,5 @@ export interface verifyDto {
   id: string;
   role: Role;
   isEmailVerified: boolean;
-  name: string;
+  username: string;
 }

@@ -48,8 +48,9 @@ export class ProfileController {
   async updateAvatar(
     @UploadedFile(new AvatarValidationPipe()) avatar: Express.Multer.File,
     @currentProfile() profile: profileDto,
+    @CurrentUser() user: authUserDto,
   ) {
-    return await this.profileService.updateAvatar(profile, avatar);
+    return await this.profileService.updateAvatar(profile, avatar, user);
   }
 
   @Post('update')
@@ -57,14 +58,15 @@ export class ProfileController {
   async update(
     @Body() data: UpdateProfileDto,
     @currentProfile() profile: profileDto,
+    @CurrentUser() user: authUserDto,
   ) {
-    return await this.profileService.updateProfile(data, profile);
+    return await this.profileService.updateProfile(data, profile, user);
   }
 
   // After toggling that new profile should be sent in header
   @Post('activate-profile')
   @ResponseMessage('Profile Activation Successfull')
-  @NoAccount() // Validating the new profile to pass even if it's isActive is false
+  @NoAccount(true) // Validating the new profile to pass even if it's isActive is false
   async activateProfile(
     @CurrentUser() user: authUserDto,
     @currentProfile() profile: profileDto,
@@ -75,7 +77,6 @@ export class ProfileController {
 
   @Put('remove-profile')
   @ResponseMessage('Profile Deleted Successfully')
-  @NoAccount()
   async deleteProfile(
     @currentProfile() profile: profileDto,
     @Query('profileId', ParseUUIDPipe, ValidateProfileExists) profileId: string,
@@ -94,8 +95,7 @@ export class ProfileController {
 
   @Get('all-profiles')
   @ResponseMessage('All Profiles received')
-  async allProfiles(@CurrentUser() user: authUserDto) {
-    const userId = user.userId;
-    return this.profileService.allProfiles(userId);
+  async allProfiles(@currentProfile() profile: profileDto) {
+    return await this.profileService.getAllProfile(profile);
   }
 }

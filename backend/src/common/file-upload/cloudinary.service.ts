@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import {
   v2 as cloud,
   UploadApiErrorResponse,
@@ -7,8 +7,15 @@ import {
 import * as streamifier from 'streamifier';
 
 @Injectable()
-export class CloudinaryService {
-  constructor(@Inject('CLOUDINARY') private cloudinary: typeof cloud) {}
+export class CloudinaryService implements OnModuleInit {
+  private cloudinary = cloud;
+  onModuleInit() {
+    this.cloudinary.config({
+      cloud_name: process.env.cloud_name,
+      api_key: process.env.api_key,
+      api_secret: process.env.api_secret,
+    });
+  }
 
   uploadedAvatar(avatar: Express.Multer.File, fileName: string) {
     return new Promise<UploadApiResponse>((resolve, reject) => {
