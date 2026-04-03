@@ -51,6 +51,9 @@ export class ProfileService {
 
     const upload = await this.cloudService.uploadedAvatar(avatar, fileName);
 
+    const key = `user:${user.userId}`;
+    await this.cacheService.delByPattern(key);
+
     await this.prisma.profile.updateMany({
       where: { userId: user.userId },
       data: { isActive: false },
@@ -73,7 +76,11 @@ export class ProfileService {
     });
   }
 
-  async updateAvatar(profileData: profileDto, avatar: Express.Multer.File) {
+  async updateAvatar(
+    profileData: profileDto,
+    avatar: Express.Multer.File,
+    user: authUserDto,
+  ) {
     const profile = await this.prisma.profile.findFirstOrThrow({
       where: { id: profileData.id },
       select: {
@@ -87,6 +94,9 @@ export class ProfileService {
 
     await this.cloudService.updateAvatar(avatar, fileName);
 
+    const key = `user:${user.userId}:profile:${profileData.id}`;
+    await this.cacheService.delete(key);
+
     return {
       id: profile.id,
       avatarUrl: profile.avatarUrl,
@@ -94,7 +104,13 @@ export class ProfileService {
     };
   }
 
-  async updateProfile(data: UpdateProfileDto, profileData: profileDto) {
+  async updateProfile(
+    data: UpdateProfileDto,
+    profileData: profileDto,
+    user: authUserDto,
+  ) {
+    const key = `user:${user.userId}:profile:${profileData.id}`;
+    await this.cacheService.delete(key);
     return await this.prisma.profile.update({
       where: { id: profileData.id },
       data: { bio: data.bio },
@@ -107,15 +123,33 @@ export class ProfileService {
   }
 
   async activateProfile(userId: string, profileData: profileDto) {
+    const key = `user:${userId}`;
+    await this.cacheService.delByPattern(key);
+    // Such that after this /auth/me should be called
     await this.prisma.profile.updateMany({
       where: { userId },
       data: { isActive: false },
     });
 
     return await this.prisma.profile.update({
-      // This should return more data like -> Post, savedPosts, Own Story,   ...
       where: { id: profileData.id },
       data: { isActive: true },
+      select: {
+        id: true,
+        isActive: true,
+      },
+    });
+  }
+
+  async getOwnProfile(profile: profileDto, user: authUserDto) {
+    const key = `user:${user.userId}:profile:${profile.id}`;
+    const cachedProfile = await this.cacheService.get(key);
+    if (cachedProfile) return cachedProfile;
+    const profileData = await this.prisma.profile.findFirst({
+      where: {
+        id: profile.id,
+        isActive: true,
+      },
       select: {
         id: true,
         name: true,
@@ -124,6 +158,8 @@ export class ProfileService {
         isActive: true,
       },
     });
+    await this.cacheService.set<typeof profileData>(key, profileData);
+    return profileData;
   }
 
   async removeProfile(

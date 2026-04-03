@@ -141,6 +141,8 @@ export class AuthService {
   }
 
   async refreshHandler(user: RefreshAccessDto) {
+    const key = `user:${user.id}`;
+    await this.cacheService.delByPattern(key);
     return await this.prisma.user.findFirst({
       where: { id: user.id },
       select: {
@@ -153,7 +155,7 @@ export class AuthService {
 
   async logout(user: RefreshAccessDto) {
     const key = `user:${user.id}`;
-    await this.cacheService.delete(key);
+    await this.cacheService.delByPattern(key);
     return await this.prisma.user.update({
       where: { id: user.id },
       data: { isActive: false },
