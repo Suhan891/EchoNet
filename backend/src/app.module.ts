@@ -22,6 +22,7 @@ import { CommentModule } from './comment/comment.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { CommonModule } from './common/common.module';
 import * as redisStore from 'cache-manager-redis-store';
+import { RoleGaurd } from './common/gaurds/roles.gaurd';
 
 @Module({
   imports: [
@@ -44,6 +45,12 @@ import * as redisStore from 'cache-manager-redis-store';
       },
     }),
     BullModule.registerQueue({ name: 'stories' }, { name: 'email' }),
+    EventEmitterModule.forRoot({
+      global: true,
+      wildcard: false,
+      maxListeners: 10,
+      verboseMemoryLeak: true,
+    }),
     PrismaModule,
     AuthModule,
     ProfileModule,
@@ -62,7 +69,6 @@ import * as redisStore from 'cache-manager-redis-store';
         },
       },
     ]),
-    EventEmitterModule.forRoot(),
     LikeModule,
     CommentModule,
     CommonModule,
@@ -72,16 +78,16 @@ import * as redisStore from 'cache-manager-redis-store';
     AppService,
     {
       provide: APP_GUARD,
+      useClass: RoleGaurd,
+    },
+    {
+      provide: APP_GUARD,
       useClass: ProfileGaurd,
     },
     {
       provide: APP_GUARD,
       useClass: UserThrottlerGaurd,
     },
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: CacheInterceptor,
-    // },
   ],
 })
 export class AppModule {}

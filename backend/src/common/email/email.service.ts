@@ -8,11 +8,10 @@ export class EmailService {
   private mailTransport: Transporter;
 
   constructor(private configService: ConfigService) {
-    // Set all this data in .env
     this.mailTransport = createTransport({
       host: this.configService.get('MAIL_HOST'),
       port: Number(this.configService.get('MAIL_PORT')),
-      secure: false, // TODO: upgrade later with STARTTLS
+      secure: false,
       auth: {
         user: this.configService.get('MAIL_USER'),
         pass: this.configService.get('MAIL_PASSWORD'),

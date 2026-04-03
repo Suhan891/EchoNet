@@ -9,7 +9,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 
-// import { User, Prisma } from 'src/generated/prisma/client';
 import { RegisterDto } from './dto/register.dto';
 import { EmailService } from 'src/common/email/email.service';
 import { JwtCreate } from './tokens/token.service';

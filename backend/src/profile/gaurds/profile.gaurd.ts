@@ -1,5 +1,5 @@
 import {
-  BadGatewayException,
+  BadRequestException,
   CanActivate,
   ExecutionContext,
   ForbiddenException,
@@ -65,7 +65,7 @@ export class ProfileGaurd implements CanActivate {
     ]);
 
     if (profile.isActive !== true && !notActive)
-      throw new BadGatewayException('Your profile is not yet active');
+      throw new BadRequestException('Your profile is not yet active');
 
     req['profile'] = profile as profileDto;
 

@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
-import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
+import { CommonModule } from 'src/common/common.module';
+import { ProfileGaurd } from './gaurds/profile.gaurd';
 
 @Module({
-  imports: [CloudinaryService],
+  imports: [CommonModule],
   controllers: [ProfileController],
-  providers: [ProfileService],
-  exports: [ProfileService],
+  providers: [ProfileService, ProfileGaurd],
+  exports: [ProfileService, ProfileGaurd],
 })
 export class ProfileModule {}

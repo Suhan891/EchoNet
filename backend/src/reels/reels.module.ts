@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ReelsService } from './reels.service';
 import { ReelsController } from './reels.controller';
-import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
-  imports: [CloudinaryService],
+  imports: [CommonModule],
   providers: [ReelsService],
   controllers: [ReelsController],
 })

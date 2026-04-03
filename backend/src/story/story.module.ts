@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { StoryController } from './story.controller';
 import { StoryService } from './story.service';
-import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
+import { CommonModule } from 'src/common/common.module';
+import { StoryListener } from './listeners/story-media.listener';
+import { StoryProcessor } from './workers/story-media.worker';
 
 @Module({
-  imports: [CloudinaryService],
+  imports: [CommonModule],
   controllers: [StoryController],
-  providers: [StoryService],
+  providers: [StoryService, StoryListener, StoryProcessor],
 })
 export class StoryModule {}

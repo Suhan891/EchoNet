@@ -7,12 +7,12 @@ import type { StoryViewEvent } from '../dto/story.usage.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class CreateStoryMediaListener {
+export class StoryListener {
   constructor(
     @InjectQueue('story') private storyQueue: Queue,
     private readonly prisma: PrismaService,
   ) {}
-  private readonly logger = new Logger(CreateStoryMediaListener.name);
+  private readonly logger = new Logger(StoryListener.name);
 
   @OnEvent('story-media.create', { async: true })
   async handleCreateStoryMedia(event: CreateStoryMediaEvent) {

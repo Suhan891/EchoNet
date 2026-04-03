@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
-import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
-  imports: [CloudinaryService],
+  imports: [CommonModule],
   controllers: [PostsController],
   providers: [PostsService],
 })
