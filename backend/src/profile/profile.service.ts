@@ -42,8 +42,8 @@ export class ProfileService {
         bio: profileData.bio,
       },
       select: {
-        id: true,
         name: true,
+        id: true,
       },
     });
 
@@ -62,15 +62,12 @@ export class ProfileService {
     return await this.prisma.profile.update({
       where: { id: profile.id },
       data: {
-        avatarUrl: upload.secure_url, //Url available in cloud
-        cloudId: upload.public_id, // Url which will enable us to delete
+        avatarUrl: upload.secure_url,
+        cloudId: upload.public_id,
         isActive: true,
       },
       select: {
-        id: true,
         name: true,
-        bio: true,
-        avatarUrl: true,
         isActive: true,
       },
     });
@@ -122,26 +119,36 @@ export class ProfileService {
     });
   }
 
-  async activateProfile(userId: string, profileData: profileDto) {
-    const key = `user:${userId}`;
+  async activateProfile(
+    user: authUserDto,
+    oldProfileData: profileDto,
+    newProfileId: string,
+  ) {
+    if (oldProfileData.id === newProfileId)
+      throw new BadRequestException('You cannot reactivate your own profile');
+    if (!user.profile?.includes({ id: newProfileId }))
+      throw new BadRequestException('No such profile exists for this user');
+    const key = `user:${user.userId}`;
     await this.cacheService.delByPattern(key);
-    // Such that after this /auth/me should be called
+    // Such that after this /auth/me should be called -> /auth/me will return all profile id within which active profile frontend will take -> Call to get the profile with his active id
     await this.prisma.profile.updateMany({
-      where: { userId },
+      where: { userId: user.userId },
       data: { isActive: false },
     });
 
     return await this.prisma.profile.update({
-      where: { id: profileData.id },
+      where: { id: newProfileId },
       data: { isActive: true },
       select: {
-        id: true,
+        name: true,
         isActive: true,
       },
     });
   }
 
   async getOwnProfile(profile: profileDto, user: authUserDto) {
+    if (!user.profile?.includes({ id: profile.id }))
+      throw new BadRequestException('Be the owner to activate the profile');
     const key = `user:${user.userId}:profile:${profile.id}`;
     const cachedProfile = await this.cacheService.get(key);
     if (cachedProfile) return cachedProfile;
@@ -156,6 +163,26 @@ export class ProfileService {
         bio: true,
         avatarUrl: true,
         isActive: true,
+        followers: {
+          select: {
+            id: true,
+          },
+        },
+        followings: {
+          select: {
+            id: true,
+          },
+        },
+        story: {
+          select: {
+            id: true,
+          },
+        },
+        sentNotifications: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     await this.cacheService.set<typeof profileData>(key, profileData);
@@ -178,7 +205,9 @@ export class ProfileService {
     if (currentprofile.id === profileId)
       throw new BadRequestException('Deactivate your profile to delete');
 
+    const userKey = `user:${user.userId}`;
     const key = `profile`;
+    await this.cacheService.delByPattern(userKey);
     await this.cacheService.delByPattern(key);
 
     return this.prisma.profile.delete({

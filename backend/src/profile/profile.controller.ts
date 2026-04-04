@@ -25,11 +25,13 @@ import type { authUserDto } from 'src/auth/tokens/token.dto';
 import { currentProfile } from './decorator/get-profile';
 import { NoAccount } from 'src/auth/decorators/no-account';
 import { ValidateProfileExists } from './pipes/existing.profile';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('profile')
 export class ProfileController {
   constructor(private profileService: ProfileService) {}
 
+  @Throttle({ default: { ttl: 60 * 60 * 1000, limit: 3 } })
   @Post('create')
   @NoProfile()
   @ResponseMessage('Profile created')
@@ -69,10 +71,10 @@ export class ProfileController {
   @NoAccount(true) // Validating the new profile to pass even if it's isActive is false
   async activateProfile(
     @CurrentUser() user: authUserDto,
+    @Param('profileId', ParseUUIDPipe, ValidateProfileExists) profileId: string,
     @currentProfile() profile: profileDto,
   ) {
-    const userId = user.userId;
-    return await this.profileService.activateProfile(userId, profile);
+    return await this.profileService.activateProfile(user, profile, profileId);
   }
 
   @Put('remove-profile')
