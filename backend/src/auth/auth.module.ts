@@ -7,10 +7,18 @@ import { ProfileModule } from 'src/profile/profile.module';
 import { CommonModule } from 'src/common/common.module';
 import { JwtCreate, JwtVerify } from './tokens/token.service';
 import { RefreshGaurd } from './gaurds/refresh-access.gaurd';
+import { TokenCreation } from './token.interceptor';
 
 @Module({
   imports: [PrismaModule, ProfileModule, CommonModule],
   controllers: [AuthController],
-  providers: [AuthService, JwtService, JwtCreate, RefreshGaurd, JwtVerify],
+  providers: [
+    AuthService,
+    JwtService,
+    JwtCreate,
+    RefreshGaurd,
+    JwtVerify,
+    TokenCreation,
+  ],
 })
 export class AuthModule {}
