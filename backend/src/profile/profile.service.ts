@@ -7,7 +7,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProfileDto, profileDto } from './dto/profile.dto';
 import { UpdateProfileDto } from './dto/profile.dto';
 import { authUserDto } from 'src/auth/tokens/token.dto';
-import { Role } from 'src/generated/prisma/enums';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 
@@ -168,10 +167,15 @@ export class ProfileService {
     profileId: string,
     user: authUserDto,
   ) {
-    if (user.role !== Role.ADMIN && !user.profile?.includes({ id: profileId }))
+    if (!user.profile?.includes({ id: profileId }))
       throw new BadRequestException('You are not allowed to delete');
 
-    if (user.role !== Role.ADMIN && currentprofile.id === profileId)
+    if (!user.profile?.includes({ id: profileId }))
+      throw new BadRequestException(
+        'No such profile exists within your registered email',
+      );
+
+    if (currentprofile.id === profileId)
       throw new BadRequestException('Deactivate your profile to delete');
 
     const key = `profile`;
