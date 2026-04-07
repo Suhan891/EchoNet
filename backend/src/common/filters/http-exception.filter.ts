@@ -24,9 +24,13 @@ export class GlobaExceptionFilter implements ExceptionFilter {
     let errorResponse: unknown = null;
     let message: string = 'Internal Server Error';
 
+    this.logger.debug(exception);
+
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const res = exception.getResponse();
+
+      this.logger.debug(res);
 
       if (typeof res === 'string') message = res;
       else {

@@ -10,7 +10,7 @@ export class PrismaService
 {
   constructor() {
     const connectionString = process.env.DATABASE_URL;
-    const client = new Client({ connectionString });
+    const client = new Client({ connectionString, ssl: false });
     const adapter = new PrismaPg(client);
 
     super({ adapter }); // Pass the adapter to the base class

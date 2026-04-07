@@ -65,7 +65,7 @@ import { RoleGaurd } from './common/gaurds/roles.gaurd';
         skipIf: (context) => {
           const request = context.switchToHttp().getRequest<Request>();
           const user = request.user as authUserDto;
-          return user.role === 'ADMIN';
+          return user?.role === 'ADMIN';
         },
       },
     ]),

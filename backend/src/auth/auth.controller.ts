@@ -29,7 +29,7 @@ import { Throttle } from '@nestjs/throttler';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Throttle({ default: { ttl: 60 * 60 * 1000, limit: 3 } })
+  @Throttle({ default: { ttl: 60 * 60 * 1000, limit: 20 } })
   @Post('register')
   @ResponseMessage('User Registered. Please Verify Your Email')
   async register(@Body() registerData: RegisterDto) {

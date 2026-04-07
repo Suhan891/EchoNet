@@ -5,8 +5,9 @@ import {
   passResetDto,
   refreshDto,
 } from './token.dto';
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
+@Injectable()
 export class JwtCreate {
   constructor(private jwtService: JwtService) {}
 

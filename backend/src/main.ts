@@ -18,11 +18,13 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: false,
+      forbidNonWhitelisted: true,
       transform: true,
-      disableErrorMessages: true,
+      disableErrorMessages: false,
     }),
   );
+
+  app.enableCors();
 
   await app.listen(process.env.PORT ?? 3000);
 }
