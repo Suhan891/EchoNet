@@ -23,6 +23,7 @@ import { RefreshGaurd } from './gaurds/refresh-access.gaurd';
 import { CurrentUser } from './gaurds/refresh.decorator';
 import type { authUserDto } from './tokens/token.dto';
 import { Throttle } from '@nestjs/throttler';
+import { NotActive } from 'src/profile/decorator/no-profile';
 
 @Controller('auth')
 @NoAccount(true)
@@ -74,6 +75,7 @@ export class AuthController {
 
   @Post('me')
   @ActivateMe(false)
+  @NotActive()
   @ResponseMessage('Received all user details')
   async me(@CurrentUser() user: authUserDto) {
     return this.authService.myself(user);
