@@ -153,3 +153,7 @@
     @apply font-sans;
   }
 }
+
+/* .inline-interactive {
+  @apply inline text-inherit leading-inherit align-baseline cursor-pointer;
+} */
