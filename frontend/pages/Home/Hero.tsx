@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 export default function Hero() {
   return (
     <div className='mx-auto min-h-full flex-col items-center'>
-    <Card size="default" className="mx-auto my-16 w-full max-w-3xl" >
+    <Card size="default" className="mx-auto mt-16 w-full max-w-3xl" >
       <CardHeader>
         <CardTitle>Landing Page</CardTitle>
         <CardDescription>

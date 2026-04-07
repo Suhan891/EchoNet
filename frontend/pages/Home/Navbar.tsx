@@ -46,7 +46,7 @@ const Navbar = () => {
           variant={"default"}
           size={"icon-lg"}
         >
-          Get Started
+          <Link href={"/login"}>Get Started</Link>
         </Button>
       </div>
     </nav>
