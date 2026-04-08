@@ -8,12 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel, FieldError, FieldDescription } from "@/components/ui/field";
 import {
   Eye,
   EyeClosed,
   GitBranchIcon,
-  Home,
   Lock,
   Mail,
   RectangleGogglesIcon,
@@ -27,9 +26,43 @@ import {
 import Hovertext from "@/components/card-hover";
 import Link from "next/link";
 import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginSchema, LoginType } from "@/validations/auth/login";
+import { useLogin } from "@/hooks/useAuth";
+import { toast } from "sonner";
+import { ErrorResponse, SuccessResponse } from "@/types/common";
+import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function Login() {
+  const router = useRouter()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: {errors}
+  } = useForm<LoginType>({
+    resolver: zodResolver(LoginSchema),
+    mode: 'onSubmit'
+  })
+  const login = useLogin()
   const [view, setView] = useState(false);
+
+  const onSubmit: SubmitHandler<LoginType> = (data) => {
+    login.mutate(data, {
+      onSuccess: (result: SuccessResponse) => {
+        toast.success(result.message);
+        console.log(result);
+        reset();
+        router.push('/profile')
+      },
+      onError: (error: ErrorResponse) => {
+        toast.error(error.message);
+        console.error(error.error);
+      },
+    });
+  };
   return (
     <div>
       <Card className="flex-5 w-7xl max-w-sm">
@@ -37,20 +70,36 @@ export default function Login() {
           <CardTitle className="text-2xl mx-auto">Login to explore</CardTitle>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email" className="ps-1.5">
+                <FieldLabel
+                  htmlFor="email"
+                  aria-invalid={!!errors.email}
+                  className="ps-1.5"
+                >
                   Email
                 </FieldLabel>
                 <InputGroup>
-                  <InputGroupInput id="email" placeholder="ram@gmail.com" />
+                  <InputGroupInput
+                    {...register("email")}
+                    id="email"
+                    aria-invalid={!!errors.email}
+                    placeholder="ram@gmail.com"
+                  />
                   <InputGroupAddon>
                     <InputGroupButton disabled={true} className="bg-gray-700">
                       <Mail />
                     </InputGroupButton>
                   </InputGroupAddon>
                 </InputGroup>
+                {errors.email ? (
+                  <FieldError errors={[errors.email]} />
+                ) : (
+                  <FieldDescription>
+                    Please provide your registered email
+                  </FieldDescription>
+                )}
               </Field>
               <Field>
                 <FieldLabel htmlFor="password" className="ps-1.5">
@@ -60,7 +109,12 @@ export default function Login() {
                   </div>{" "}
                 </FieldLabel>
                 <InputGroup>
-                  <InputGroupInput id="password" type={view ? "password" : "text"} placeholder="******" />
+                  <InputGroupInput
+                    {...register("password")}
+                    aria-invalid={!!errors.password}
+                    id="password"
+                    placeholder="******"
+                  />
                   <InputGroupAddon>
                     <InputGroupButton disabled={true} className="bg-gray-700">
                       <Lock />
@@ -72,6 +126,13 @@ export default function Login() {
                     </Button>
                   </InputGroupAddon>
                 </InputGroup>
+                {errors.password ? (
+                  <FieldError errors={[errors.password]} />
+                ) : (
+                  <FieldDescription>
+                    Please provide your registered password
+                  </FieldDescription>
+                )}
               </Field>
             </FieldGroup>
           </form>
@@ -94,9 +155,16 @@ export default function Login() {
           </CardDescription>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
-            Register
-          </Button>
+          {login.isPending ? (
+            <Button variant="outline" disabled>
+              <Spinner data-icon="inline-start" />
+              LogingIn
+            </Button>
+          ) : (
+            <Button type="submit" variant={"default"} className="w-full">
+              Login
+            </Button>
+          )}
           <CardDescription className="text-gray-600 flex px-auto">
             All the data are end to end encrypted.{" "}
             <Hovertext
