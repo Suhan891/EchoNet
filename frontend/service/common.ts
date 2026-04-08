@@ -6,6 +6,10 @@ export const getUrl = (path: string) => {
     return `${API_BASE}${path}`;
 }
 
+export const requestUrl = () => {
+    return `${API_BASE}`
+}
+
 export async function getToken() {
     const cookieStore = await cookies()
     return cookieStore.get('authToken')
