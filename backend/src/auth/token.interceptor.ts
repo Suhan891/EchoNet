@@ -28,7 +28,7 @@ export class TokenCreation implements NestInterceptor {
 
     return next.handle().pipe(
       map((data) => {
-        const userData: userDto = data;
+        const userData = data as userDto;
         //const { id, role, tokenVersion } = data;
 
         const accessData = { sub: userData.id, role: userData.role };

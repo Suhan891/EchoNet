@@ -126,12 +126,11 @@ export class AuthService {
       select: {
         username: true,
         email: true,
+        role: true,
         profile: {
           select: {
             isActive: true,
-            name: true,
             id: true,
-            avatarUrl: true,
           },
         },
       },

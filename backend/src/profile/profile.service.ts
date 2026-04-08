@@ -147,22 +147,18 @@ export class ProfileService {
   }
 
   async getOwnProfile(profile: profileDto, user: authUserDto) {
-    if (!user.profile?.includes({ id: profile.id }))
-      throw new BadRequestException('Be the owner to activate the profile');
     const key = `user:${user.userId}:profile:${profile.id}`;
     const cachedProfile = await this.cacheService.get(key);
     if (cachedProfile) return cachedProfile;
     const profileData = await this.prisma.profile.findFirst({
       where: {
         id: profile.id,
-        isActive: true,
       },
       select: {
         id: true,
         name: true,
         bio: true,
         avatarUrl: true,
-        isActive: true,
         followers: {
           select: {
             id: true,

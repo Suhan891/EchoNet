@@ -67,6 +67,11 @@ export class ProfileGaurd implements CanActivate {
     if (profile.isActive !== true && !notActive)
       throw new BadRequestException('Your profile is not yet active');
 
+    if (!user.profile?.includes({ id: profile.id }))
+      throw new BadRequestException(
+        'This is not your profile that you can accesss',
+      );
+
     req['profile'] = profile as profileDto;
 
     return true;
