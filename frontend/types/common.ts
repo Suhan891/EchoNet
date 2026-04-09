@@ -15,6 +15,7 @@ export interface ErrorResponse {
     message: string;
 }
 
+
 // export type Response = SuccessResponse<T> | ErrorResponse
 
 // export interface AuthUser {
