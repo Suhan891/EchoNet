@@ -1,7 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import { UserDetails } from "@/features/Auth/user.details";
 import { useEffect, useState } from "react";
 
 export default function AuthLayout({
@@ -11,7 +10,7 @@ export default function AuthLayout({
 }>) {
   const [isLoading, setIsLoading] = useState(true);
 
-  const isUser = UserDetails();
+  const isUser = ();
   useEffect(() => {
     if (isUser) setIsLoading(false);
   }, [isUser]);
