@@ -65,7 +65,16 @@ export class ProfileController {
     return await this.profileService.updateProfile(data, profile, user);
   }
 
-  // After toggling that new profile should be sent in header
+  @Get('own-details')
+  @ResponseMessage('Own Profile Details Received Successfull')
+  async getOwnProfile(
+    @CurrentUser() user: authUserDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    return await this.profileService.getOwnProfile(profile, user);
+  }
+
+  // After toggling that new profile => access token refetch => active profile taking from /auth/me => calling with this new profile
   @Post('activate-profile')
   @ResponseMessage('Profile Activation Successfull')
   @NoAccount(true) // Validating the new profile to pass even if it's isActive is false

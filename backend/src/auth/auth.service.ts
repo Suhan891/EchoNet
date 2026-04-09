@@ -124,6 +124,7 @@ export class AuthService {
     const authUser = await this.prisma.user.findFirst({
       where: { id: user.userId },
       select: {
+        id: true,
         username: true,
         email: true,
         role: true,
