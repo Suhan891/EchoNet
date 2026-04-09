@@ -23,6 +23,7 @@ axiosInstance.interceptors.request.use(
 
     async (request: InternalAxiosRequestConfig) => {
     const cookie = await getCookies("accessToken");
+    const profileCookie = await getCookies('')
     
     const accessToken = cookie?.value; 
 
@@ -32,7 +33,7 @@ axiosInstance.interceptors.request.use(
     return request;
   },
   (error) => {
-    console.log("User request creation failed", error);
+    console.log("User request creation failed: ", error);
     return Promise.reject(error);
   },
 );

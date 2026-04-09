@@ -1,10 +1,12 @@
-import { requestUrl } from "./common";
+import { Request } from "./common";
 
-
-async function profileUrl(path: string) {
-    return `${requestUrl()}/profile${path}`
+async function postJson(path: string, payload: unknown) {
+  return Request(`/profile/${path}`, { method: "POST", body: payload });
+}
+async function getJson(path: string) {
+  return Request(`/profile/${path}`, { method: "POST", body: null });
 }
 
-async function getJson(path: string) {
-  return requests(path, "GET");
-}v
+export async function GetOwnprofile() {
+  return getJson('own-details')
+}
