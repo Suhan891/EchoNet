@@ -29,6 +29,6 @@ export function useMyself() {
   return useQuery<SuccessResponse<UserResponse>, ErrorResponse>({
     queryKey: ["user"],
     queryFn: () => GetUser(),
-    staleTime: 1000* 60* 5
+    staleTime: 1000* 60* 10
   });
 }
