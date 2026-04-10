@@ -1,25 +1,30 @@
-import { Home, Images, Inbox, Video } from "lucide-react";
+import { CircleUserRound, Images, Inbox, MessageSquare, Video } from "lucide-react";
 
 export const items = [
     {
         title: 'Profile',
-        url: '#',
-        icons: Home,
+        url: '/profile',
+        icon: CircleUserRound,
     },
     {
         title: 'Inbox',
         url: '#',
-        icons: Inbox,
+        icon: Inbox,
     },
     {
         title: 'Posts',
         url: '#',
-        icons: Images,
+        icon: Images,
     },
     {
         title: 'Reels',
         url: '#',
-        icons: Video,
+        icon: Video,
+    },
+    {
+        title: 'Message',
+        url: '#',
+        icon: MessageSquare,
     },
 ]
 

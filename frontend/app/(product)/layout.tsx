@@ -1,4 +1,5 @@
 "use client";
+import AppSidebar from "@/components/AppSidebar";
 import { Badge } from "@/components/ui/badge";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
@@ -21,6 +22,7 @@ export default function AuthLayout({
   //   return ()
   return (
     <SidebarProvider>
+      <AppSidebar />
       <main className="flex flex-col w-full">
         <Navbar />
         {children}

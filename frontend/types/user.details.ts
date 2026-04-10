@@ -16,6 +16,8 @@ export interface UserResponse {
 export interface authAllProfiles {
   id: string;
   isActive: boolean;
+  avatarUrl: string;
+  name: string;
 }
 
 export interface AuthState {
@@ -26,7 +28,7 @@ export interface AuthState {
   profiles: authAllProfiles[];
   setUserId: (userId: string) => void;
   setEmail: (email: string) => void;
-  setRole: (role:Role) => void;
+  setRole: (role: Role) => void;
   setUserName: (name: string) => void;
   setProfile: (profiles: authAllProfiles[]) => void;
 }

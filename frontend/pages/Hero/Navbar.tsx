@@ -12,7 +12,7 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useProfileStore } from "@/stores/ProfileStore";
 import { useUserStore } from "@/stores/UserStore";
-import { Bell, LogOut, Moon, Sun, User, UserRound } from "lucide-react";
+import { Bell, LogOut, Moon, Sun, User } from "lucide-react";
 import { useTheme } from "next-themes";
 import React from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -82,7 +82,6 @@ export default function Navbar() {
                     alt="Profile Image"
                     width={10}
                   />
-                  {/* Name before img is visible */}
                   <AvatarFallback>SP</AvatarFallback>
                 </Avatar>
                 {name}

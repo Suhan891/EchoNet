@@ -132,6 +132,8 @@ export class AuthService {
           select: {
             isActive: true,
             id: true,
+            avatarUrl: true,
+            name: true,
           },
         },
       },
