@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateProfileDto {
   @IsNotEmpty({ message: 'Name is required' })
@@ -7,7 +13,6 @@ export class CreateProfileDto {
   @MaxLength(100, { message: 'Maximum 100 charecters are allowed' })
   name: string;
 
-  //@IsOptional()
   @IsNotEmpty({ message: 'Bio is required' })
   @IsString({ message: 'Bio must be string' })
   @MinLength(3, { message: 'Minimum 10 charecters are required' })
@@ -15,7 +20,13 @@ export class CreateProfileDto {
 }
 
 export class UpdateProfileDto {
-  @IsNotEmpty({ message: 'Bio is required' })
+  @IsOptional()
+  @IsString({ message: 'Name must be string' })
+  @MinLength(3, { message: 'Minimum 3 charecters are required' })
+  @MaxLength(100, { message: 'Maximum 100 charecters are allowed' })
+  name: string;
+
+  @IsOptional()
   @IsString({ message: 'Bio must be string' })
   @MinLength(3, { message: 'Minimum 10 charecters are required' })
   bio: string;
@@ -26,5 +37,6 @@ export interface profileDto {
   // After Profile authentication
   id: string;
   name: string;
+  bio?: string;
   isActive: boolean;
 }

@@ -9,12 +9,12 @@ export default function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const isUser = UserDetails();
-  useEffect(() => {
-    if (isUser) setIsLoading(false);
-  }, [isUser]);
+  // const isUser = UserDetails();
+  // useEffect(() => {
+  //   if (isUser) setIsLoading(false);
+  // }, [isUser]);
 
   return (
     <>

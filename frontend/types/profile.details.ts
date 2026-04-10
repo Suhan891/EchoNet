@@ -17,12 +17,23 @@ export interface OwnProfileResponse {
   };
 }
 
-export interface Follow {
+ interface Follower {
   id: string;
+  follower: {
+    id: string;
+    name: string;
+    avatarUrl: string;
+  };
 }
-export interface Story {
+ interface Following {
   id: string;
+  followings: {
+    id: string;
+    name: string;
+    avatarUrl: string;
+  };
 }
+export type Follow = Follower | Following
 export interface Notifications {
   id: string;
 }
@@ -32,17 +43,17 @@ export interface ProfileState {
   name: string;
   bio?: string;
   avatarUrl: string;
-  followers: Follow[];
-  followings?: Follow[];
-  story: Story;
+  followers?: Follower[];
+  followings?: Following[];
+  storyId: string;
   sentNotifications: Notifications[];
 
   setId: (id: string) => void;
   setName: (name: string) => void;
   setBio: (bio: string) => void;
   setAvatar: (avatarUrl: string) => void;
-  setFollowers: (followers: Follow[]) => void;
-  setFollowinngs: (followings: Follow[]) => void;
-  setStory: (story: Story) => void;
+  setFollowers: (followers: Follower[]) => void;
+  setFollowinngs: (followings: Following[]) => void;
+  setStoryId: (storyId: string) => void;
   setNotification: (sentNotifications: Notifications[]) => void;
 }

@@ -55,6 +55,7 @@ export class ProfileGaurd implements CanActivate {
         name: true,
         id: true,
         isActive: true,
+        bio: true,
       },
     });
     if (!profile) throw new ForbiddenException('Invalid profile');

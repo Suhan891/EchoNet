@@ -106,11 +106,21 @@ export class ProfileService {
     profileData: profileDto,
     user: authUserDto,
   ) {
+    if (data.name) {
+      const existingName = await this.prisma.profile.count({
+        where: { name: data.name },
+      });
+      if (existingName)
+        throw new BadRequestException('Profile name already exists');
+    }
     const key = `user:${user.userId}:profile:${profileData.id}`;
     await this.cacheService.delete(key);
     return await this.prisma.profile.update({
       where: { id: profileData.id },
-      data: { bio: data.bio },
+      data: {
+        bio: data.bio ?? profileData.bio,
+        name: data.name ?? profileData.name,
+      },
       select: {
         bio: true,
         name: true,
@@ -162,11 +172,25 @@ export class ProfileService {
         followers: {
           select: {
             id: true,
+            follower: {
+              select: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+              },
+            },
           },
         },
         followings: {
           select: {
             id: true,
+            following: {
+              select: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+              },
+            },
           },
         },
         story: {
