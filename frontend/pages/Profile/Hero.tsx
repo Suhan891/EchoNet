@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { useProfileStore } from "@/stores/ProfileStore";
-import Image from "next/image";
 import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import FollowerTab from "./Followers";
@@ -84,7 +83,7 @@ export default function ProfileHero() {
             <span className="font-semibold mr-1">{followers?.length || 0}</span>{" "}
             Followers
           </Button>
-          
+          {followerOpen && (<FollowerTab followerOpen={followerOpen} setFollowerOpen={setFollowerOpen} />)}
           <Button
             variant="ghost"
             disabled={!followings?.length}
@@ -95,6 +94,7 @@ export default function ProfileHero() {
             </span>{" "}
             Following
           </Button>
+          {followingOpen && (<FollowingTab followingOpen={followingOpen} setFollowingOpen={setFollowingOpen} />)}
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { Home, Inbox } from "lucide-react";
+import { Home, Images, Inbox, Video } from "lucide-react";
 
 export const items = [
     {
@@ -14,12 +14,12 @@ export const items = [
     {
         title: 'Posts',
         url: '#',
-        icons: Home,
+        icons: Images,
     },
     {
         title: 'Reels',
         url: '#',
-        icons: Home,
+        icons: Video,
     },
 ]
 

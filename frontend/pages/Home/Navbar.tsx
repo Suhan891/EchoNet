@@ -13,7 +13,7 @@ import Link from "next/link";
 const Navbar = () => {
   const { setTheme } = useTheme();
   return (
-    <nav className="px-4 flex items-center justify-between sticky top-0 bg-background z-10 text-3xl">
+    <nav className="px-4 flex items-center justify-between top-0 bg-background z-10 text-3xl sticky">
       <div className="font-bold">
         <Link href={"/"}>EchoNet</Link>
       </div>

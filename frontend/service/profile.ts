@@ -1,3 +1,4 @@
+import { UpdateProfileType } from "@/validations/profile/update.profile";
 import { Request } from "./common";
 
 async function postJson(path: string, payload: unknown) {
@@ -9,4 +10,8 @@ async function getJson(path: string) {
 
 export async function GetOwnprofile() {
   return getJson('own-details')
+}
+
+export async function UpdateProfile(data: UpdateProfileType) {
+  return postJson('update', data)
 }

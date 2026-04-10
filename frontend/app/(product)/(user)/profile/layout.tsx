@@ -13,7 +13,7 @@ export default function AuthLayout({
   reels: React.ReactNode;
 }>) {
   return (
-    <main className="bg-background">
+    <main className="relative bg-background">
       <div className="w-full max-w-4xl mx-auto mb-8">{children}</div>
       <Tabs defaultValue="saved" className="">
         <TabsList className="w-full max-w-4xl mx-auto flex justify-center gap-8 border-t border-border bg-transparent rounded-none h-14 p-0">
