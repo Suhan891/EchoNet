@@ -14,16 +14,39 @@ export default function AuthLayout({
 }>) {
   return (
     <main className="bg-background">
-      <div className="h-[25vw]">{children}</div>
-      <Tabs defaultValue="saved" className="w-full " >
-          <TabsList className="min-w-fit relative flex justify-center-safe gap-6 mx-[45%]">
-            <TabsTrigger value="saved" className=" p-4 ">Saved Posts</TabsTrigger>
-            <TabsTrigger value="posts" className="p-4">Posts</TabsTrigger>
-            <TabsTrigger value="reels" className="p-4">Reels</TabsTrigger>
-          </TabsList>
-          <TabsContent value="saved">{savedPosts} </TabsContent>
-          <TabsContent value="posts">{posts}</TabsContent>
-          <TabsContent value="reels">{reels}</TabsContent>
+      <div className="w-full max-w-4xl mx-auto mb-8">{children}</div>
+      <Tabs defaultValue="saved" className="">
+        <TabsList className="w-full max-w-4xl mx-auto flex justify-center gap-8 border-t border-border bg-transparent rounded-none h-14 p-0">
+          <TabsTrigger
+            value="saved"
+            className="h-14 rounded-none bg-transparent px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground border-t-2 border-transparent shadow-none data-[state=active]:text-foreground data-[state=active]:rounded-2xl transition-all"
+          >
+            Saved Posts
+          </TabsTrigger>
+          <TabsTrigger
+            value="posts"
+            className="h-14 rounded-none bg-transparent px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground border-t-2 border-transparent shadow-none data-[state=active]:text-foreground data-[state=active]:rounded-2xl transition-all"
+          >
+            Posts
+          </TabsTrigger>
+          <TabsTrigger
+            value="reels"
+            className="h-14 rounded-none bg-transparent px-4 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground border-t-2 border-transparent shadow-none data-[state=active]:text-foreground data-[state=active]:rounded-2xl transition-all"
+          >
+            Reels
+          </TabsTrigger>
+        </TabsList>
+        <div className="w-full max-w-4xl mx-auto pt-4">
+          <TabsContent value="saved" className="mt-0">
+            {savedPosts}
+          </TabsContent>
+          <TabsContent value="posts" className="mt-0">
+            {posts}
+          </TabsContent>
+          <TabsContent value="reels" className="mt-0">
+            {reels}
+          </TabsContent>
+        </div>
       </Tabs>
     </main>
   );

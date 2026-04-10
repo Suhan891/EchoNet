@@ -59,12 +59,12 @@ export default function Register() {
   });
   const onSubmit: SubmitHandler<RegisterType> = (data) => {
     registers.mutate(data, {
-      onSuccess: (result: SuccessResponse) => {
+      onSuccess: (result) => {
         toast.success(result.message);
         console.log(result);
         reset();
       },
-      onError: (error: ErrorResponse) => {
+      onError: (error) => {
         toast.error(error.message);
         console.error(error.error);
       },

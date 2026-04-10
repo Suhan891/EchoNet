@@ -51,13 +51,13 @@ export default function Login() {
 
   const onSubmit: SubmitHandler<LoginType> = (data) => {
     login.mutate(data, {
-      onSuccess: (result: SuccessResponse) => {
+      onSuccess: (result) => {
         toast.success(result.message);
         console.log(result);
         reset();
         router.push('/profile')
       },
-      onError: (error: ErrorResponse) => {
+      onError: (error) => {
         toast.error(error.message);
         console.error(error.error);
       },

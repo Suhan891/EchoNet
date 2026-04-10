@@ -1,15 +1,4 @@
 "use client";
-
-import * as React from "react";
-import {
-  CalculatorIcon,
-  CalendarIcon,
-  CreditCardIcon,
-  SettingsIcon,
-  SmileIcon,
-  UserIcon,
-} from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -23,12 +12,12 @@ import {
 import { useProfileStore } from "@/stores/ProfileStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function Following({
-  open,
-  setOpen,
+export default function FollowingTab({
+  followingOpen,
+  setFollowingOpen,
 }: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  followingOpen: boolean;
+  setFollowingOpen: (followingOpen: boolean) => void;
 }) {
   // const [open, setOpen] = React.useState(false)
   const { followings } = useProfileStore((state) => ({
@@ -37,7 +26,7 @@ export default function Following({
 
   return (
     <div className="flex flex-col gap-4">
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={followingOpen} onOpenChange={setFollowingOpen}>
         <Command>
           <CommandInput placeholder="Enter a name to search..." />
           <CommandList>
@@ -57,10 +46,6 @@ export default function Following({
                   <span>{following.followings.name}</span>
                 </CommandItem>
               ))}
-              <CommandItem>
-                <CalendarIcon />
-                <span>Calendar</span>
-              </CommandItem>
             </CommandGroup>
           </CommandList>
         </Command>

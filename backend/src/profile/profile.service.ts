@@ -118,7 +118,7 @@ export class ProfileService {
     return await this.prisma.profile.update({
       where: { id: profileData.id },
       data: {
-        bio: data.bio ?? profileData.bio,
+        bio: data.bio, // removed default to enable user to keep no bio logic
         name: data.name ?? profileData.name,
       },
       select: {

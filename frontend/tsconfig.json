@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "app/(product)/(user)/profile/reels/default.tsx"  ],
+, "app/(product)/(user)/profile/@reels/default.tsx"  ],
   "exclude": ["node_modules"]
 }
