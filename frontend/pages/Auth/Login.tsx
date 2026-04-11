@@ -8,7 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel, FieldError, FieldDescription } from "@/components/ui/field";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+  FieldDescription,
+} from "@/components/ui/field";
 import {
   Eye,
   EyeClosed,
@@ -35,17 +41,17 @@ import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
 
 export default function Login() {
-  const router = useRouter()
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     reset,
-    formState: {errors}
+    formState: { errors },
   } = useForm<LoginType>({
     resolver: zodResolver(LoginSchema),
-    mode: 'onSubmit'
-  })
-  const login = useLogin()
+    mode: "onSubmit",
+  });
+  const login = useLogin();
   const [view, setView] = useState(false);
 
   const onSubmit: SubmitHandler<LoginType> = (data) => {
@@ -54,7 +60,7 @@ export default function Login() {
         toast.success(result.message);
         console.log(result);
         reset();
-        router.push('/profile')
+        router.push("/profile");
       },
       onError: (error) => {
         toast.error(error.message);
@@ -65,11 +71,11 @@ export default function Login() {
   return (
     <div>
       <Card className="flex-5 w-7xl max-w-sm">
-        <CardHeader className="w-full ">
-          <CardTitle className="text-2xl mx-auto">Login to explore</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <CardHeader className="w-full ">
+            <CardTitle className="text-2xl mx-auto">Login to explore</CardTitle>
+          </CardHeader>
+          <CardContent>
             <FieldGroup>
               <Field>
                 <FieldLabel
@@ -104,7 +110,7 @@ export default function Login() {
                 <FieldLabel htmlFor="password" className="ps-1.5">
                   Password{" "}
                   <div className="ml-auto text-sm text-amber-50 hover:text-blue-400">
-                    <Link href={"#"}>Forgot{" "} password</Link>{" "}
+                    <Link href={"#"}>Forgot password</Link>{" "}
                   </div>{" "}
                 </FieldLabel>
                 <InputGroup>
@@ -120,7 +126,13 @@ export default function Login() {
                     </InputGroupButton>
                   </InputGroupAddon>
                   <InputGroupAddon align="inline-end">
-                    <Button variant={"ghost"} onClick={(e) => {e.preventDefault();setView(!view);}}>
+                    <Button
+                      variant={"ghost"}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setView(!view);
+                      }}
+                    >
                       {view ? <Eye /> : <EyeClosed />}
                     </Button>
                   </InputGroupAddon>
@@ -134,44 +146,44 @@ export default function Login() {
                 )}
               </Field>
             </FieldGroup>
-          </form>
-        </CardContent>
-        <CardContent className="w-full flex justify-center gap-2.5 my-1.5">
-          <Button variant="outline" className="">
-            <RectangleGogglesIcon />
-            Google
-          </Button>
-          <Button variant="outline" className="px-1.5">
-            <GitBranchIcon /> Github
-          </Button>
-        </CardContent>
-        <CardContent className="w-full flex justify-center text-gray-800">
-          <CardDescription>
-            Do not have an account{" "}
-            <Link href={"/register"} className="hover:text-blue-500">
-              SignUp
-            </Link>
-          </CardDescription>
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          {login.isPending ? (
-            <Button variant="outline" disabled>
-              <Spinner data-icon="inline-start" />
-              LogingIn
+          </CardContent>
+          <CardContent className="w-full flex justify-center gap-2.5 my-1.5">
+            <Button variant="outline" className="">
+              <RectangleGogglesIcon />
+              Google
             </Button>
-          ) : (
-            <Button type="submit" variant={"default"} className="w-full">
-              Login
+            <Button variant="outline" className="px-1.5">
+              <GitBranchIcon /> Github
             </Button>
-          )}
-          <CardDescription className="text-gray-600 flex px-auto">
-            All the data are end to end encrypted.{" "}
-            <Hovertext
-              title="Privacy"
-              description="No data shall go outside of this account"
-            />
-          </CardDescription>
-        </CardFooter>
+          </CardContent>
+          <CardContent className="w-full flex justify-center text-gray-800">
+            <CardDescription>
+              Do not have an account{" "}
+              <Link href={"/register"} className="hover:text-blue-500">
+                SignUp
+              </Link>
+            </CardDescription>
+          </CardContent>
+          <CardFooter className="flex-col gap-2">
+            {login.isPending ? (
+              <Button variant="outline" disabled>
+                <Spinner data-icon="inline-start" />
+                LogingIn
+              </Button>
+            ) : (
+              <Button type="submit" variant={"default"} className="w-full">
+                Login
+              </Button>
+            )}
+            <CardDescription className="text-gray-600 flex px-auto">
+              All the data are end to end encrypted.{" "}
+              <Hovertext
+                title="Privacy"
+                description="No data shall go outside of this account"
+              />
+            </CardDescription>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );

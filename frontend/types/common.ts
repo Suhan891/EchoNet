@@ -2,7 +2,7 @@
 export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export interface RequestDto {
     method: Method;
-    body: unknown;
+    body: unknown | FormData;
 }
 export interface SuccessResponse<T> {
     success: boolean;

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/PNG"];
 
 export const VerifySchema = z.object({
   token: z
@@ -12,21 +12,21 @@ export const VerifySchema = z.object({
       "Invalid Token",
     ),
   avatar: z
-    .instanceof(File)
-    .refine(
-      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
-      "Invalid document Type",
-    )
-    .refine(
-      (file) => file.size <= MAX_FILE_SIZE,
-      "File size shouldnot exceed 5 MB",
-    ),
+    .any(),
+    // .refine(
+    //   (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+    //   "Invalid document Type",
+    // )
+    // .refine(
+    //   (file) => file.size <= MAX_FILE_SIZE,
+    //   "File size shouldnot exceed 5 MB",
+    // ),
   bio: z.string().min(10, "Bio must include 10 charecters").optional(),
 
   name: z
     .string()
     .min(3, "Name must be at least 2 characters.")
-    .max(100, "Name must be at most 200 characters."),
+    .max(200, "Name must be at most 200 characters."),
 });
 
 export type VerifyType = z.infer<typeof VerifySchema>

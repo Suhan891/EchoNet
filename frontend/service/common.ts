@@ -2,7 +2,7 @@ import { RequestDto } from "@/types/common";
 import Cookie from "js-cookie";
 import axiosInstance from "./starter";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 export const getUrl = (path: string) => {
     return `${API_BASE}${path}`;

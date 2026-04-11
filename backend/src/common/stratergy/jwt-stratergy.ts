@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  BadRequestException,
   Injectable,
   NotAcceptableException,
   NotFoundException,
@@ -22,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: accessDto): Promise<authUserDto> {
-    // Also later attack profile data in auth token
+    console.log('Payload: ', payload);
     const userId = payload.sub;
     //const user = await this.authService.userExists(userId);
     const user = await this.prisma.user.findUnique({
@@ -45,11 +46,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (payload.role !== user.role)
       throw new NotAcceptableException('Role not matching');
 
+    console.log('User: ', user);
+
     if (user.isEmailVerified !== true)
       throw new BadGatewayException('Verify your email firstly');
 
     if (user.isActive !== true)
-      throw new BadGatewayException('Your account is not yet active');
+      throw new BadRequestException('Your account is not yet active');
 
     return {
       userId: user.id,

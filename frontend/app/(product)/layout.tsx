@@ -20,6 +20,7 @@ export default function AuthLayout({
   // const isFetching = useIsFetching({queryKey: ['user']})
   // if(isFetching)
   //   return ()
+  UserDetails()
   return (
     <SidebarProvider>
       <AppSidebar />

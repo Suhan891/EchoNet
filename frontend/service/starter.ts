@@ -8,7 +8,7 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 const axiosInstance = axios.create({
-  baseURL: process.env.REQUEST_APP_URL || "http://localhost:8080",
+  baseURL: process.env.REQUEST_APP_URL || "http://localhost:3001",
   headers: {
     "Content-Type": "application/json",
   },
@@ -20,6 +20,7 @@ axiosInstance.interceptors.request.use(
     const profileCookie = Cookie.get('profile')
 
     const accessToken = Cookie.get('accessToken')
+    console.log('Starter:', accessToken);
 
     if (!accessToken) throw new Error("No token available");
 

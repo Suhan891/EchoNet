@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
   ParseFilePipeBuilder,
   Post,
@@ -46,7 +47,7 @@ export class AuthController {
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
-          fileType: 'jpg|jpeg|png',
+          fileType: 'jpg|jpeg|png|PNG',
         })
         .addMaxSizeValidator({
           maxSize: 5 * 1024 * 1024, // 5MB
@@ -73,8 +74,9 @@ export class AuthController {
     return this.authService.login(data);
   }
 
-  @Post('me')
+  @Get('me')
   @ActivateMe(false)
+  @NoAccount(false)
   @NotActive()
   @ResponseMessage('Received all user details')
   async me(@CurrentUser() user: authUserDto) {

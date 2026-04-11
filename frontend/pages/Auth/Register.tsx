@@ -57,6 +57,8 @@ export default function Register() {
       password: "",
     },
   });
+  if(errors)
+    console.log(errors)
   const onSubmit: SubmitHandler<RegisterType> = (data) => {
     registers.mutate(data, {
       onSuccess: (result) => {
@@ -73,13 +75,13 @@ export default function Register() {
   return (
     <div>
       <Card className="flex-5 w-7xl max-w-sm">
+        <form onSubmit={handleSubmit(onSubmit)}>
         <CardHeader className="w-full ">
           <CardTitle className="text-2xl mx-auto">
             Register the experience
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <Field>
                 <FieldLabel
@@ -170,7 +172,7 @@ export default function Register() {
                 )}
               </Field>
             </FieldGroup>
-          </form>
+          
         </CardContent>
         <CardContent className="w-full flex justify-center gap-2.5 my-1.5">
           <Button variant="outline" className="">
@@ -208,7 +210,9 @@ export default function Register() {
             />{" "}
             and Conditions
           </CardDescription>
+      
         </CardFooter>
+        </form>
       </Card>
     </div>
   );

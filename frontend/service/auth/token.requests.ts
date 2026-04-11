@@ -5,10 +5,11 @@ import { RequestDto } from "@/types/common";
 
 async function setToken(token: string) {
     Cookie.set('accessToken', token, {
-        expires: Date.now() + 7,
-        httpOnly: true,
-        secure: true,
+        expires:7,
+        secure: false,
     })
+    console.log("Token ",token);
+    console.log("Cookie",Cookie.get('accessToken'))
 }
 
 async function requests(path: string,  request: RequestDto) {
@@ -25,7 +26,8 @@ async function requests(path: string,  request: RequestDto) {
     if(!result.success) {
         throw new Error(result)
     }
-    await setToken(result.accessToken);
+    console.log('Result: ', result);
+    await setToken(result.data.accessToken);
     return result
 }
 

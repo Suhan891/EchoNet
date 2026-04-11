@@ -57,10 +57,10 @@ export default function EmailVerify({ token }: { token: string }) {
   const onSubmit: SubmitHandler<VerifyType> = (data) => {
     const token = data.token;
     const formData = new FormData();
-    formData.append("avatar", data.avatar);
+    formData.append("avatar", data.avatar[0]);
     formData.append("bio", data.bio ?? "");
     formData.append("name", data.name);
-
+    console.log("Form Data has: ",typeof(formData.get('name')))
     verify.mutate(
       { token, formData },
       {
@@ -87,16 +87,17 @@ export default function EmailVerify({ token }: { token: string }) {
 
   // 1. Extract react-hook-form's onChange event
   const { onChange: formOnChange, ...avatarRegister } = register("avatar");
-
+  if(errors)
+    console.log(errors)
   return (
     <div>
       <Card className="card dark:card w-2xl">
+        <form onSubmit={handleSubmit(onSubmit)}>
         <CardHeader className="w-full justify-center items-center">
           <CardTitle className="text-xl pl-2.0">Email Verification</CardTitle>
           <CardDescription>Create Profile before Login</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-row gap-8 w-full items-start my-3">
               <Field className="w-1/3 shrink-0">
                 <FieldLabel htmlFor="avatar" className="pl-3.5">
@@ -134,9 +135,7 @@ export default function EmailVerify({ token }: { token: string }) {
                   </div>
                 </div>
                 {errors.avatar ? (
-                  <FieldError className="ml-2">
-                    {errors.avatar.message}
-                  </FieldError>
+                  <FieldError className="ml-2" errors={[errors.avatar]} />
                 ) : (
                   <FieldDescription className="mt-2 ml-4">
                     Image within 5 MB
@@ -191,7 +190,7 @@ export default function EmailVerify({ token }: { token: string }) {
                 </Field>
               </div>
             </div>
-          </form>
+          
         </CardContent>
         <CardFooter className="pt-5">
           {verify.isPending ? (
@@ -205,6 +204,7 @@ export default function EmailVerify({ token }: { token: string }) {
             </Button>
           )}
         </CardFooter>
+        </form>
       </Card>
     </div>
   );

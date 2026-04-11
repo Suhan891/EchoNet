@@ -1,22 +1,19 @@
 import { useMyself } from "@/hooks/useAuth";
 import { useUserStore } from "@/stores/UserStore";
-import { cookies } from "next/headers";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 async function cookieProfile(profileId: string) {
-    const cookieStore = await cookies()
-    cookieStore.set('profile', profileId, {
-        httpOnly: false,
+    Cookies.set('profile', profileId, {
         sameSite: 'lax',
         secure: false,
     });
 }
 
 async function removeAuthToken() {
-  const cookieStore = await cookies()
-  cookieStore.delete('accessToken')
-  cookieStore.delete('profile')
+  Cookies.remove('accessToken')
+  Cookies.remove('profile')
 }
 
 export function UserDetails() {

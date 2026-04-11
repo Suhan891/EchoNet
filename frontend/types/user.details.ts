@@ -10,6 +10,8 @@ export interface UserResponse {
   profile: {
     isActive: boolean;
     id: string;
+    avatarUrl: string;
+    name: string;
   }[];
 }
 

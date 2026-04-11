@@ -13,21 +13,21 @@ export class JwtCreate {
 
   emailVerifyToken(payload: emailverifyDto) {
     return this.jwtService.sign(payload, {
-      secret: process.env.JWT_EMAIL_VERIFY || 'refresh',
+      secret: process.env.JWT_EMAIL_VERIFY || 'email_verify',
       expiresIn: '1d',
     });
   }
 
   accessToken(payload: any) {
     return this.jwtService.sign(payload, {
-      secret: process.env.JWT_ACCESS_SECRET || 'refresh',
+      secret: process.env.JWT_ACCESS_SECRET || 'super_secret_auth',
       expiresIn: '30m',
     });
   }
 
   refreshToken(payload: any) {
     return this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET || 'refresh',
+      secret: process.env.JWT_REFRESH_SECRET || 'super_secret_auth',
       expiresIn: '1d',
     });
   }
@@ -40,6 +40,7 @@ export class JwtCreate {
   }
 }
 
+@Injectable()
 export class JwtVerify {
   constructor(private jwtService: JwtService) {}
 
@@ -47,9 +48,10 @@ export class JwtVerify {
     try {
       return this.jwtService.verify<emailverifyDto>(token, {
         // Asked to send the data in the format of dto
-        secret: process.env.JWT_EMAIL_VERIFY || 'email_verify',
+        secret: process.env.JWT_EMAIL_VERIFY || 'refresh',
       });
-    } catch {
+    } catch (e) {
+      console.error('Token error', e);
       throw new ForbiddenException('Invalid Token');
     }
   }
