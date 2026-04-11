@@ -5,7 +5,7 @@ import { ErrorResponse, SuccessResponse } from "@/types/common";
 import { LoginType } from "@/validations/auth/login";
 import { RegisterType } from "@/validations/auth/register";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { LoginResult, RefreshResult, RegisterResult } from "@/types/auth.user";
+import { LoginResult, RefreshResult, RegisterResult, VerifyResult } from "@/types/auth.user";
 import { GetUser } from "@/service/common";
 
 export function useRegister() {
@@ -15,7 +15,7 @@ export function useRegister() {
 }
 
 export function useVerify() {
-  return useMutation<SuccessResponse<>, ErrorResponse>({
+  return useMutation<SuccessResponse<VerifyResult>, ErrorResponse>({
     mutationFn: (payload) => VerifyRequest(payload)
   })
 }

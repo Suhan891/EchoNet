@@ -6,10 +6,16 @@ export interface RegisterResult {
   username: string;
   role: Role;
 }
+export interface VerifyResult {
+  isEmailVerified: boolean;
+  email: string;
+  username: string;
+  isActive: string;
+}
 
 export interface LoginResult {
-    accessToken: string;
+  accessToken: string;
 }
 export interface RefreshResult {
-    accessToken: string;
+  accessToken: string;
 }

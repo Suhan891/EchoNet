@@ -1,6 +1,6 @@
 // Made like this as call from axios may result in error 
 import { RefreshUserToken } from "@/hooks/useAuth";
-import { cookies } from "next/headers";
+import Cookies from "js-cookie";
 import { toast } from "sonner";
 
 export async function RefreshUser() {
@@ -15,13 +15,10 @@ export async function RefreshUser() {
     return response.data?.data.accessToken; 
     
   } catch (error) {
-    const cookieStore = await cookies();
-    cookieStore.delete('accessToken');
-    cookieStore.delete('profile');
-
+    Cookies.remove('accessToken');
+    Cookies.remove('profile');
+    toast.error(error as string)
     window.location.href = '/login';
-    
-    toast.error(error as string) // message is only returned as being handled above
     return null;
   }
 }
