@@ -6,6 +6,11 @@ export interface RegisterResult {
   username: string;
   role: Role;
 }
+
+export interface VerifyRequestType {
+    token: string;
+    formData: FormData;
+}
 export interface VerifyResult {
   isEmailVerified: boolean;
   email: string;

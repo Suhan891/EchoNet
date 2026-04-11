@@ -1,6 +1,7 @@
 import { RegisterType } from "@/validations/auth/register";
 import { getUrl } from "../common";
 import { RequestDto } from "@/types/common";
+import { VerifyRequestType } from "@/types/auth.user";
 
 async function requests(path: string,  request: RequestDto) {
     const url = getUrl(path)
@@ -30,6 +31,6 @@ export async function RegisterRequest(payload: RegisterType) {
     return postJson('/register', payload)
 }
 
-export async function VerifyRequest(payload) {
-    return postJson('/verify-email', payload)
+export async function VerifyRequest(payload: VerifyRequestType) {
+    return postJson(`/verify-email?token=${payload.token}`, payload.formData)
 }
