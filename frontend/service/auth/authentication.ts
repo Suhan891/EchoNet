@@ -4,9 +4,12 @@ import { RequestDto } from "@/types/common";
 
 async function requests(path: string,  request: RequestDto) {
     const url = getUrl(path)
-    const headers = {"Content-Type": "application/json"}
 
-    const response = await fetch(url, {
+    let headers = {}
+    if(path !== '/verify-email')
+        headers = {"Content-Type": "application/json"}
+
+    const response = await fetch(`/auth${url}`, {
         method: request.method,
         headers,
         body: JSON.stringify(request.body)
@@ -24,5 +27,9 @@ async function postJson(path: string, payload: unknown) {
 }
 
 export async function RegisterRequest(payload: RegisterType) {
-    return postJson('/auth/register', payload)
+    return postJson('/register', payload)
+}
+
+export async function VerifyRequest(payload) {
+    return postJson('/verify-email', payload)
 }

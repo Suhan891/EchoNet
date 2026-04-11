@@ -35,7 +35,6 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { RegisterSchema, RegisterType } from "@/validations/auth/register";
 import { useRegister } from "@/hooks/useAuth";
-import { ErrorResponse, SuccessResponse } from "@/types/common";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";

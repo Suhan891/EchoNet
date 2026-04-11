@@ -23,13 +23,20 @@ axiosInstance.interceptors.request.use(
 
     async (request: InternalAxiosRequestConfig) => {
     const cookie = await getCookies("accessToken");
-    const profileCookie = await getCookies('')
-    
+    const profileCookie = await getCookies('profile')
+
     const accessToken = cookie?.value; 
 
     if (!accessToken) throw new Error("No token available");
+
+    if(profileCookie)
+      request.headers['profile_id'] = profileCookie.value;
     
     request.headers["Authorization"] = `Bearer ${accessToken}`;
+
+    if(request.data instanceof FormData)
+      delete request.headers['Content-Type']
+
     return request;
   },
   (error) => {

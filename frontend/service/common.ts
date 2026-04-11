@@ -31,3 +31,11 @@ export async function Request(path: string, requests: RequestDto) {
 
     return response
 }
+
+async function getJson(path: string) {
+  return Request(path, {method: 'GET', body: null});
+}
+
+export async function GetUser() {
+  return getJson("/auth/me");
+}

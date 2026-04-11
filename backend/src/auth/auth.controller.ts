@@ -49,7 +49,7 @@ export class AuthController {
           fileType: 'jpg|jpeg|png',
         })
         .addMaxSizeValidator({
-          maxSize: 500 * 1024,
+          maxSize: 5 * 1024 * 1024, // 5MB
         })
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,

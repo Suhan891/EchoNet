@@ -13,7 +13,8 @@ export class CreateProfileDto {
   @MaxLength(100, { message: 'Maximum 100 charecters are allowed' })
   name: string;
 
-  @IsNotEmpty({ message: 'Bio is required' })
+  //@IsNotEmpty({ message: 'Bio is required' })
+  @IsOptional()
   @IsString({ message: 'Bio must be string' })
   @MinLength(3, { message: 'Minimum 10 charecters are required' })
   bio: string;
