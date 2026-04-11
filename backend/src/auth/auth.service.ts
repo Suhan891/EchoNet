@@ -57,7 +57,7 @@ export class AuthService {
     });
 
     const token = this.tokenService.emailVerifyToken({ sub: user.id });
-    const url = `http://localhost:3000/verify-email?token=${token}`;
+    const url = `http://localhost:3000/verify?token=${token}`;
     await this.mailService.sendEmail({
       receipents: user.email,
       text: `Welcome ${user.username} to Social Media App`,
@@ -81,7 +81,12 @@ export class AuthService {
       role: user.role,
       name: user.username,
     };
-    await this.profileService.createProfile(reqUser, profileData, avatar);
+    const addedProfile = await this.profileService.createProfile(
+      reqUser,
+      profileData,
+      avatar,
+    );
+    console.log('Added Profile: ', addedProfile);
 
     return await this.prisma.user.update({
       where: { id: reqUser.userId },

@@ -16,7 +16,6 @@ export class UserExistsPipe implements PipeTransform {
   ) {}
 
   async transform(token: string): Promise<verifyDto> {
-    console.log('Token: ', token);
     if (!token) throw new UnauthorizedException('Token Missing');
 
     const payload = this.jwtService.emailVerifyToken(token);

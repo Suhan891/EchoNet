@@ -48,7 +48,7 @@ export class JwtVerify {
     try {
       return this.jwtService.verify<emailverifyDto>(token, {
         // Asked to send the data in the format of dto
-        secret: process.env.JWT_EMAIL_VERIFY || 'refresh',
+        secret: process.env.JWT_EMAIL_VERIFY || 'email_verify',
       });
     } catch (e) {
       console.error('Token error', e);

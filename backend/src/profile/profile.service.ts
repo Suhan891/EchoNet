@@ -28,7 +28,7 @@ export class ProfileService {
       where: { name },
     });
     if (existingProfile)
-      return new ForbiddenException(
+      throw new ForbiddenException(
         'Name already exists. Please provide a new name',
       );
 
@@ -68,6 +68,7 @@ export class ProfileService {
       },
       select: {
         name: true,
+        avatarUrl: true,
         isActive: true,
       },
     });

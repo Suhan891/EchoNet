@@ -37,15 +37,13 @@ export class ResponseInterceptor<T> implements NestInterceptor<
         const responseTime = Date.now() - startTime;
 
         this.logger.log(`${method} ${url} ${responseTime} ms`);
-
+        this.logger.log('Data', data);
         return {
           success: true,
           message: customMessage,
           data,
           timestamp: new Date().toISOString(),
         };
-
-        // return response.status(HttpStatus.OK).json(apiResponse);
       }),
 
       catchError((error: unknown) => {

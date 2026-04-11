@@ -25,12 +25,8 @@ export default function Navbar() {
       email: state.email,
     })),
   );
-  const {avatarUrl, name} = useProfileStore(
-    useShallow((state) => ({
-      avatarUrl: state.avatarUrl,
-      name: state.name,
-    })),
-  );
+  const avatarUrl = useProfileStore(state => state.avatarUrl)
+  const name = useProfileStore(state => state.name)
   return (
     <nav className="bg-transparent w-full border  dark:border backdrop-blur-2xl flex justify-between top-0 sticky z-5 px-10 py-3 pb-5">
       <SidebarTrigger />
@@ -75,16 +71,16 @@ export default function Navbar() {
                 <p>{email || "no@gmail.com"}</p>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem className="">
                 <Avatar>
                   <AvatarImage
-                    src={avatarUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80'}
+                    src={avatarUrl ?? 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80'}
                     alt="Profile Image"
                     width={10}
                   />
                   <AvatarFallback>SP</AvatarFallback>
                 </Avatar>
-                {name}
+                <span className="text-xl">{name}</span>
               </DropdownMenuItem>
               <DropdownMenuItem variant="destructive">
                 <LogOut className="h-[1.2rem] w-[1.2rem] mr-3" /> Logout

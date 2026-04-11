@@ -4,7 +4,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 import { IS_PUBLIC_KEY } from '../../auth/decorators/public';
 import { ACTIVATE_ME, NO_ACCOUNT } from '../../auth/decorators/no-account';
-import { Request } from 'express';
 
 @Injectable()
 export class JwtAuthGaurd extends AuthGuard('jwt') {
@@ -30,12 +29,8 @@ export class JwtAuthGaurd extends AuthGuard('jwt') {
       context.getClass(),
     ]);
 
-    console.log('Activating me ', activatingMe);
-
     if (noAccount && !activatingMe) return true;
 
-    const req = context.switchToHttp().getRequest<Request>();
-    console.log('Headers', req.headers);
     return super.canActivate(context) as Promise<boolean>;
   }
 }

@@ -10,7 +10,6 @@ export async function RefreshUser() {
       console.error(response.error.error);
       throw new Error(response.error.message);
     }
-    
     console.log("Refetched user details");
     return response.data?.data.accessToken; 
     

@@ -22,13 +22,12 @@ export async function Request(path: string, requests: RequestDto) {
         url: path,
         data: requests.body ? JSON.stringify(requests.body) : undefined,
     })
+    console.log(data)
 
-    const response = await JSON.parse(data)
+    if(!data.success) 
+        throw new Error(data)
 
-    if(!response.success) 
-        throw new Error(response)
-
-    return response
+    return data
 }
 
 async function getJson(path: string) {

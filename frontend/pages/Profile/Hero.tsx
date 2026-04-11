@@ -13,7 +13,7 @@ export default function ProfileHero() {
   const [followerOpen, setFollowerOpen] = useState(false);
   const [followingOpen, setFollowingOpen] = useState(false);
   const [upDialogOpen, setUpDialogOpen] = useState(false);
-  const { id, name, bio, avatarUrl, followers, followings, storyId } =
+  const { name, bio, avatarUrl, followers, followings, storyId } =
     useProfileStore(
       useShallow((state) => ({
         id: state.id,
@@ -41,7 +41,7 @@ export default function ProfileHero() {
       <Avatar className="w-24 h-24 md:w-32 md:h-32">
         <AvatarImage
           src={
-            avatarUrl ||
+            avatarUrl ??
             "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80"
           }
           alt="Profile Image"
