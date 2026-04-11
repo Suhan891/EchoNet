@@ -31,7 +31,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, LoginType } from "@/validations/auth/login";
 import { useLogin } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { ErrorResponse, SuccessResponse } from "@/types/common";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
 

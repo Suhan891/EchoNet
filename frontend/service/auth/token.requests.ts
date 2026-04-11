@@ -1,11 +1,10 @@
-import { cookies } from "next/headers";
+import Cookie from "js-cookie";
 import { getUrl } from "../common";
 import { LoginType } from "@/validations/auth/login";
 import { RequestDto } from "@/types/common";
 
 async function setToken(token: string) {
-    const cookieStore = await cookies()
-    cookieStore.set('accessToken', token, {
+    Cookie.set('accessToken', token, {
         expires: Date.now() + 7,
         httpOnly: true,
         secure: true,

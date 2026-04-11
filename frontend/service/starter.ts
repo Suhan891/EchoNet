@@ -1,15 +1,10 @@
-import { cookies } from "next/headers";
+import Cookie from "js-cookie";
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { RefreshUser } from "@/features/Auth/user.refresh";
 
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
-}
-
-async function getCookies(param: string) {
-  const cookieStore = await cookies();
-  return cookieStore.get(param);
 }
 
 const axiosInstance = axios.create({
@@ -22,15 +17,14 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
 
     async (request: InternalAxiosRequestConfig) => {
-    const cookie = await getCookies("accessToken");
-    const profileCookie = await getCookies('profile')
+    const profileCookie = Cookie.get('profile')
 
-    const accessToken = cookie?.value; 
+    const accessToken = Cookie.get('accessToken')
 
     if (!accessToken) throw new Error("No token available");
 
     if(profileCookie)
-      request.headers['profile_id'] = profileCookie.value;
+      request.headers['profile_id'] = profileCookie;
     
     request.headers["Authorization"] = `Bearer ${accessToken}`;
 

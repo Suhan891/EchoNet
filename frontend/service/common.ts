@@ -1,5 +1,5 @@
 import { RequestDto } from "@/types/common";
-import { cookies } from "next/headers";
+import Cookie from "js-cookie";
 import axiosInstance from "./starter";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
@@ -13,8 +13,7 @@ export const requestUrl = () => {
 }
 
 export async function getToken() {
-    const cookieStore = await cookies()
-    return cookieStore.get('authToken')
+    return Cookie.get('authToken')
 }
 
 export async function Request(path: string, requests: RequestDto) {
