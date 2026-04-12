@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { ProfileDetails } from "../Profile/profile.details";
 
 async function cookieProfile(profileId: string) {
   Cookies.set("profile", profileId, {
@@ -31,7 +32,7 @@ export function UserDetails() {
     if (isError) {
       console.log('user', user);
       console.error(error.error);
-      removeAuthToken();
+      //removeAuthToken();
       toast.error(error.message);
       router.push("/login");
     }
@@ -41,6 +42,7 @@ export function UserDetails() {
       );
 
       if (activeProfile) cookieProfile(activeProfile.id);
+      ProfileDetails()
 
       if (email !== user.data.email) useStore.setEmail(user.data.email);
       if (userId !== user.data.id) useStore.setUserId(user.data.id);

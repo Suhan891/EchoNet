@@ -5,33 +5,33 @@ export interface OwnProfileResponse {
   avatarUrl: string;
   followers?: {
     id: string;
-  };
+  }[];
   followings?: {
     id: string;
-  };
+  }[];
   story?: {
     id: string;
   };
   sentNotifications?: {
     id: string;
-  };
+  }[];
 }
 
 interface Follower {
   id: string;
-  follower: {
-    id: string;
-    name: string;
-    avatarUrl: string;
-  };
+  // follower: {
+  //   id: string;
+  //   name: string;
+  //   avatarUrl: string;
+  // };
 }
 interface Following {
   id: string;
-  followings: {
-    id: string;
-    name: string;
-    avatarUrl: string;
-  };
+  // followings: {
+  //   id: string;
+  //   name: string;
+  //   avatarUrl: string;
+  // };
 }
 export type Follow = Follower | Following;
 export interface Notifications {
@@ -43,19 +43,19 @@ export interface ProfileState {
   name: string;
   bio?: string;
   avatarUrl: string;
-  followers?: Follower[];
-  followings?: Following[];
+  followers?: Follower[] | undefined ;
+  followings?: Following[] | undefined;
   storyId: string;
-  sentNotifications: Notifications[];
+  sentNotifications: Notifications[] | undefined;
 
   setId: (id: string) => void;
   setName: (name: string) => void;
-  setBio: (bio: string) => void;
+  setBio: (bio: string | undefined) => void;
   setAvatar: (avatarUrl: string) => void;
-  setFollowers: (followers: Follower[]) => void;
-  setFollowinngs: (followings: Following[]) => void;
+  setFollowers: (followers: Follower[] | undefined ) => void;
+  setFollowinngs: (followings: Following[] | undefined) => void;
   setStoryId: (storyId: string) => void;
-  setNotification: (sentNotifications: Notifications[]) => void;
+  setNotification: (sentNotifications: Notifications[] | undefined) => void;
 }
 
 export interface UpProfileResult {
