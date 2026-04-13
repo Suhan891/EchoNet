@@ -20,11 +20,11 @@ export default function AuthLayout({
   // const isFetching = useIsFetching({queryKey: ['user']})
   // if(isFetching)
   //   return ()
-  UserDetails()
+  //UserDetails()
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="flex flex-col w-full">
+      <main className="flex flex-col w-full background dark:background">
         <Navbar />
         {children}
       </main>
