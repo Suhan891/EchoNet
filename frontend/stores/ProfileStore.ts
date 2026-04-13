@@ -10,7 +10,7 @@ export const useProfileStore = create<ProfileState>()(
     avatarUrl: "",
     followers: [],
     followings: [],
-    storyId: "",
+    storyId: "abc",
     sentNotifications: [],
 
     setId: (id) => set({ id }),
