@@ -49,7 +49,7 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const newToken = RefreshUser(); 
+      const newToken = await RefreshUser(); 
       
       if (!newToken) {
         return Promise.reject(error);

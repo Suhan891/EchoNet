@@ -38,11 +38,8 @@ export interface Notifications {
   id: string;
 }
 export interface Stories {
-  id: string;
-  storyMedia: {
     id: string;
     order: number;
-  }[];
 }
 export interface ProfileState {
   id: string;
@@ -62,7 +59,7 @@ export interface ProfileState {
   setFollowers: (followers: Follower[] | undefined ) => void;
   setFollowinngs: (followings: Following[] | undefined) => void;
   setStoryId?: (storyId: string) => void;
-  setStories?: (stories: Stories[] | undefined) => void;
+  setStories?: (stories: Stories[]) => void;
   setNotification: (sentNotifications: Notifications[] | undefined) => void;
 }
 

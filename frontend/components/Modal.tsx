@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { Dialog, DialogContent } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 
 export default function DialogModal({
   children,
@@ -11,7 +11,10 @@ export default function DialogModal({
   };
   return (
     <Dialog defaultOpen={true} open={true} onOpenChange={handleChange}>
-      <DialogContent>{children}</DialogContent>
-    </Dialog>
+      <DialogContent aria-describedby={undefined}>
+        <DialogTitle className="sr-only">Dialog</DialogTitle>
+        {children}
+      </DialogContent>
+     </Dialog>
   );
 }
