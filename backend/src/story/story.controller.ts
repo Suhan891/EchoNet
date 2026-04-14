@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   ParseUUIDPipe,
   Post,
   Query,
@@ -42,19 +43,19 @@ export class StoryController {
     return this.storyService.createStory(files, fileOrder, profile);
   }
 
-  @Get('get-story')
+  @Get(':storyId')
   @ResponseMessage('Story Media Id"s Received')
   async getStoryMediaId(
     @currentProfile() profile: profileDto,
-    @Query('storyId', ParseUUIDPipe, ValidateStoryExists) story: StoryDto,
+    @Param('storyId', ParseUUIDPipe, ValidateStoryExists) story: StoryDto,
   ) {
     return await this.storyService.getStory(profile, story);
   }
 
-  @Get('view-media')
-  @ResponseMessage('Story Media Id Data Received')
+  @Get(':storyMediaId')
+  @ResponseMessage('Story Media Data Received')
   async getStoryMedia(
-    @Query('storyId', ParseUUIDPipe, ValidateStoryMediaPipe)
+    @Param('storyMediaId', ParseUUIDPipe, ValidateStoryMediaPipe)
     storyMedia: StoryMediaDataDto,
     @currentProfile() profile: profileDto,
   ) {

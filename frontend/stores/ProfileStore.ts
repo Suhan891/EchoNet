@@ -12,7 +12,7 @@ export const useProfileStore = create<ProfileState>()(
     followers: [],
     followings: [],
     storyId: "abc",
-    stories: storyMediaConstants,  // Only for testing
+    stories: storyMediaConstants,
     sentNotifications: [],
 
     setId: (id) => set({ id }),

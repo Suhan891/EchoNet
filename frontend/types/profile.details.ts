@@ -1,3 +1,5 @@
+import { Stories } from "./story.detils";
+
 export interface OwnProfileResponse {
   id: string;
   name: string;
@@ -36,10 +38,6 @@ interface Following {
 export type Follow = Follower | Following;
 export interface Notifications {
   id: string;
-}
-export interface Stories {
-    id: string;
-    order: number;
 }
 export interface ProfileState {
   id: string;
