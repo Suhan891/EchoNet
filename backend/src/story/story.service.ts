@@ -13,7 +13,7 @@ import {
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { Media } from 'src/generated/prisma/enums';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { StoryMediaDataDto } from './dto/story.usage.dto';
+import { StoryDto, StoryMediaDataDto } from './dto/story.usage.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 
@@ -113,6 +113,36 @@ export class StoryService {
       storyId: story.id,
       stories: totalFiles,
     };
+  }
+
+  async getStory(profile: profileDto, story: StoryDto) {
+    const key = `profile:${profile.id}:story:${story.id}`;
+    const cachedStories = await this.cacheService.get(key);
+    if (cachedStories) return cachedStories;
+    if (profile.id !== story.profile.id) {
+      const existingFollow = await this.prisma.follow.count({
+        where: {
+          followerId: profile.id,
+          followingId: story.profile.id,
+        },
+      });
+      if (!existingFollow)
+        throw new BadRequestException(
+          'You need to follow before viewing the profile',
+        );
+    }
+    const storyMediaData = await this.prisma.storyMedia.findMany({
+      where: { storyId: story.id },
+      orderBy: {
+        order: 'asc',
+      },
+      select: {
+        id: true,
+        order: true,
+      },
+    });
+    await this.cacheService.set<typeof storyMediaData>(key, storyMediaData);
+    return storyMediaData;
   }
 
   async getStoryMedia(profile: profileDto, storyMedia: StoryMediaDataDto) {

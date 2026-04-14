@@ -37,7 +37,13 @@ export type Follow = Follower | Following;
 export interface Notifications {
   id: string;
 }
-
+export interface Stories {
+  id: string;
+  storyMedia: {
+    id: string;
+    order: number;
+  }[];
+}
 export interface ProfileState {
   id: string;
   name: string;
@@ -45,7 +51,8 @@ export interface ProfileState {
   avatarUrl: string;
   followers?: Follower[] | undefined ;
   followings?: Following[] | undefined;
-  storyId: string;
+  storyId?: string;
+  stories?: Stories[] | undefined;
   sentNotifications: Notifications[] | undefined;
 
   setId: (id: string) => void;
@@ -54,7 +61,8 @@ export interface ProfileState {
   setAvatar: (avatarUrl: string) => void;
   setFollowers: (followers: Follower[] | undefined ) => void;
   setFollowinngs: (followings: Following[] | undefined) => void;
-  setStoryId: (storyId: string) => void;
+  setStoryId?: (storyId: string) => void;
+  setStories?: (stories: Stories[] | undefined) => void;
   setNotification: (sentNotifications: Notifications[] | undefined) => void;
 }
 

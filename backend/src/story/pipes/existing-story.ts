@@ -10,10 +10,9 @@ export class ValidateStoryExists implements PipeTransform {
       where: { id: storyId },
       select: {
         id: true,
-        storyMedia: {
+        profile: {
           select: {
             id: true,
-            order: true,
           },
         },
       },

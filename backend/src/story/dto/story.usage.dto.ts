@@ -1,11 +1,9 @@
 import { Media } from 'src/generated/prisma/enums';
-
 export interface StoryDto {
   id: string;
-  storyMedia: {
+  profile: {
     id: string;
-    order: number;
-  }[];
+  };
 }
 export interface StoryMediaDataDto {
   id: string;

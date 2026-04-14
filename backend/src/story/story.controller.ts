@@ -42,21 +42,13 @@ export class StoryController {
     return this.storyService.createStory(files, fileOrder, profile);
   }
 
-  // @Post('view')
-  // @ResponseMessage('Story Media Received')
-  // async viewStory(
-  //   @Query('storyId', ParseUUIDPipe, ValidateStoryExists) story: StoryDto,
-  //   @currentProfile() profile: profileDto,
-  // ) {
-  //   return await this.storyService.getStory(profile, story);
-  // }
-
-  @Get('get-ids')
+  @Get('get-story')
   @ResponseMessage('Story Media Id"s Received')
-  getStoryMediaId(
+  async getStoryMediaId(
+    @currentProfile() profile: profileDto,
     @Query('storyId', ParseUUIDPipe, ValidateStoryExists) story: StoryDto,
   ) {
-    return story;
+    return await this.storyService.getStory(profile, story);
   }
 
   @Get('view-media')
