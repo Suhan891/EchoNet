@@ -3,6 +3,10 @@ export interface Stories {
   order: number;
 }
 
+export interface StoryState {
+  stories: string;
+}
+
 export interface StoryMediaOwnResponse {
   mediaType: string;
   mediaUrl: string;
