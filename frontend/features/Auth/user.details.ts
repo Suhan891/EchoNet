@@ -1,11 +1,11 @@
 "use client";
+import React, { useEffect } from "react";
 import { useMyself } from "@/hooks/useAuth";
 import { useUserStore } from "@/stores/UserStore";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { toast } from "sonner";
-import { ProfileDetails } from "../Profile/profile.details";
+import ProfileDetails  from "../Profile/profile.details";
 
 async function cookieProfile(profileId: string) {
   Cookies.set("profile", profileId, {
@@ -14,57 +14,44 @@ async function cookieProfile(profileId: string) {
   });
 }
 
-async function removeAuthToken() {
+function removeAuthToken() {
   Cookies.remove("accessToken");
   Cookies.remove("profile");
 }
 
 export function UserDetails() {
   const router = useRouter();
-  const useStore = useUserStore();
-  const email = useUserStore((state) => state.email);
-  const role = useUserStore((state) => state.role);
-  const username = useUserStore((state) => state.username);
-  const userId = useUserStore((state) => state.userId);
-  const profiles = useUserStore((state) => state.profiles);
   const { data: user, isSuccess, isError, error } = useMyself();
+
   useEffect(() => {
     if (isError) {
-      console.log('user', user);
-      console.error(error.error);
-      //removeAuthToken();
+      console.error(error);
+      removeAuthToken();
       toast.error(error.message);
       router.push("/login");
     }
     if (isSuccess) {
       const activeProfile = user.data.profile.find(
-        (profile) => profile.isActive == true,
+        (profile) => profile.isActive === true,
       );
 
       if (activeProfile) cookieProfile(activeProfile.id);
-      ProfileDetails()
 
-      if (email !== user.data.email) useStore.setEmail(user.data.email);
-      if (userId !== user.data.id) useStore.setUserId(user.data.id);
-      if (role !== user.data.role) useStore.setRole(user.data.role);
-      if (username !== user.data.username)
-        useStore.setUserName(user.data.username);
-      if (profiles !== user.data.profile)
-        useStore.setProfile(user.data.profile);
+      const state = useUserStore.getState();
+      if (state.email !== user.data.email) state.setEmail(user.data.email);
+      if (state.role !== user.data.role) state.setRole(user.data.role);
+      if (state.username !== user.data.username)
+        state.setUserName(user.data.username);
+      if (state.profiles !== user.data.profile)
+        state.setProfile(user.data.profile);
+
+      ProfileDetails({ userId: user.data.id }); 
     }
   }, [
     isSuccess,
     isError,
     error,
-    useStore,
     router,
     user,
-    email,
-    role,
-    userId,
-    profiles,
-    username,
   ]);
-
-  return true;
 }

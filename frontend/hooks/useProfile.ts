@@ -1,16 +1,14 @@
 import { GetOwnprofile, UpdateProfile } from "@/service/profile";
-import { useUserStore } from "@/stores/UserStore";
 import { ErrorResponse, SuccessResponse } from "@/types/common";
 import { OwnProfileResponse, UpProfileResult } from "@/types/profile.details";
 import { queryKeys } from "@/utils/query.key";
 import { UpdateProfileType } from "@/validations/profile/update.profile";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-export function useMyProfile() {
-  const {userId} = useUserStore()
+export function useMyProfile(userId: string) {
   return useQuery<SuccessResponse<OwnProfileResponse>, ErrorResponse>({
     queryKey: [queryKeys.PROFILE, userId],
-    queryFn: GetOwnprofile,
+    queryFn: () => GetOwnprofile(),
     enabled: !!userId,
     staleTime: 1000* 60* 5
   });

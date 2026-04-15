@@ -4,13 +4,13 @@ import { devtools } from "zustand/middleware";
 
 export const useUserStore = create<AuthState>()(
   devtools((set) => ({
-    userId: '',
+    //userId: '',
     email: "",
     username: "",
     profiles: [],
     role: '',
 
-    setUserId: (userId) => set({userId}),
+    //setUserId: (userId) => set({userId}),
     setEmail: (email) => set({ email }),
     setRole: (role) => set({ role }),
     setUserName: (name) => set({ username: name }),
