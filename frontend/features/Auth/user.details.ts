@@ -19,7 +19,7 @@ function removeAuthToken() {
   Cookies.remove("profile");
 }
 
-export function UserDetails() {
+export function useUserDetails() {
   const router = useRouter();
   const { data: user, isSuccess, isError, error } = useMyself();
 
@@ -54,4 +54,5 @@ export function UserDetails() {
     router,
     user,
   ]);
+  return isSuccess;
 }
