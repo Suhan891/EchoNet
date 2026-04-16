@@ -9,8 +9,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { useProfileStore } from "@/stores/ProfileStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useFollowStore } from "@/stores/FollowStore";
 
 export default function FollowingTab({
   followingOpen,
@@ -19,10 +19,7 @@ export default function FollowingTab({
   followingOpen: boolean;
   setFollowingOpen: (followingOpen: boolean) => void;
 }) {
-  // const [open, setOpen] = React.useState(false)
-  const { followings } = useProfileStore((state) => ({
-    followings: state.followings,
-  }));
+  const followings = useFollowStore(state => state.followings)
 
   return (
     <div className="flex flex-col gap-4">
@@ -36,14 +33,14 @@ export default function FollowingTab({
                 <CommandItem key={following.id}>
                   <Avatar>
                     <AvatarImage
-                      src={following.followings.avatarUrl}
-                      alt={following.followings.name.slice(0, 1).toUpperCase()}
+                      src={following.following.avatarUrl}
+                      alt={following.following.name.slice(0, 1).toUpperCase()}
                     />
                     <AvatarFallback>
-                      {following.followings.name.slice(0, 1).toUpperCase()}
+                      {following.following.name.slice(0, 1).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <span>{following.followings.name}</span>
+                  <span>{following.following.name}</span>
                 </CommandItem>
               ))}
             </CommandGroup>

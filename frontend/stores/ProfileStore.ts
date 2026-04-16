@@ -8,9 +8,9 @@ export const useProfileStore = create<ProfileState>()(
     name: "",
     bio: "",
     avatarUrl: "",
-    followers: [],
-    followings: [],
-    storyId: "",
+    followers: 0,
+    followings: 0,
+    story: false,
     sentNotifications: [],
 
     setId: (id) => set({ id }),
@@ -19,7 +19,8 @@ export const useProfileStore = create<ProfileState>()(
     setAvatar: (avatarUrl) => set({ avatarUrl }),
     setFollowers: (followers) => set({ followers }),
     setFollowinngs: (followings) => set({ followings }),
-    setStoryId: (storyId) => set({ storyId }),
+    setStory: (story) => set({ story }),
+    
     setNotification: (sentNotifications) => set({ sentNotifications }),
   })),
 );

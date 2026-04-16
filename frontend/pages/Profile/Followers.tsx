@@ -9,8 +9,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { useProfileStore } from "@/stores/ProfileStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useFollowStore } from "@/stores/FollowStore";
 
 export default function FollowerTab({
   followerOpen,
@@ -19,10 +19,7 @@ export default function FollowerTab({
   followerOpen: boolean;
   setFollowerOpen: (followerOpen: boolean) => void;
 }) {
-  // const [open, setOpen] = React.useState(false)
-  const { followers } = useProfileStore((state) => ({
-    followers: state.followers,
-  }));
+  const followers = useFollowStore(state => state.followers)
 
   return (
     <div className="flex flex-col gap-4">

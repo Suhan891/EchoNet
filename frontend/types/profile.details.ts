@@ -5,18 +5,12 @@ export interface OwnProfileResponse {
   name: string;
   bio?: string;
   avatarUrl: string;
-  followers?: {
-    id: string;
-  }[];
-  followings?: {
-    id: string;
-  }[];
-  story?: {
-    id: string;
+  _count: {
+    followers: number;
+    followings: number;
+    story: number;
+    sentNotifications: number;
   };
-  sentNotifications?: {
-    id: string;
-  }[];
 }
 
 interface Follower {
@@ -44,18 +38,18 @@ export interface ProfileState {
   name: string;
   bio?: string;
   avatarUrl: string;
-  followers?: Follower[] | undefined ;
-  followings?: Following[] | undefined;
-  storyId?: string;
+  followers?: number | null;
+  followings?: number | null;
+  story: boolean;
   sentNotifications: Notifications[] | undefined;
 
   setId: (id: string) => void;
   setName: (name: string) => void;
   setBio: (bio: string | undefined) => void;
   setAvatar: (avatarUrl: string) => void;
-  setFollowers: (followers: Follower[] | undefined ) => void;
-  setFollowinngs: (followings: Following[] | undefined) => void;
-  setStoryId?: (storyId: string | undefined) => void;
+  setFollowers: (followers: number | null) => void;
+  setFollowinngs: (followings: number | null) => void;
+  setStory: (story: boolean) => void;
   setNotification: (sentNotifications: Notifications[] | undefined) => void;
 }
 

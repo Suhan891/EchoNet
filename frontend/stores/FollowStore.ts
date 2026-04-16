@@ -2,7 +2,7 @@ import { FollowState } from "@/types/follow.type";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-export const useProfileStore = create<FollowState>()(
+export const useFollowStore = create<FollowState>()(
   devtools((set) => ({
     followers: [],
     followings: [],

@@ -19,7 +19,7 @@ export default function ProfileDetails({ userId }: { userId: string }) {
     if (isError) {
       console.log("Profile", profile);
       console.error(error);
-      toast.error(error.message || ' Profile details fetch failed');
+      toast.error(error.message || " Profile details fetch failed");
       removeAuthToken();
       router.push("/login");
     }
@@ -28,17 +28,14 @@ export default function ProfileDetails({ userId }: { userId: string }) {
       if (state.avatarUrl !== profile.data.avatarUrl)
         state.setAvatar(profile.data.avatarUrl);
       if (state.id !== profile.data.id) state.setId(profile.data.id);
-      if (state.followers !== profile.data.followers)
-        state.setFollowers(profile.data.followers);
-      if (state.followings !== profile.data.followings)
-        state.setFollowinngs(profile.data.followings);
+      if (state.followers !== profile.data._count.followers)
+        state.setFollowers(profile.data._count.followers);
+      if (state.followings !== profile.data._count.followings)
+        state.setFollowinngs(profile.data._count.followings);
       if (state.name !== profile.data.name) state.setName(profile.data.name);
       if (state.bio !== profile.data.bio) state.setBio(profile.data.bio);
+      if (state.story !== !!profile.data._count.story)
+        state.setStory(!!profile.data._count.story);
     }
-  }, [
-    isSuccess,
-    isError,
-    error,
-    profile,
-  ]);
+  }, [isSuccess, isError, error, profile, router]);
 }
