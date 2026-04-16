@@ -35,6 +35,13 @@ export class FollowService {
       },
       select: {
         id: true,
+        followingId: true,
+        following: {
+          select: {
+            avatarUrl: true,
+            name: true,
+          },
+        },
       },
     });
   }
