@@ -1,5 +1,4 @@
 import { ProfileState } from "@/types/profile.details";
-import { storyMediaConstants } from "@/utils/constants";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
@@ -11,8 +10,7 @@ export const useProfileStore = create<ProfileState>()(
     avatarUrl: "",
     followers: [],
     followings: [],
-    storyId: "abc",
-    stories: storyMediaConstants,
+    storyId: "",
     sentNotifications: [],
 
     setId: (id) => set({ id }),
@@ -22,7 +20,6 @@ export const useProfileStore = create<ProfileState>()(
     setFollowers: (followers) => set({ followers }),
     setFollowinngs: (followings) => set({ followings }),
     setStoryId: (storyId) => set({ storyId }),
-    setStories: (stories) => set({stories}),
     setNotification: (sentNotifications) => set({ sentNotifications }),
   })),
 );

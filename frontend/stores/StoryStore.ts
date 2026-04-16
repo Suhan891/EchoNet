@@ -2,7 +2,7 @@ import { StoryState } from "@/types/story.detils";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-export const useProfileStore = create<StoryState>()(
+export const useStoryStore = create<StoryState>()(
   devtools((set) => ({
     stories: [],
 

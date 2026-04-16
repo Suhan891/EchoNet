@@ -9,14 +9,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useProfileStore } from "@/stores/ProfileStore";
 import * as React from "react";
 import Autoplay from "embla-carousel-autoplay";
+import { useStoryStore } from "@/stores/StoryStore";
 
-export default function Story() {
+export default function ViewStory() {
     
   const [api, setApi] = React.useState<CarouselApi>()
-  const stories = useProfileStore((state) => state.stories);
+  const stories = useStoryStore((state) => state.stories);
 
   const plugin = React.useRef(
     Autoplay({ 

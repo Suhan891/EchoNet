@@ -47,7 +47,6 @@ export interface ProfileState {
   followers?: Follower[] | undefined ;
   followings?: Following[] | undefined;
   storyId?: string;
-  stories?: Stories[] | undefined;
   sentNotifications: Notifications[] | undefined;
 
   setId: (id: string) => void;
@@ -56,8 +55,7 @@ export interface ProfileState {
   setAvatar: (avatarUrl: string) => void;
   setFollowers: (followers: Follower[] | undefined ) => void;
   setFollowinngs: (followings: Following[] | undefined) => void;
-  setStoryId?: (storyId: string) => void;
-  setStories?: (stories: Stories[]) => void;
+  setStoryId?: (storyId: string | undefined) => void;
   setNotification: (sentNotifications: Notifications[] | undefined) => void;
 }
 
