@@ -11,9 +11,9 @@ export default function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isUserDetailsLoaded = useUserDetails();
+  // const isUserDetailsLoaded = useUserDetails();
 
-  if(!isUserDetailsLoaded) return <Spinner />
+  // if(!isUserDetailsLoaded) return <Spinner />
   return (
     <SidebarProvider>
       <AppSidebar />
