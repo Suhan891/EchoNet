@@ -1,4 +1,5 @@
 import { useCreateStory } from "@/hooks/useStory";
+import { useProfileStore } from "@/stores/ProfileStore";
 import { useStoryStore } from "@/stores/StoryStore";
 import { storySchema, storyType } from "@/validations/story/story.create";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,7 +7,9 @@ import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export default function CreateStory() {
+  // Later be made within dialog
   const story = useCreateStory();
+  const setStory = useProfileStore((state) => state.setStory);
   const { control } = useForm<storyType>({
     resolver: zodResolver(storySchema),
     mode: "onChange",
@@ -45,20 +48,22 @@ export default function CreateStory() {
           formData.append(`imgAudio[${index}][caption]`, item.caption);
       }
     });
-    story.mutate(formData,{
+    story.mutate(formData, {
       onSuccess: (result) => {
-        const state = useStoryStore.getState()
-        state.setStory(result.data.storyId)
-        state.setExpiresAt(result.data.expiresAt)
-        if(result.data.status === 'successfull')
-          state.setIsUploaded(true)
+        const state = useStoryStore.getState();
+        if (result.data.status === "successfull") {
+          state.setStory(result.data.storyId);
+          state.setExpiresAt(result.data.expiresAt);
+          state.setIsUploaded(true);
+        }
+        setStory(true);
         toast.success(result.message);
         // Closing the dialog => setOpen(false)
       },
       onError: (error) => {
-        toast.error(error.message)
+        toast.error(error.message);
         console.error(error.error);
-      }
-    })
+      },
+    });
   };
 }

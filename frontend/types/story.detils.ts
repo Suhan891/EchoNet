@@ -17,15 +17,18 @@ export interface StoryState {
   deleteStory: (storyId: string) => void
   removeStory: () => void
 }
-
-export interface StoryCreateResponse {
+export interface StoryProcessing {
+  status: 'processing'
+}
+export interface StoryUploaded {
   status: 'processing'| 'successfull',
   storyId: string;
   expiresAt: string;
 }
-export interface StoryStatReq {
-  storyId: string;
-}
+export type StoryResponseType = StoryUploaded | StoryProcessing;
+// export interface StoryStatReq {
+//   storyId: string;
+// }
 export interface StoryStatusResponse {
   status: 'processing'| 'successfull', // if uploding in background => processing and  'successfull' only after checking that exact number is saved in pg
 }
