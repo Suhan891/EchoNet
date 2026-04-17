@@ -25,27 +25,27 @@ export default function CreateStory() {
     const formData = new FormData();
     data.slides.forEach((item, index) => {
       if (item.type === "image") {
-        //formData.append(`image[${index}][type]`, item.type)
+        formData.append(`slides[${index}][type]`, item.type)
         if (item.imageFile)
-          formData.append(`image[${index}][file]`, item.imageFile);
+          formData.append(`slides[${index}][imageFile]`, item.imageFile);
         if (item.caption)
-          formData.append(`image[${index}][caption]`, item.caption);
+          formData.append(`slides[${index}][caption]`, item.caption);
       }
       if (item.type === "video") {
-        //formData.append(`video[${index}][type]`, item.type)
+        formData.append(`slides[${index}][type]`, item.type)
         if (item.videoFile)
-          formData.append(`video[${index}][file]`, item.videoFile);
+          formData.append(`slides[${index}][videoFile]`, item.videoFile);
         if (item.caption)
-          formData.append(`video[${index}][caption]`, item.caption);
+          formData.append(`slides[${index}][caption]`, item.caption);
       }
       if (item.type === "imageAudio") {
-        //formData.append(`imageAudio[${index}][type]`, item.type)
+        formData.append(`slides[${index}][type]`, item.type)
         if (item.imageFile)
-          formData.append(`imgAudio[${index}][image]`, item.imageFile);
+          formData.append(`slides[${index}][imageFile]`, item.imageFile);
         if (item.audioFile)
-          formData.append(`imgAudio[${index}][audio]`, item.audioFile);
+          formData.append(`slides[${index}][audioFile]`, item.audioFile);
         if (item.caption)
-          formData.append(`imgAudio[${index}][caption]`, item.caption);
+          formData.append(`slides[${index}][caption]`, item.caption);
       }
     });
     story.mutate(formData, {

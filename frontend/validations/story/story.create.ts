@@ -1,26 +1,111 @@
-import z from "zod";
+import { z } from "zod";
+
 const MAX_FILE_SIZES = {
-  image: 10 * 1024 * 1024,       // 10 MB
-  video: 100 * 1024 * 1024,      // 100 MB
-  audio: 20 * 1024 * 1024,       // 20 MB
+  image: 10 * 1024 * 1024,
+  video: 100 * 1024 * 1024,
+  audio: 20 * 1024 * 1024,
 };
 
 const ALLOWED_MIME = {
-  image: ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"],
+  image: ["image/jpeg", "image/png", "image/webp", "image/jpg"],
   video: ["video/mp4", "video/webm", "video/quicktime"],
-  audio: ["audio/mpeg", "audio/wav", "audio/ogg", "audio/mp4"],
+  audio: ["audio/mpeg", "audio/wav", "audio/ogg"],
 };
 
-export const slideSchema = z.object({
-    type: z.enum(['image', 'video', 'imageAudio']),
-    imageFile: z.instanceof(File).refine(file => file.size <= MAX_FILE_SIZES.image,'Image cannot exceed 10 mb file size').refine(file => ALLOWED_MIME.image.includes(file.type),`Allowed types: ${ALLOWED_MIME.image.map(type => type.split('/')[1]).join(', ')}`).optional(),
-    videoFile: z.instanceof(File).refine(file => file.size <= MAX_FILE_SIZES.video,'Video cannot exceed 100 mb file size').refine(file => ALLOWED_MIME.video.includes(file.type),`Allowed types: ${ALLOWED_MIME.video.map(type => type.split('/')[1]).join(', ')}`).optional(),
-    audioFile: z.instanceof(File).refine(file => file.size <= MAX_FILE_SIZES.audio,'Audio cannot exceed 20 mb file size').refine(file => ALLOWED_MIME.audio.includes(file.type),`Allowed types: ${ALLOWED_MIME.audio.map(type => type.split('/')[1]).join(', ')}`).optional(),
-    caption: z.string().max(100, 'Not more that 100 charecters are qllowed'),
-    order: z.number(),
-})
-export const storySchema = z.object({
-    slides: z.array(slideSchema).max(15,'Maximum 15 media are allowed')
-})
+const fileValidator = (
+  category: "image" | "video" | "audio"
+) =>
+  z
+    .instanceof(File)
+    .refine(
+      (file) => ALLOWED_MIME[category].includes(file.type),
+      `Invalid ${category} type`
+    )
+    .refine(
+      (file) => file.size <= MAX_FILE_SIZES[category],
+      `${category} file too large`
+    );
 
-export type storyType = z.infer<typeof storySchema>
+export const storySchema = z.object({
+  slides: z.array(
+    z
+      .object({
+        type: z.enum(["image", "video", "imageAudio"]),
+        caption: z.string().max(100).optional(),
+
+        imageFile: z.any().optional().nullable(),
+        videoFile: z.any().optional().nullable(),
+        audioFile: z.any().optional().nullable(),
+      })
+      .superRefine((data, ctx) => {
+
+        if (data.type === "image") {
+          if (!data.imageFile) {
+            ctx.addIssue({
+              code: 'custom',
+              message: "Image required",
+              path: ["imageFile"],
+            });
+            return;
+          }
+
+          const result = fileValidator("image").safeParse(data.imageFile);
+          if (!result.success) {
+            result.error.issues.forEach((issue) =>
+              ctx.addIssue({
+                ...issue,
+                path: ["imageFile"],
+              })
+            );
+          }
+        }
+
+        if (data.type === "video") {
+          if (!data.videoFile) {
+            ctx.addIssue({
+              code: 'custom',
+              message: "Video required",
+              path: ["videoFile"],
+            });
+            return;
+          }
+
+          const result = fileValidator("video").safeParse(data.videoFile);
+          if (!result.success) {
+            result.error.issues.forEach((issue) =>
+              ctx.addIssue({
+                ...issue,
+                path: ["videoFile"],
+              })
+            );
+          }
+        }
+
+        if (data.type === "imageAudio") {
+          if (!data.imageFile || !data.audioFile) {
+            ctx.addIssue({
+              code: 'custom',
+              message: "Image + Audio required",
+            });
+            return;
+          }
+
+          const img = fileValidator("image").safeParse(data.imageFile);
+          if (!img.success) {
+            img.error.issues.forEach((issue) =>
+              ctx.addIssue({ ...issue, path: ["imageFile"] })
+            );
+          }
+
+          const aud = fileValidator("audio").safeParse(data.audioFile);
+          if (!aud.success) {
+            aud.error.issues.forEach((issue) =>
+              ctx.addIssue({ ...issue, path: ["audioFile"] })
+            );
+          }
+        }
+      })
+  ),
+});
+
+export type storyType = z.infer<typeof storySchema>;
