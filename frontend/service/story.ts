@@ -12,6 +12,15 @@ async function getJson(path: string) {
   return requests(path, { method: "POST", body: null });
 }
 
+export async function CreateStoryRequest(payload: FormData) {
+  return postJson('create', payload);
+}
+// To check if story is uploaded in background of backend => response from redis
+export async function StoryStatus() {
+  return getJson('status')
+}
+
+
 export async function GetStories(storyId: string) {
   return getJson(`:${storyId}`)
 }

@@ -4,12 +4,30 @@ export interface Stories {
 }
 
 export interface StoryState {
+  story: string;
   stories: StoryMedia[] | [];
+  isUploaded: boolean;
+  expiresAt: string;
 
+  setStory: (story: string | undefined) => void
+  setExpiresAt: (expiresAt: string | undefined) => void
+  setIsUploaded: (isUploaded: boolean) => void
   setStories: (stories: StoryMedia[]) => void;
   addStory: (story: StoryMedia) => void;
   deleteStory: (storyId: string) => void
   removeStory: () => void
+}
+
+export interface StoryCreateResponse {
+  status: 'processing'| 'successfull',
+  storyId: string;
+  expiresAt: string;
+}
+export interface StoryStatReq {
+  storyId: string;
+}
+export interface StoryStatusResponse {
+  status: 'processing'| 'successfull', // if uploding in background => processing and  'successfull' only after checking that exact number is saved in pg
 }
 
 export interface StoryMedia {

@@ -1,8 +1,12 @@
+import { useCreateStory } from "@/hooks/useStory";
+import { useStoryStore } from "@/stores/StoryStore";
 import { storySchema, storyType } from "@/validations/story/story.create";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function CreateStory() {
+  const story = useCreateStory();
   const { control } = useForm<storyType>({
     resolver: zodResolver(storySchema),
     mode: "onChange",
@@ -18,31 +22,43 @@ export default function CreateStory() {
     const formData = new FormData();
     data.slides.forEach((item, index) => {
       if (item.type === "image") {
+        //formData.append(`image[${index}][type]`, item.type)
         if (item.imageFile)
           formData.append(`image[${index}][file]`, item.imageFile);
         if (item.caption)
           formData.append(`image[${index}][caption]`, item.caption);
-        if (item.order)
-          formData.append(`image[${index}][order]`, `${item.order}`); // As it accepts only string other than a number
       }
       if (item.type === "video") {
+        //formData.append(`video[${index}][type]`, item.type)
         if (item.videoFile)
           formData.append(`video[${index}][file]`, item.videoFile);
         if (item.caption)
           formData.append(`video[${index}][caption]`, item.caption);
-        if (item.order)
-          formData.append(`video[${index}][order]`, `${item.order}`);
       }
       if (item.type === "imageAudio") {
+        //formData.append(`imageAudio[${index}][type]`, item.type)
         if (item.imageFile)
           formData.append(`imgAudio[${index}][image]`, item.imageFile);
         if (item.audioFile)
           formData.append(`imgAudio[${index}][audio]`, item.audioFile);
         if (item.caption)
           formData.append(`imgAudio[${index}][caption]`, item.caption);
-        if (item.order)
-          formData.append(`imgAudio[${index}][order]`, `${item.order}`);
       }
     });
+    story.mutate(formData,{
+      onSuccess: (result) => {
+        const state = useStoryStore.getState()
+        state.setStory(result.data.storyId)
+        state.setExpiresAt(result.data.expiresAt)
+        if(result.data.status === 'successfull')
+          state.setIsUploaded(true)
+        toast.success(result.message);
+        // Closing the dialog => setOpen(false)
+      },
+      onError: (error) => {
+        toast.error(error.message)
+        console.error(error.error);
+      }
+    })
   };
 }
