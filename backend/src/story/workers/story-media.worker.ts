@@ -51,7 +51,11 @@ export class StoryProcessor extends WorkerHost {
     if (job.name === 'batch-complete') {
       const storyId = job.returnvalue as string;
       const key = `story:${storyId}`;
-      await this.cacheService.set<CacheStatus>(key, 'successfull');
+      await this.cacheService.set<CacheStatus>(
+        key,
+        'successfull',
+        1_000 * 60 * 60 * 24,
+      );
       this.logger.log(`Job successfull for storyId: ${storyId}`);
     }
   }
@@ -71,7 +75,11 @@ export class StoryProcessor extends WorkerHost {
     if (job.name === 'process-task') {
       const data = job.data as StoryCreateDto;
       const key = `story:${data.storyId}`;
-      await this.cacheService.set<CacheStatus>(key, 'failed');
+      await this.cacheService.set<CacheStatus>(
+        key,
+        'failed',
+        1_000 * 60 * 60 * 24,
+      );
       this.logger.error(
         `Child task failed for story ${data.storyId}`,
         err.stack,

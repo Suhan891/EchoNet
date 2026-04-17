@@ -4,19 +4,21 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  StoryMediaDto,
-  FileValidateDto,
-  StoryMediaType,
-  CreateStoryMediaEvent,
-} from './dto/file.type.dto';
+import { StoryMediaType, CreateStoryMediaEvent } from './dto/file.type.dto';
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { Media } from 'src/generated/prisma/enums';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { StoryDto, StoryMediaDataDto } from './dto/story.usage.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
-import { ImageAudioMedia, ImageMedia, VideoMedia } from './dto/story.create.dto';
+import {
+  CacheStatus,
+  ImageAudioMedia,
+  ImageMedia,
+  ParsedSlideDto,
+  StoryCreateDto,
+  VideoMedia,
+} from './dto/story.create.dto';
 
 @Injectable()
 export class StoryService {
@@ -27,69 +29,21 @@ export class StoryService {
     private cacheService: AppCacheService,
   ) {}
 
-  async createStory(
-    files: FileValidateDto,
-    fileOrder: string,
-    profile: profileDto,
-  ) {
-    const allFiles = [
-      ...(files.image || []),
-      ...(files.video || []),
-      ...(files.audio || []),
-    ];
-
-    const orderSteps = fileOrder.split(',');
-    let totalFiles = orderSteps.length;
-
-    const sortedStoryMedia: StoryMediaDto[] = orderSteps.map((step) => {
-      if (step.includes('+')) {
-        const [imgName, audName] = step.split('+');
-        totalFiles++;
-        return {
-          type: 'combined',
-          image: allFiles.find((f) => f.originalname === imgName),
-          audio: allFiles.find((f) => f.originalname === audName),
-        };
-      }
-      const file = allFiles.find((f) => f.originalname === step);
-      return {
-        type: file?.mimetype.startsWith('image') ? 'image' : 'video',
-        file,
-      };
-    });
-
-    if (
-      allFiles.length !== totalFiles ||
-      sortedStoryMedia.length !== totalFiles
-    )
-      throw new BadRequestException(
-        'All the files with correct name were not provided',
-      );
-
+  async createStory(slides: ParsedSlideDto[], profile: profileDto) {
     const existingStory = await this.prisma.story.findFirst({
       where: { profileId: profile.id },
-      select: { expiresAt: true, id: true },
+      select: {
+        expiresAt: true,
+        id: true,
+      },
     });
-    if (
-      existingStory?.expiresAt &&
-      existingStory.expiresAt > new Date(Date.now())
-    )
-      throw new BadRequestException('Story already exists');
 
-    if (
-      existingStory?.expiresAt &&
-      existingStory.expiresAt < new Date(Date.now())
-    ) {
-      const storyIdEvent = existingStory?.id;
-      // const res = await this.eventEmitter.emitAsync(
-      //   'story.delete',
-      //   storyIdEvent,
-      // );
-      // if (!res)
-      //   throw new InternalServerErrorException(
-      //     'Job of deletion did not proceed',
-      //   );
-      await this.deleteStory(storyIdEvent);
+    if (existingStory && existingStory.expiresAt >= new Date(Date.now()))
+      throw new BadRequestException(
+        'You already have a existing story still not expired',
+      );
+    if (existingStory && existingStory.expiresAt < new Date(Date.now())) {
+      await this.deleteStory(existingStory.id);
     }
 
     const story = await this.prisma.story.create({
@@ -97,23 +51,84 @@ export class StoryService {
         profileId: profile.id,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
+      select: {
+        id: true,
+        expiresAt: true,
+      },
+    });
+
+    const stories = slides.map((slide) => {
+      return {
+        storyId: story.id,
+        ...slide,
+      } as StoryCreateDto;
+    });
+
+    this.eventEmitter.emit('story.create', stories);
+    const key = `story:${story.id}`;
+    await this.cacheService.set<CacheStatus>(
+      key,
+      'processing',
+      1_000 * 60 * 60 * 24,
+    );
+    return {
+      status: 'processing',
+    };
+  }
+
+  async getOwnStory(profile: profileDto) {
+    const story = await this.prisma.story.findFirst({
+      where: { profileId: profile.id },
       select: { id: true, expiresAt: true },
     });
-    const profileName = profile.name;
-    const storyId = story.id;
+    if (!story)
+      throw new BadRequestException('No story available for this profile');
+    if (story && story.expiresAt < new Date(Date.now())) {
+      await this.deleteStory(story.id);
+      throw new BadRequestException('You story has expired');
+    }
+    const key = `profile:${profile.id}:story:${story.id}`;
+    const cachedStories = await this.cacheService.get(key);
+    if (cachedStories) return cachedStories;
 
-    const payload: CreateStoryMediaEvent = {
-      sortedStoryMedia,
-      profileName,
-      storyId,
-    };
+    const storyStatKey = `story:${story.id}`;
 
-    this.eventEmitter.emit('story-media.create', payload);
-
-    return {
-      storyId: story.id,
-      stories: totalFiles,
-    };
+    const dataUploadStatus = await this.cacheService.get(storyStatKey);
+    if (dataUploadStatus) {
+      if (dataUploadStatus === 'failed') {
+        await this.cacheService.delete(storyStatKey);
+        throw new InternalServerErrorException('File Upload Unsuccessfull');
+      }
+      await this.cacheService.delete(storyStatKey); // As successfull so no need to remember
+      if (dataUploadStatus === 'processing') return dataUploadStatus;
+    }
+    const stories = await this.prisma.storyMedia.findMany({
+      where: { storyId: story.id },
+      select: {
+        mediaType: true,
+        mediaUrl: true,
+        order: true,
+        likes: {
+          select: {
+            id: true,
+            profileId: true,
+          },
+        },
+        storyViews: {
+          select: {
+            id: true,
+            viewer: {
+              select: {
+                name: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    await this.cacheService.set<typeof stories>(key, stories);
+    return stories;
   }
 
   async getStory(profile: profileDto, story: StoryDto) {
@@ -158,6 +173,7 @@ export class StoryService {
   async createImageMedia(data: ImageMedia) {}
   async createVideoMedia(data: VideoMedia) {}
   async createImageAudioMedia(data: ImageAudioMedia) {}
+
   async createStoryMedia(request: CreateStoryMediaEvent) {
     const { sortedStoryMedia, profileName, storyId } = request;
     const uploadPromise = sortedStoryMedia.map(async (item) => {
