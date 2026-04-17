@@ -16,6 +16,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { StoryDto, StoryMediaDataDto } from './dto/story.usage.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
+import { ImageAudioMedia, ImageMedia, VideoMedia } from './dto/story.create.dto';
 
 @Injectable()
 export class StoryService {
@@ -154,7 +155,9 @@ export class StoryService {
     const profileId = profile.id;
     return this.OthersStory(profileId, storyMedia, key);
   }
-
+  async createImageMedia(data: ImageMedia) {}
+  async createVideoMedia(data: VideoMedia) {}
+  async createImageAudioMedia(data: ImageAudioMedia) {}
   async createStoryMedia(request: CreateStoryMediaEvent) {
     const { sortedStoryMedia, profileName, storyId } = request;
     const uploadPromise = sortedStoryMedia.map(async (item) => {

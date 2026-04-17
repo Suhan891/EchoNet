@@ -45,6 +45,8 @@ import { RoleGaurd } from './common/gaurds/roles.gaurd';
       },
     }),
     // BullModule.registerQueue({ name: 'stories' }, { name: 'email' }),
+    BullModule.registerFlowProducer({ name: 'story-task' }),
+    BullModule.registerQueue({ name: 'story-queue' }),
     EventEmitterModule.forRoot({
       global: true,
       wildcard: false,

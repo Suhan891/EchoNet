@@ -13,21 +13,21 @@ export interface ParsedSlideDto {
 
 export type RawMultipartBody = Record<string, string>;
 
-interface ImageSlide {
+export interface ImageMedia {
   storyId: string;
   type: 'image';
   imageFile: Express.Multer.File;
   caption?: string;
   order: number;
 }
-interface VideoSlide {
+export interface VideoMedia {
   storyId: string;
   type: 'video';
   videoFile: Express.Multer.File;
   caption?: string;
   order: number;
 }
-interface ImageAudioSlide {
+export interface ImageAudioMedia {
   storyId: string;
   type: 'imgAudio';
   imageFile: Express.Multer.File;
@@ -36,4 +36,6 @@ interface ImageAudioSlide {
   order: number;
 }
 
-export type StoryCreateDto = ImageAudioSlide | ImageSlide | VideoSlide;
+export type StoryCreateDto = ImageAudioMedia | ImageMedia | VideoMedia;
+
+export type CacheStatus = 'processing' | 'successfull' | 'failed';
