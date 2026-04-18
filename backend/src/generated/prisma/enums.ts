@@ -19,7 +19,8 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 export const Media = {
   IMG: 'IMG',
-  VIDEO: 'VIDEO'
+  VIDEO: 'VIDEO',
+  COMBINED: 'COMBINED'
 } as const
 
 export type Media = (typeof Media)[keyof typeof Media]

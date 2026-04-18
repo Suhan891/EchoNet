@@ -212,6 +212,7 @@ export type NotificationOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   receiver?: Prisma.ProfileOrderByWithRelationInput
   sender?: Prisma.ProfileOrderByWithRelationInput
+  _relevance?: Prisma.NotificationOrderByRelevanceInput
 }
 
 export type NotificationWhereUniqueInput = Prisma.AtLeast<{
@@ -331,6 +332,12 @@ export type NotificationListRelationFilter = {
 
 export type NotificationOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type NotificationOrderByRelevanceInput = {
+  fields: Prisma.NotificationOrderByRelevanceFieldEnum | Prisma.NotificationOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type NotificationCountOrderByAggregateInput = {

@@ -170,45 +170,17 @@ export class ProfileService {
         name: true,
         bio: true,
         avatarUrl: true,
-        // followers: {
-        //   select: {
-        //     id: true,
-        //     follower: {
-        //       select: {
-        //         id: true,
-        //         name: true,
-        //         avatarUrl: true,
-        //       },
-        //     },
-        //   },
-        // },
-        // followings: {
-        //   select: {
-        //     id: true,
-        //     following: {
-        //       select: {
-        //         id: true,
-        //         name: true,
-        //         avatarUrl: true,
-        //       },
-        //     },
-        //   },
-        // },
-        // story: {
-        //   select: {
-        //     id: true,
-        //   },
-        // },
-        // sentNotifications: {
-        //   select: {
-        //     id: true,
-        //   },
-        // },
         _count: {
           select: {
             followers: true,
             followings: true,
-            story: true,
+            story: {
+              where: {
+                expiresAt: {
+                  lt: new Date(Date.now()),
+                },
+              },
+            },
             sentNotifications: true,
           },
         },

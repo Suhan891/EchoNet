@@ -1600,6 +1600,137 @@ export const NullsOrder = {
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
+export const UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  email: 'email',
+  username: 'username',
+  password: 'password',
+  passResetToken: 'passResetToken'
+} as const
+
+export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const ProfileOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  bio: 'bio',
+  avatarUrl: 'avatarUrl',
+  cloudId: 'cloudId'
+} as const
+
+export type ProfileOrderByRelevanceFieldEnum = (typeof ProfileOrderByRelevanceFieldEnum)[keyof typeof ProfileOrderByRelevanceFieldEnum]
+
+
+export const FollowOrderByRelevanceFieldEnum = {
+  id: 'id',
+  followerId: 'followerId',
+  followingId: 'followingId'
+} as const
+
+export type FollowOrderByRelevanceFieldEnum = (typeof FollowOrderByRelevanceFieldEnum)[keyof typeof FollowOrderByRelevanceFieldEnum]
+
+
+export const PostOrderByRelevanceFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  caption: 'caption'
+} as const
+
+export type PostOrderByRelevanceFieldEnum = (typeof PostOrderByRelevanceFieldEnum)[keyof typeof PostOrderByRelevanceFieldEnum]
+
+
+export const PostPhotoOrderByRelevanceFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  imageUrl: 'imageUrl',
+  cloudId: 'cloudId'
+} as const
+
+export type PostPhotoOrderByRelevanceFieldEnum = (typeof PostPhotoOrderByRelevanceFieldEnum)[keyof typeof PostPhotoOrderByRelevanceFieldEnum]
+
+
+export const SavePostOrderByRelevanceFieldEnum = {
+  id: 'id',
+  postPhotoId: 'postPhotoId',
+  profileId: 'profileId'
+} as const
+
+export type SavePostOrderByRelevanceFieldEnum = (typeof SavePostOrderByRelevanceFieldEnum)[keyof typeof SavePostOrderByRelevanceFieldEnum]
+
+
+export const ReelOrderByRelevanceFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  videoUrl: 'videoUrl',
+  cloudId: 'cloudId',
+  caption: 'caption'
+} as const
+
+export type ReelOrderByRelevanceFieldEnum = (typeof ReelOrderByRelevanceFieldEnum)[keyof typeof ReelOrderByRelevanceFieldEnum]
+
+
+export const StoryOrderByRelevanceFieldEnum = {
+  id: 'id',
+  profileId: 'profileId'
+} as const
+
+export type StoryOrderByRelevanceFieldEnum = (typeof StoryOrderByRelevanceFieldEnum)[keyof typeof StoryOrderByRelevanceFieldEnum]
+
+
+export const StoryMediaOrderByRelevanceFieldEnum = {
+  id: 'id',
+  storyId: 'storyId',
+  mediaUrl: 'mediaUrl',
+  cloudId: 'cloudId'
+} as const
+
+export type StoryMediaOrderByRelevanceFieldEnum = (typeof StoryMediaOrderByRelevanceFieldEnum)[keyof typeof StoryMediaOrderByRelevanceFieldEnum]
+
+
+export const StoryViewsOrderByRelevanceFieldEnum = {
+  id: 'id',
+  storyMediaId: 'storyMediaId',
+  viewerId: 'viewerId'
+} as const
+
+export type StoryViewsOrderByRelevanceFieldEnum = (typeof StoryViewsOrderByRelevanceFieldEnum)[keyof typeof StoryViewsOrderByRelevanceFieldEnum]
+
+
+export const LikesOrderByRelevanceFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  postId: 'postId',
+  reelId: 'reelId',
+  storyMediaId: 'storyMediaId'
+} as const
+
+export type LikesOrderByRelevanceFieldEnum = (typeof LikesOrderByRelevanceFieldEnum)[keyof typeof LikesOrderByRelevanceFieldEnum]
+
+
+export const CommentsOrderByRelevanceFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  postId: 'postId',
+  reelId: 'reelId',
+  parentId: 'parentId',
+  content: 'content'
+} as const
+
+export type CommentsOrderByRelevanceFieldEnum = (typeof CommentsOrderByRelevanceFieldEnum)[keyof typeof CommentsOrderByRelevanceFieldEnum]
+
+
+export const NotificationOrderByRelevanceFieldEnum = {
+  id: 'id',
+  receiverId: 'receiverId',
+  senderId: 'senderId',
+  message: 'message'
+} as const
+
+export type NotificationOrderByRelevanceFieldEnum = (typeof NotificationOrderByRelevanceFieldEnum)[keyof typeof NotificationOrderByRelevanceFieldEnum]
+
+
 
 /**
  * Field references

@@ -161,6 +161,7 @@ model Story {
 enum Media {
   IMG
   VIDEO
+  COMBINED
 }
 
 model StoryMedia {

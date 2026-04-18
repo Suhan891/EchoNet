@@ -185,6 +185,7 @@ export type FollowOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   follower?: Prisma.ProfileOrderByWithRelationInput
   following?: Prisma.ProfileOrderByWithRelationInput
+  _relevance?: Prisma.FollowOrderByRelevanceInput
 }
 
 export type FollowWhereUniqueInput = Prisma.AtLeast<{
@@ -275,6 +276,12 @@ export type FollowListRelationFilter = {
 
 export type FollowOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type FollowOrderByRelevanceInput = {
+  fields: Prisma.FollowOrderByRelevanceFieldEnum | Prisma.FollowOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type FollowFollowerIdFollowingIdCompoundUniqueInput = {

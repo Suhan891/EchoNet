@@ -194,6 +194,7 @@ export type StoryViewsOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   storyMedia?: Prisma.StoryMediaOrderByWithRelationInput
   viewer?: Prisma.ProfileOrderByWithRelationInput
+  _relevance?: Prisma.StoryViewsOrderByRelevanceInput
 }
 
 export type StoryViewsWhereUniqueInput = Prisma.AtLeast<{
@@ -294,6 +295,12 @@ export type StoryViewsListRelationFilter = {
 
 export type StoryViewsOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type StoryViewsOrderByRelevanceInput = {
+  fields: Prisma.StoryViewsOrderByRelevanceFieldEnum | Prisma.StoryViewsOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type StoryViewsStoryMediaIdViewerIdCompoundUniqueInput = {

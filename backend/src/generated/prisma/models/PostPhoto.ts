@@ -228,6 +228,7 @@ export type PostPhotoOrderByWithRelationInput = {
   order?: Prisma.SortOrder
   savedPosts?: Prisma.SavePostOrderByRelationAggregateInput
   post?: Prisma.PostOrderByWithRelationInput
+  _relevance?: Prisma.PostPhotoOrderByRelevanceInput
 }
 
 export type PostPhotoWhereUniqueInput = Prisma.AtLeast<{
@@ -334,6 +335,12 @@ export type PostPhotoListRelationFilter = {
 
 export type PostPhotoOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type PostPhotoOrderByRelevanceInput = {
+  fields: Prisma.PostPhotoOrderByRelevanceFieldEnum | Prisma.PostPhotoOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type PostPhotoCountOrderByAggregateInput = {

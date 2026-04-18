@@ -250,6 +250,7 @@ export type ProfileOrderByWithRelationInput = {
   followings?: Prisma.FollowOrderByRelationAggregateInput
   pofileLikes?: Prisma.LikesOrderByRelationAggregateInput
   profileCommentes?: Prisma.CommentsOrderByRelationAggregateInput
+  _relevance?: Prisma.ProfileOrderByRelevanceInput
 }
 
 export type ProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -444,6 +445,12 @@ export type ProfileListRelationFilter = {
 
 export type ProfileOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type ProfileOrderByRelevanceInput = {
+  fields: Prisma.ProfileOrderByRelevanceFieldEnum | Prisma.ProfileOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type ProfileCountOrderByAggregateInput = {

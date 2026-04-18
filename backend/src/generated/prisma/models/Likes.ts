@@ -207,6 +207,7 @@ export type LikesOrderByWithRelationInput = {
   post?: Prisma.PostOrderByWithRelationInput
   reel?: Prisma.ReelOrderByWithRelationInput
   storyMedia?: Prisma.StoryMediaOrderByWithRelationInput
+  _relevance?: Prisma.LikesOrderByRelevanceInput
 }
 
 export type LikesWhereUniqueInput = Prisma.AtLeast<{
@@ -316,6 +317,12 @@ export type LikesListRelationFilter = {
 
 export type LikesOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type LikesOrderByRelevanceInput = {
+  fields: Prisma.LikesOrderByRelevanceFieldEnum | Prisma.LikesOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type LikesCountOrderByAggregateInput = {

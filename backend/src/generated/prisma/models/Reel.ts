@@ -214,6 +214,7 @@ export type ReelOrderByWithRelationInput = {
   profile?: Prisma.ProfileOrderByWithRelationInput
   likes?: Prisma.LikesOrderByRelationAggregateInput
   comments?: Prisma.CommentsOrderByRelationAggregateInput
+  _relevance?: Prisma.ReelOrderByRelevanceInput
 }
 
 export type ReelWhereUniqueInput = Prisma.AtLeast<{
@@ -343,6 +344,12 @@ export type ReelListRelationFilter = {
 
 export type ReelOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type ReelOrderByRelevanceInput = {
+  fields: Prisma.ReelOrderByRelevanceFieldEnum | Prisma.ReelOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type ReelCountOrderByAggregateInput = {

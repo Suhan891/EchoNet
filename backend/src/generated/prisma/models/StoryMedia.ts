@@ -239,6 +239,7 @@ export type StoryMediaOrderByWithRelationInput = {
   storyViews?: Prisma.StoryViewsOrderByRelationAggregateInput
   likes?: Prisma.LikesOrderByRelationAggregateInput
   story?: Prisma.StoryOrderByWithRelationInput
+  _relevance?: Prisma.StoryMediaOrderByRelevanceInput
 }
 
 export type StoryMediaWhereUniqueInput = Prisma.AtLeast<{
@@ -360,6 +361,12 @@ export type StoryMediaListRelationFilter = {
 
 export type StoryMediaOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type StoryMediaOrderByRelevanceInput = {
+  fields: Prisma.StoryMediaOrderByRelevanceFieldEnum | Prisma.StoryMediaOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type StoryMediaCountOrderByAggregateInput = {

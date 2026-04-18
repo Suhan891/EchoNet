@@ -176,6 +176,7 @@ export type SavePostOrderByWithRelationInput = {
   profileId?: Prisma.SortOrder
   post?: Prisma.PostPhotoOrderByWithRelationInput
   profile?: Prisma.ProfileOrderByWithRelationInput
+  _relevance?: Prisma.SavePostOrderByRelevanceInput
 }
 
 export type SavePostWhereUniqueInput = Prisma.AtLeast<{
@@ -255,6 +256,12 @@ export type SavePostListRelationFilter = {
 
 export type SavePostOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type SavePostOrderByRelevanceInput = {
+  fields: Prisma.SavePostOrderByRelevanceFieldEnum | Prisma.SavePostOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type SavePostCountOrderByAggregateInput = {

@@ -218,6 +218,7 @@ export type CommentsOrderByWithRelationInput = {
   reel?: Prisma.ReelOrderByWithRelationInput
   replies?: Prisma.CommentsOrderByRelationAggregateInput
   parentComment?: Prisma.CommentsOrderByWithRelationInput
+  _relevance?: Prisma.CommentsOrderByRelevanceInput
 }
 
 export type CommentsWhereUniqueInput = Prisma.AtLeast<{
@@ -347,6 +348,12 @@ export type CommentsOrderByRelationAggregateInput = {
 export type CommentsNullableScalarRelationFilter = {
   is?: Prisma.CommentsWhereInput | null
   isNot?: Prisma.CommentsWhereInput | null
+}
+
+export type CommentsOrderByRelevanceInput = {
+  fields: Prisma.CommentsOrderByRelevanceFieldEnum | Prisma.CommentsOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type CommentsCountOrderByAggregateInput = {
