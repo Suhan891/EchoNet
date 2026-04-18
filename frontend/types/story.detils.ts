@@ -1,3 +1,5 @@
+export type SlideType = 'image' | 'video' | 'imageAudio'
+
 export interface Stories {
   id: string;
   order: number;

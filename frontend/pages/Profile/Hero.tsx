@@ -20,12 +20,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import CreateStory from "../Story/CreateStory";
 
 export default function ProfileHero() {
   const [followerOpen, setFollowerOpen] = useState(false);
   const [followingOpen, setFollowingOpen] = useState(false);
   const [upDialogOpen, setUpDialogOpen] = useState(false);
-  const { name, bio, avatarUrl, followers, followings, storyId } =
+  const [createStoryOpen, setCreateStoryOpen] = useState(false);
+  const { name, bio, avatarUrl, followers, followings, story } =
     useProfileStore(
       useShallow((state) => ({
         id: state.id,
@@ -34,7 +36,7 @@ export default function ProfileHero() {
         bio: state.bio,
         followers: state.followers,
         followings: state.followings,
-        storyId: state.storyId,
+        story: state.story,
       })),
     );
   return (
@@ -47,7 +49,7 @@ export default function ProfileHero() {
               //disabled={!storyId}
               className={cn(
                 "shrink-0 rounded-full transition-all duration-200 border-none bg-transparent p-0 mt-12",
-                storyId &&
+                story &&
                   "ring-2 ring-offset-2 ring-offset-background ring-amber-500 hover:scale-105 cursor-pointer",
               )}
             >
@@ -80,7 +82,7 @@ export default function ProfileHero() {
               <DropdownMenuSubTrigger>Story</DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
-                  {storyId ? (
+                  {story ? (
                     <>
                       <DropdownMenuItem><Link href={'/profile/story'}>View</Link></DropdownMenuItem>
                       <DropdownMenuSeparator />
@@ -90,14 +92,14 @@ export default function ProfileHero() {
                       </DropdownMenuItem>
                     </>
                   ) : (
-                    <DropdownMenuItem>Add</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setCreateStoryOpen(true)}>Add</DropdownMenuItem>
                   )}
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
           </DropdownMenuContent>
         </DropdownMenu>
-
+        {createStoryOpen && <CreateStory open={createStoryOpen} setOpen={setCreateStoryOpen} />}
         {/* Info and Actions Section */}
         <div className="flex flex-col items-center md:items-start gap-4 flex-1">
           {/* Name and Bio */}
@@ -126,11 +128,11 @@ export default function ProfileHero() {
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
-                disabled={!followers?.length}
+                disabled={!followers}
                 onClick={() => setFollowerOpen(true)}
               >
                 <span className="font-semibold mr-1">
-                  {followers?.length || 0}
+                  {followers}
                 </span>{" "}
                 Followers
               </Button>
@@ -142,11 +144,11 @@ export default function ProfileHero() {
               )}
               <Button
                 variant="ghost"
-                disabled={!followings?.length}
+                disabled={!followings}
                 onClick={() => setFollowingOpen(true)}
               >
                 <span className="font-semibold mr-1">
-                  {followings?.length || 0}
+                  {followings}
                 </span>{" "}
                 Following
               </Button>

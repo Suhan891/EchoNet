@@ -93,14 +93,17 @@ export class StoryService {
 
     const storyStatKey = `story:${story.id}`;
 
-    const dataUploadStatus = await this.cacheService.get(storyStatKey);
+    const dataUploadStatus = (await this.cacheService.get(
+      storyStatKey,
+    )) as CacheStatus;
     if (dataUploadStatus) {
       if (dataUploadStatus === 'failed') {
         await this.cacheService.delete(storyStatKey);
         throw new InternalServerErrorException('File Upload Unsuccessfull');
       }
-      await this.cacheService.delete(storyStatKey); // As successfull so no need to remember
       if (dataUploadStatus === 'processing') return dataUploadStatus;
+      if (dataUploadStatus === 'successfull')
+        await this.cacheService.delete(storyStatKey);
     }
     const stories = await this.prisma.storyMedia.findMany({
       where: { storyId: story.id },
