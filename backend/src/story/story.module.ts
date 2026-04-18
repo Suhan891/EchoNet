@@ -7,7 +7,11 @@ import { StoryProcessor } from './workers/story-media.worker';
 import { BullModule } from '@nestjs/bullmq';
 
 @Module({
-  imports: [CommonModule, BullModule.registerQueue({ name: 'story' })],
+  imports: [
+    CommonModule,
+    BullModule.registerFlowProducer({ name: 'story-task' }),
+    BullModule.registerQueue({ name: 'story-queue' }),
+  ],
   controllers: [StoryController],
   providers: [StoryService, StoryListener, StoryProcessor],
 })

@@ -133,15 +133,11 @@ export class CloudinaryService implements OnModuleInit {
     });
   }
 
-  async uploadImageStory(
-    file: Express.Multer.File,
-    filename: string,
-    profileName: string,
-  ) {
+  async uploadImageStory(file: Express.Multer.File, filename: string) {
     return new Promise<UploadApiResponse>((resolve, reject) => {
       const uploadStream = this.cloudinary.uploader.upload_stream(
         {
-          folder: `social_media/story/${profileName}`,
+          folder: `social_media/story`,
           public_id: filename,
           resource_type: 'image',
           transformation: [
@@ -163,15 +159,11 @@ export class CloudinaryService implements OnModuleInit {
     });
   }
 
-  async uploadVideoStory(
-    file: Express.Multer.File,
-    filename: string,
-    profileName: string,
-  ) {
+  async uploadVideoStory(file: Express.Multer.File, filename: string) {
     return new Promise<UploadApiResponse>((resolve, reject) => {
       const uploadStream = this.cloudinary.uploader.upload_stream(
         {
-          folder: `social_media/story/${profileName}`,
+          folder: `social_media/story`,
           public_id: filename,
           resource_type: 'video',
           transformation: [
@@ -201,15 +193,13 @@ export class CloudinaryService implements OnModuleInit {
     audioFile: Express.Multer.File,
     imgPublicId: string,
     fileName: string,
-    profileName: string,
   ) {
     return new Promise<UploadApiResponse>((resolve, reject) => {
       const uploadStream = this.cloudinary.uploader.upload_stream(
         {
-          folder: `social_media/story/${profileName}`,
+          folder: `social_media/story`,
           public_id: fileName,
           resource_type: 'video',
-          // Merging of below img with current audio
           transformation: [
             { width: 1080, height: 1350, crop: 'fill' },
             { underlay: imgPublicId.replace(/\//g, ':') },

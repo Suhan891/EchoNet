@@ -11,12 +11,7 @@ import {
 import { StoryService } from './story.service';
 import type { profileDto } from 'src/profile/dto/profile.dto';
 import { Throttle } from '@nestjs/throttler';
-import {
-  AnyFilesInterceptor,
-  FileFieldsInterceptor,
-} from '@nestjs/platform-express';
-import { StoryMediaValidation } from './pipes/files.validate';
-import type { FileValidateDto } from './dto/file.type.dto';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { currentProfile } from 'src/profile/decorator/get-profile';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 import { ValidateStoryExists } from './pipes/existing-story';
@@ -24,6 +19,8 @@ import type { StoryDto, StoryMediaDataDto } from './dto/story.usage.dto';
 import { ValidateStoryMediaPipe } from './pipes/existing-storymedia';
 import { ParsedStoryPipe } from './pipes/story.create.validate';
 import type { RawMultipartBody } from './dto/story.create.dto';
+import { CurrentUser } from 'src/common/gaurds/current-user.decorator';
+import type { authUserDto } from 'src/auth/tokens/token.dto';
 
 @Controller('story')
 export class StoryController {
@@ -36,10 +33,11 @@ export class StoryController {
   async create(
     @UploadedFiles() files: Express.Multer.File[],
     @Body() body: RawMultipartBody,
+    @CurrentUser() user: authUserDto,
     @currentProfile() profile: profileDto,
   ) {
     const data = new ParsedStoryPipe().transform(files, body);
-    return await this.storyService.createStory(data, profile);
+    return await this.storyService.createStory(data, profile, user);
   }
 
   @Get(':storyId')

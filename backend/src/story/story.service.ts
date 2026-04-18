@@ -4,7 +4,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { StoryMediaType, CreateStoryMediaEvent } from './dto/file.type.dto';
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { Media } from 'src/generated/prisma/enums';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -19,6 +18,7 @@ import {
   StoryCreateDto,
   VideoMedia,
 } from './dto/story.create.dto';
+import { authUserDto } from 'src/auth/tokens/token.dto';
 
 @Injectable()
 export class StoryService {
@@ -29,7 +29,11 @@ export class StoryService {
     private cacheService: AppCacheService,
   ) {}
 
-  async createStory(slides: ParsedSlideDto[], profile: profileDto) {
+  async createStory(
+    slides: ParsedSlideDto[],
+    profile: profileDto,
+    user: authUserDto,
+  ) {
     const existingStory = await this.prisma.story.findFirst({
       where: { profileId: profile.id },
       select: {
@@ -71,6 +75,8 @@ export class StoryService {
       'processing',
       1_000 * 60 * 60 * 24,
     );
+    const profileKey = `user:${user.userId}:profile:${profile.id}`;
+    await this.cacheService.delByPattern(profileKey);
     return {
       status: 'processing',
     };
@@ -173,79 +179,111 @@ export class StoryService {
     const profileId = profile.id;
     return this.OthersStory(profileId, storyMedia, key);
   }
-  async createImageMedia(data: ImageMedia) {}
-  async createVideoMedia(data: VideoMedia) {}
-  async createImageAudioMedia(data: ImageAudioMedia) {}
-
-  async createStoryMedia(request: CreateStoryMediaEvent) {
-    const { sortedStoryMedia, profileName, storyId } = request;
-    const uploadPromise = sortedStoryMedia.map(async (item) => {
-      let order = 1;
-      if (item.type === StoryMediaType.IMAGE) {
-        const file = item.file as Express.Multer.File;
-        const fileName = `${crypto.randomUUID()}-${order}`;
-        return await this.cloudService.uploadImageStory(
-          file,
-          fileName,
-          profileName,
-        );
-      }
-      if (item.type === StoryMediaType.VIDEO) {
-        const file = item.file as Express.Multer.File;
-        const fileName = `${crypto.randomUUID()}-${order}`;
-        return await this.cloudService.uploadVideoStory(
-          file,
-          fileName,
-          profileName,
-        );
-      }
-      if (item.type === StoryMediaType.COMBINED) {
-        const image = item.image as Express.Multer.File;
-        const imgFileName = crypto.randomUUID();
-        const imgUpload = await this.cloudService.uploadImageStory(
-          image,
-          imgFileName,
-          profileName,
-        );
-
-        const audioFile = item.audio as Express.Multer.File;
-        const imgPublicId = imgUpload.public_id;
-        const fileName = `${crypto.randomUUID()}-${order}`;
-        return await this.cloudService.uploadAudioAndMerge(
-          audioFile,
-          imgPublicId,
-          fileName,
-          profileName,
-        );
-      }
-      order++;
+  async createImageMedia(data: ImageMedia) {
+    const fileName = `${crypto.randomUUID()}-${data.order}`;
+    const uploaded = await this.cloudService.uploadImageStory(
+      data.imageFile,
+      fileName,
+    );
+    await this.prisma.storyMedia.create({
+      data: {
+        mediaType: Media.IMG,
+        mediaUrl: uploaded.secure_url,
+        cloudId: uploaded.public_id,
+        order: data.order,
+        storyId: data.storyId,
+      },
     });
-    const uploads = await Promise.all(uploadPromise);
-    if (!uploads)
-      throw new InternalServerErrorException('No uploaded file returned');
-    if (uploads.length !== sortedStoryMedia.length)
-      throw new InternalServerErrorException('All the files were not returned');
-
-    const createStoryMediaPromise = uploads.map(async (upload) => {
-      if (upload)
-        return await this.prisma.storyMedia.create({
-          data: {
-            cloudId: upload.public_id,
-            mediaUrl: upload.secure_url,
-            mediaType:
-              upload.resource_type === 'image' ? Media.IMG : Media.VIDEO,
-            storyId,
-          },
-          select: {
-            id: true,
-            mediaUrl: true,
-            mediaType: true,
-          },
-        });
-    });
-
-    return await Promise.all(createStoryMediaPromise);
   }
+  async createVideoMedia(data: VideoMedia) {
+    const fileName = `${crypto.randomUUID()}-${data.order}`;
+    const uploaded = await this.cloudService.uploadVideoStory(
+      data.videoFile,
+      fileName,
+    );
+    await this.prisma.storyMedia.create({
+      data: {
+        mediaType: Media.VIDEO,
+        mediaUrl: uploaded.secure_url,
+        cloudId: uploaded.public_id,
+        order: data.order,
+        storyId: data.storyId,
+      },
+    });
+  }
+  async createImageAudioMedia(data: ImageAudioMedia) {
+    const imgFileName = crypto.randomUUID();
+    const uploadedImg = await this.cloudService.uploadImageStory(
+      data.imageFile,
+      imgFileName,
+    );
+    const fileName = `${crypto.randomUUID()}-${data.order}`;
+    return await this.cloudService.uploadAudioAndMerge(
+      data.audioFile,
+      uploadedImg.public_id,
+      fileName,
+    );
+  }
+
+  // async createStoryMedia(request: CreateStoryMediaEvent) {
+  //   const { sortedStoryMedia, profileName, storyId } = request;
+  //   const uploadPromise = sortedStoryMedia.map(async (item) => {
+  //     let order = 1;
+  //     if (item.type === StoryMediaType.IMAGE) {
+  //       const file = item.file as Express.Multer.File;
+  //       const fileName = `${crypto.randomUUID()}-${order}`;
+  //       return await this.cloudService.uploadImageStory(file, fileName);
+  //     }
+  //     if (item.type === StoryMediaType.VIDEO) {
+  //       const file = item.file as Express.Multer.File;
+  //       const fileName = `${crypto.randomUUID()}-${order}`;
+  //       return await this.cloudService.uploadVideoStory(file, fileName);
+  //     }
+  //     if (item.type === StoryMediaType.COMBINED) {
+  //       const image = item.image as Express.Multer.File;
+  //       const imgFileName = crypto.randomUUID();
+  //       const imgUpload = await this.cloudService.uploadImageStory(
+  //         image,
+  //         imgFileName,
+  //       );
+
+  //       const audioFile = item.audio as Express.Multer.File;
+  //       const imgPublicId = imgUpload.public_id;
+  //       const fileName = `${crypto.randomUUID()}-${order}`;
+  //       return await this.cloudService.uploadAudioAndMerge(
+  //         audioFile,
+  //         imgPublicId,
+  //         fileName,
+  //       );
+  //     }
+  //     order++;
+  //   });
+  //   const uploads = await Promise.all(uploadPromise);
+  //   if (!uploads)
+  //     throw new InternalServerErrorException('No uploaded file returned');
+  //   if (uploads.length !== sortedStoryMedia.length)
+  //     throw new InternalServerErrorException('All the files were not returned');
+
+  //   const createStoryMediaPromise = uploads.map(async (upload) => {
+  //     if (upload)
+  //       return await this.prisma.storyMedia.create({
+  //         data: {
+  //           cloudId: upload.public_id,
+  //           mediaUrl: upload.secure_url,
+  //           mediaType:
+  //             upload.resource_type === 'image' ? Media.IMG : Media.VIDEO,
+  //           storyId,
+  //         },
+  //         select: {
+  //           id: true,
+  //           mediaUrl: true,
+  //           mediaType: true,
+  //         },
+  //       });
+  //   });
+
+  //   return await Promise.all(createStoryMediaPromise);
+  // }
 
   async deleteStory(storyId: string): Promise<string> {
     const storyMedias = await this.prisma.storyMedia.findMany({

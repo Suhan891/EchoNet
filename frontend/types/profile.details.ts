@@ -1,33 +1,23 @@
-import { Stories } from "./story.detils";
-
 export interface OwnProfileResponse {
   id: string;
   name: string;
   bio?: string;
   avatarUrl: string;
+  story?: {
+    id: true;
+  };
   _count: {
     followers: number;
     followings: number;
-    story: number;
     sentNotifications: number;
   };
 }
 
 interface Follower {
   id: string;
-  // follower: {
-  //   id: string;
-  //   name: string;
-  //   avatarUrl: string;
-  // };
 }
 interface Following {
   id: string;
-  // followings: {
-  //   id: string;
-  //   name: string;
-  //   avatarUrl: string;
-  // };
 }
 export type Follow = Follower | Following;
 export interface Notifications {

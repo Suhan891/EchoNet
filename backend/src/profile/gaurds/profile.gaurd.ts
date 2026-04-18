@@ -23,7 +23,7 @@ export class ProfileGaurd implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<Request>();
 
-    // Auth Gaurd was not immplemented
+    console.log('Profile Gaurd starting: ', req.user);
     if (!req.user) return true;
 
     const activatingMe = this.reflector.getAllAndOverride<boolean>(

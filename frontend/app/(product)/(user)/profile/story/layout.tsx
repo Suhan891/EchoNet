@@ -1,10 +1,9 @@
 "use client";
-import DialogModal from "@/components/Modal";
 import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
 import { useAvailStory } from "@/hooks/useStory";
 import { useStoryStore } from "@/stores/StoryStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useProfileStore } from "@/stores/ProfileStore";
 import {
@@ -22,6 +21,7 @@ import CreateStory from "@/pages/Story/CreateStory";
 export default function StoryLayoutOverlay({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const [open, setOpen] = useState(false)
   const story = useProfileStore((state) => state.story);
   const setStory = useProfileStore((state) => state.setStory);
   const profileId = useProfileStore((state) => state.id);
@@ -61,9 +61,10 @@ export default function StoryLayoutOverlay({
             <EmptyDescription>Upload your story to access</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button variant={"link"}>Create Story</Button>
+            <Button variant={"link"} onClick={() => setOpen(true)}>Create Story</Button>
           </EmptyContent>
         </Empty>
+        {open && <CreateStory open={open} setOpen={setOpen} />}
       </div>
     );
   }

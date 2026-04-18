@@ -170,17 +170,20 @@ export class ProfileService {
         name: true,
         bio: true,
         avatarUrl: true,
+        story: {
+          where: {
+            expiresAt: {
+              lt: new Date(Date.now()),
+            },
+          },
+          select: {
+            id: true,
+          },
+        },
         _count: {
           select: {
             followers: true,
             followings: true,
-            story: {
-              where: {
-                expiresAt: {
-                  lt: new Date(Date.now()),
-                },
-              },
-            },
             sentNotifications: true,
           },
         },

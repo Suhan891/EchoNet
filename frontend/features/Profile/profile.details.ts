@@ -11,31 +11,70 @@ function removeAuthToken() {
   Cookies.remove("profile");
 }
 
-export default function ProfileDetails({ userId }: { userId: string }) {
+export function useProfileDetails(userId: string| undefined) {
   const router = useRouter();
-  const { data: profile, isSuccess, isError, error } = useMyProfile(userId);
+
+  const setAvatar = useProfileStore((s) => s.setAvatar);
+  const setId = useProfileStore((s) => s.setId);
+  const setFollowers = useProfileStore((s) => s.setFollowers);
+  const setFollowings = useProfileStore((s) => s.setFollowinngs);
+  const setName = useProfileStore((s) => s.setName);
+  const setBio = useProfileStore((s) => s.setBio);
+  const setStory = useProfileStore((s) => s.setStory);
+
+  const storeAvatar = useProfileStore((s) => s.avatarUrl);
+  const storeId = useProfileStore((s) => s.id);
+  const storeFollowers = useProfileStore((s) => s.followers);
+  const storeFollowings = useProfileStore((s) => s.followings);
+  const storeName = useProfileStore((s) => s.name);
+  const storeBio = useProfileStore((s) => s.bio);
+  const storeStory = useProfileStore((s) => s.story);
+
+  const { data: profile, isSuccess, isError, error } = useMyProfile(userId!);
 
   useEffect(() => {
+    if (!userId) return;
+
     if (isError) {
-      console.log("Profile", profile);
       console.error(error);
-      toast.error(error.message || " Profile details fetch failed");
+      toast.error(error?.message ?? "Profile details fetch failed");
       removeAuthToken();
       router.push("/login");
+      return;
     }
+
     if (isSuccess) {
-      const state = useProfileStore.getState();
-      if (state.avatarUrl !== profile.data.avatarUrl)
-        state.setAvatar(profile.data.avatarUrl);
-      if (state.id !== profile.data.id) state.setId(profile.data.id);
-      if (state.followers !== profile.data._count.followers)
-        state.setFollowers(profile.data._count.followers);
-      if (state.followings !== profile.data._count.followings)
-        state.setFollowinngs(profile.data._count.followings);
-      if (state.name !== profile.data.name) state.setName(profile.data.name);
-      if (state.bio !== profile.data.bio) state.setBio(profile.data.bio);
-      if (state.story !== !!profile.data._count.story)
-        state.setStory(!!profile.data._count.story);
+      if (storeAvatar !== profile.data.avatarUrl)
+        setAvatar(profile.data.avatarUrl);
+      if (storeId !== profile.data.id) setId(profile.data.id);
+      if (storeFollowers !== profile.data._count.followers)
+        setFollowers(profile.data._count.followers);
+      if (storeFollowings !== profile.data._count.followings)
+        setFollowings(profile.data._count.followings);
+      if (storeName !== profile.data.name) setName(profile.data.name);
+      if (storeBio !== profile.data.bio) setBio(profile.data.bio);
+      if (storeStory !== !!profile.data.story) setStory(!!profile.data.story);
     }
-  }, [isSuccess, isError, error, profile, router]);
+  }, [
+    userId,
+    isSuccess,
+    isError,
+    error,
+    profile,
+    router,
+    storeAvatar,
+    storeId,
+    storeFollowers,
+    storeFollowings,
+    storeName,
+    storeBio,
+    storeStory,
+    setAvatar,
+    setId,
+    setFollowers,
+    setFollowings,
+    setName,
+    setBio,
+    setStory,
+  ]);
 }

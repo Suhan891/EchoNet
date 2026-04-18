@@ -41,10 +41,10 @@ export class StoryProcessor extends WorkerHost {
     return storyId;
   }
 
-  // @OnWorkerEvent('active')
-  // onAdded(job: Job) {
-  //   this.logger.log(`Job started: ${job.id}`);
-  // }
+  @OnWorkerEvent('active')
+  onAdded(job: Job) {
+    this.logger.log(`Job started: ${job.id}`);
+  }
 
   @OnWorkerEvent('completed')
   async onCompleted(job: Job) {

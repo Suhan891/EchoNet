@@ -1,6 +1,5 @@
 "use client";
 import AppSidebar from "@/components/AppSidebar";
-import { Badge } from "@/components/ui/badge";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
 import { useUserDetails } from "@/features/Auth/user.details";
@@ -11,9 +10,9 @@ export default function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const isUserDetailsLoaded = useUserDetails();
+  const isUserDetailsLoaded = useUserDetails();
 
-  // if(!isUserDetailsLoaded) return <Spinner />
+  if(!isUserDetailsLoaded) return <Spinner className="size-3" />
   return (
     <SidebarProvider>
       <AppSidebar />
