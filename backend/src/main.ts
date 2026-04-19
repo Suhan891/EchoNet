@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './common/interceptors/response';
 import { GlobaExceptionFilter } from './common/filters/http-exception.filter';
-import { JwtAuthGaurd } from './common/gaurds/jwt-auth';
 import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
@@ -12,7 +11,6 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
 
   app.useGlobalInterceptors(new ResponseInterceptor(reflector));
-  app.useGlobalGuards(new JwtAuthGaurd(reflector));
   app.useGlobalFilters(new GlobaExceptionFilter());
 
   app.useGlobalPipes(

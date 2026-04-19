@@ -23,6 +23,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { CommonModule } from './common/common.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { RoleGaurd } from './common/gaurds/roles.gaurd';
+import { JwtAuthGaurd } from './common/gaurds/jwt-auth';
 
 @Module({
   imports: [
@@ -76,6 +77,10 @@ import { RoleGaurd } from './common/gaurds/roles.gaurd';
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGaurd,
+    },
     {
       provide: APP_GUARD,
       useClass: RoleGaurd,

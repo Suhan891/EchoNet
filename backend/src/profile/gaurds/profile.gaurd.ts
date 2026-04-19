@@ -23,7 +23,6 @@ export class ProfileGaurd implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<Request>();
 
-    console.log('Profile Gaurd starting: ', req.user);
     if (!req.user) return true;
 
     const activatingMe = this.reflector.getAllAndOverride<boolean>(
@@ -35,6 +34,12 @@ export class ProfileGaurd implements CanActivate {
     const user = req.user as authUserDto;
 
     const userId = user.userId;
+
+    const notActive = this.reflector.getAllAndOverride<boolean>(NOT_ACTIVE, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (notActive) return true;
 
     const noProfile = this.reflector.getAllAndOverride<boolean>(NO_PROFILE, [
       context.getHandler(),
@@ -60,15 +65,11 @@ export class ProfileGaurd implements CanActivate {
     });
     if (!profile) throw new ForbiddenException('Invalid profile');
 
-    const notActive = this.reflector.getAllAndOverride<boolean>(NOT_ACTIVE, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-
     if (profile.isActive !== true && !notActive)
       throw new BadRequestException('Your profile is not yet active');
 
-    if (!user.profile?.includes({ id: profile.id }))
+    const belong = user.profile?.some((p) => p.id === profile.id);
+    if (!belong)
       throw new BadRequestException(
         'This is not your profile that you can accesss',
       );

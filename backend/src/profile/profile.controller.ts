@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ProfileService } from './profile.service';
@@ -26,8 +27,10 @@ import { currentProfile } from './decorator/get-profile';
 import { NoAccount } from 'src/auth/decorators/no-account';
 import { ValidateProfileExists } from './pipes/existing.profile';
 import { Throttle } from '@nestjs/throttler';
+import { ProfileGaurd } from './gaurds/profile.gaurd';
 
 @Controller('profile')
+@UseGuards(ProfileGaurd)
 export class ProfileController {
   constructor(private profileService: ProfileService) {}
 

@@ -25,7 +25,7 @@ axiosInstance.interceptors.request.use(
     if (!accessToken) throw new Error("No token available");
 
     if(profileCookie)
-      request.headers['profile_id'] = profileCookie;
+      request.headers['x-profile-id'] = profileCookie;
     
     request.headers["Authorization"] = `Bearer ${accessToken}`;
 

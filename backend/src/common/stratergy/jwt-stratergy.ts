@@ -8,8 +8,6 @@ import {
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { accessDto, authUserDto } from 'src/auth/tokens/token.dto';
-// import { AuthDTO, JwtPayload } from '../dto/authorization';
-
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -23,9 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: accessDto): Promise<authUserDto> {
-    console.log('Payload: ', payload);
     const userId = payload.sub;
-    //const user = await this.authService.userExists(userId);
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -45,8 +41,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     if (payload.role !== user.role)
       throw new NotAcceptableException('Role not matching');
-
-    console.log('User: ', user);
 
     if (user.isEmailVerified !== true)
       throw new BadGatewayException('Verify your email firstly');

@@ -9,7 +9,7 @@ import { ApiResponse } from '../interfaces/response';
 import { Reflector } from '@nestjs/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { RESPONSE_MESSAGE } from '../decorators/response-message';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<
@@ -37,7 +37,6 @@ export class ResponseInterceptor<T> implements NestInterceptor<
         const responseTime = Date.now() - startTime;
 
         this.logger.log(`${method} ${url} ${responseTime} ms`);
-        this.logger.log('Data', data);
         return {
           success: true,
           message: customMessage,
