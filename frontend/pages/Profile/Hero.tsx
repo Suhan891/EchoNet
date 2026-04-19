@@ -6,7 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 import FollowerTab from "./Followers";
 import FollowingTab from "./Following";
 import { cn } from "@/lib/utils";
-import { UpdateProfileDialog } from "./UpdateProfile";
+import UpdateProfile from "./UpdateProfile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -25,7 +25,7 @@ import CreateStory from "../Story/CreateStory";
 export default function ProfileHero() {
   const [followerOpen, setFollowerOpen] = useState(false);
   const [followingOpen, setFollowingOpen] = useState(false);
-  const [upDialogOpen, setUpDialogOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const [createStoryOpen, setCreateStoryOpen] = useState(false);
   const { name, bio, avatarUrl, followers, followings, story } =
     useProfileStore(
@@ -55,7 +55,7 @@ export default function ProfileHero() {
             >
               <Avatar className="w-24 h-24 md:w-32 md:h-32">
                 <AvatarImage
-                width={'auto'}
+                  width={"auto"}
                   src={
                     avatarUrl ??
                     "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80"
@@ -84,7 +84,9 @@ export default function ProfileHero() {
                 <DropdownMenuSubContent>
                   {story ? (
                     <>
-                      <DropdownMenuItem><Link href={'/profile/story'}>View</Link></DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link href={"/profile/story"}>View</Link>
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>Update</DropdownMenuItem>
                       <DropdownMenuItem variant={"destructive"}>
@@ -92,17 +94,21 @@ export default function ProfileHero() {
                       </DropdownMenuItem>
                     </>
                   ) : (
-                    <DropdownMenuItem onClick={() => setCreateStoryOpen(true)}>Add</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setCreateStoryOpen(true)}>
+                      Add
+                    </DropdownMenuItem>
                   )}
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
           </DropdownMenuContent>
         </DropdownMenu>
-        {createStoryOpen && <CreateStory open={createStoryOpen} setOpen={setCreateStoryOpen} />}
-        {/* Info and Actions Section */}
+        {createStoryOpen && (
+          <CreateStory open={createStoryOpen} setOpen={setCreateStoryOpen} />
+        )}
+
         <div className="flex flex-col items-center md:items-start gap-4 flex-1">
-          {/* Name and Bio */}
+
           <div className="flex flex-col items-center md:items-start space-y-2">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
               {name || "name"}
@@ -112,28 +118,24 @@ export default function ProfileHero() {
             </p>
           </div>
 
-          {upDialogOpen && (
-            <UpdateProfileDialog
-              open={upDialogOpen}
-              setOpen={setUpDialogOpen}
-            />
-          )}
-
-          {/* Action Buttons */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-2">
-            <Button variant="secondary" onClick={() => setUpDialogOpen(true)}>
-              Edit Profile
-            </Button>
+            <UpdateProfile open={editOpen} setOpen={setEditOpen}>
+              <Button
+                variant="secondary"
+                type={"button"}
+                onClick={() => setEditOpen(true)}
+              >
+                Edit Profile
+              </Button>
+            </UpdateProfile>
 
             <div className="flex items-center gap-2">
               <Button
-                variant="ghost"
+                variant={followers ? "outline" : "ghost"}
                 disabled={!followers}
                 onClick={() => setFollowerOpen(true)}
               >
-                <span className="font-semibold mr-1">
-                  {followers}
-                </span>{" "}
+                <span className="font-semibold mr-1">{followers}</span>{" "}
                 Followers
               </Button>
               {followerOpen && (
@@ -143,13 +145,11 @@ export default function ProfileHero() {
                 />
               )}
               <Button
-                variant="ghost"
+                variant={followings ? "outline" : "ghost"}
                 disabled={!followings}
                 onClick={() => setFollowingOpen(true)}
               >
-                <span className="font-semibold mr-1">
-                  {followings}
-                </span>{" "}
+                <span className="font-semibold mr-1">{followings}</span>{" "}
                 Following
               </Button>
               {followingOpen && (

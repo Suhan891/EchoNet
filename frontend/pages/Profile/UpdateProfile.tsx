@@ -1,28 +1,47 @@
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldSeparator,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
 import { useProfileStore } from "@/stores/ProfileStore";
 import {
   UpdateProfileSchema,
   UpdateProfileType,
 } from "@/validations/profile/update.profile";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { X } from "lucide-react";
 import { useForm, useWatch, SubmitHandler } from "react-hook-form";
 
-export function UpdateProfileDialog({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
+export default function UpdateProfile({
+  open,
+  setOpen,
+  children,
+}: {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  children: React.ReactNode;
+}) {
   const name = useProfileStore((state) => state.name);
   const bio = useProfileStore((state) => state.bio);
-  const { register, handleSubmit, control } = useForm<UpdateProfileType>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<UpdateProfileType>({
     resolver: zodResolver(UpdateProfileSchema),
   });
   const newName = useWatch({
@@ -35,39 +54,58 @@ export function UpdateProfileDialog({ open, setOpen }: { open: boolean, setOpen:
     name: "bio",
     defaultValue: bio,
   });
-  const isDisabled = newName === name || newBio === bio;
+  const isDisabled = !newName || newName === name && newBio === bio;
   const onSubmit: SubmitHandler<UpdateProfileType> = (data) => {};
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
-            </DialogDescription>
-          </DialogHeader>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverContent align={"center"}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <PopoverHeader>
+            <PopoverTitle className="w-full flex px-1 justify-between">
+              <h1 className="text-xl font-bold pl-1 py-2.5"> Update Profile</h1>
+              <Button
+                variant={"outline"}
+                type={"button"}
+                onClick={() => setOpen(false)}
+              >
+                <X />
+              </Button>
+            </PopoverTitle>
+          </PopoverHeader>
           <FieldGroup>
             <Field>
               <Label htmlFor="name-1">Name</Label>
-              <Input id="name-1" {...register("name")} />
+              <Input id="name-1" {...register("name")} autoComplete="name" />
+              {errors.name ? (
+                <FieldError errors={[errors.name]} />
+              ) : (
+                <FieldDescription>Name should be unique</FieldDescription>
+              )}
             </Field>
             <Field>
               <Label htmlFor="bio">Bio</Label>
-              <Input id="bio" {...register("bio")} />
+              <Textarea
+                rows={2}
+                id="bio"
+                {...register("bio")}
+                autoComplete="bio"
+              />
+              {errors.bio ? (
+                <FieldError errors={[errors.bio]} />
+              ) : (
+                <FieldDescription>Bio is an optional field</FieldDescription>
+              )}
+            </Field>
+            <FieldSeparator />
+            <Field>
+              <Button variant={"secondary"} disabled={isDisabled}>
+                Update
+              </Button>
             </Field>
           </FieldGroup>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            </DialogClose>
-            <Button disabled={isDisabled} type="submit">
-              Save changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </form>
-    </Dialog>
+        </form>
+      </PopoverContent>
+    </Popover>
   );
 }
