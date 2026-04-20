@@ -28,7 +28,7 @@ export class StoryController {
 
   @Post('create')
   @ResponseMessage('Story Upload startted')
-  @Throttle({ default: { ttl: 24 * 60 * 60 * 1000, limit: 1 } })
+  //@Throttle({ default: { ttl: 24 * 60 * 60 * 1000, limit: 1 } })
   @UseInterceptors(AnyFilesInterceptor())
   async create(
     @UploadedFiles() files: Express.Multer.File[],
@@ -36,6 +36,7 @@ export class StoryController {
     @CurrentUser() user: authUserDto,
     @currentProfile() profile: profileDto,
   ) {
+    console.log('Files', files, body);
     const data = new ParsedStoryPipe().transform(files, body);
     return await this.storyService.createStory(data, profile, user);
   }

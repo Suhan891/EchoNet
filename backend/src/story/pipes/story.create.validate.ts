@@ -48,7 +48,7 @@ export class ParsedStoryPipe {
   private parseFile(files: Express.Multer.File[]): SlideMap {
     const result: SlideMap = {};
 
-    files.map((file) => {
+    files.forEach((file) => {
       const match = file.fieldname.match(/slides\[(\d+)\]\[(.+)\]/);
       if (!match) return;
 
@@ -91,13 +91,15 @@ export class ParsedStoryPipe {
       }
       if (slide.type === 'video') {
         if (!slide.videoFile)
-          throw new BadRequestException(`Image of order ${i + 1} is needed`);
+          throw new BadRequestException(`Video of order ${i + 1} is needed`);
         this.validateFile('video', slide.videoFile, i);
       }
 
       if (slide.type === 'imgAudio') {
         if (!slide.imageFile || !slide.audioFile)
-          throw new BadRequestException(`Image of order ${i + 1} is needed`);
+          throw new BadRequestException(
+            `Image and audio of order ${i + 1} is needed`,
+          );
         this.validateFile('image', slide.imageFile, i);
         this.validateFile('audio', slide.audioFile, i);
       }
