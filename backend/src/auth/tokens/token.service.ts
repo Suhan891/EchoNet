@@ -20,21 +20,21 @@ export class JwtCreate {
 
   accessToken(payload: any) {
     return this.jwtService.sign(payload, {
-      secret: process.env.JWT_ACCESS_SECRET || 'super_secret_auth',
+      secret: process.env.JWT_ACCESS_SECRET || 'access',
       expiresIn: '30m',
     });
   }
 
   refreshToken(payload: any) {
     return this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET || 'super_secret_auth',
+      secret: process.env.JWT_REFRESH_SECRET || 'refresh',
       expiresIn: '1d',
     });
   }
 
   forgotPassToken(payload: any) {
     return this.jwtService.sign(payload, {
-      secret: process.env.JWT_PASSWORD_SECRET || 'refresh',
+      secret: process.env.JWT_PASSWORD_SECRET || 'forgot_pass',
       expiresIn: '1d',
     });
   }

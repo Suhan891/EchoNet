@@ -143,7 +143,7 @@ export class AuthService {
         },
       },
     });
-    await this.cacheService.set<typeof authUser>(key, authUser, 1000 * 60 * 10); // Save with userId for 10 min
+    await this.cacheService.set<typeof authUser>(key, authUser, 1000 * 60 * 10);
     return authUser;
   }
 

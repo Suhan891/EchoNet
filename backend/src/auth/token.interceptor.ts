@@ -43,7 +43,9 @@ export class TokenCreation implements NestInterceptor {
         response.cookie('refreshToken', refreshToken, {
           httpOnly: true,
           secure: true,
-          sameSite: 'lax',
+          sameSite: 'none',
+          path: '/',
+          domain: 'localhost',
           maxAge: 1000 * 60 * 60 * 24 * 7,
         });
 

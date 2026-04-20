@@ -1,11 +1,11 @@
 import {
-  BadGatewayException,
+  BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtVerify } from '../tokens/token.service';
 
@@ -18,8 +18,6 @@ export class RefreshGaurd implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<Request>();
-    const res = context.switchToHttp().getResponse<Response>();
-
     const refreshToken = req.cookies['refreshToken'] as string;
 
     if (!refreshToken)
@@ -39,18 +37,16 @@ export class RefreshGaurd implements CanActivate {
     if (!user) throw new UnauthorizedException('No Such User Exists');
 
     if (user.isActive !== true)
-      throw new BadGatewayException(
+      throw new BadRequestException(
         'You have been logged out. Please login again',
       );
 
     if (user.tokenVersion !== payload.tokenVersion)
-      throw new BadGatewayException(
+      throw new BadRequestException(
         'Token version has been rotated. Please login again',
       );
 
     req.user = user;
-
-    res.clearCookie(refreshToken);
 
     return true;
   }

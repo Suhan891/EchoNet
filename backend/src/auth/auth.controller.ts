@@ -83,8 +83,9 @@ export class AuthController {
     return this.authService.myself(user);
   }
 
-  @Post('refresh-token')
+  @Post('refresh')
   @UseGuards(RefreshGaurd)
+  @UseInterceptors(TokenCreation)
   @ResponseMessage('New access and refresh token created')
   async refreshHandler(@CurrentUser() user: RefreshAccessDto) {
     return this.authService.refreshHandler(user);
