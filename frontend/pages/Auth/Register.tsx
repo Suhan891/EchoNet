@@ -150,6 +150,7 @@ export default function Register() {
                     {...register("password")}
                     aria-invalid={!!errors.password}
                     id="password"
+                    type={view ? 'password':'text'}
                     placeholder="******"
                   />
                   <InputGroupAddon>

@@ -118,6 +118,7 @@ export default function Login() {
                     {...register("password")}
                     aria-invalid={!!errors.password}
                     id="password"
+                    type={view ? 'password':'text'}
                     placeholder="******"
                   />
                   <InputGroupAddon>

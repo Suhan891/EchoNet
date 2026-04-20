@@ -20,7 +20,7 @@ export async function Request(path: string, requests: RequestDto) {
     const {data} = await axiosInstance({
         method: requests.method,
         url: path,
-        data: requests.body ? JSON.stringify(requests.body) : undefined,
+        data: requests.body instanceof FormData ? requests.body : requests.body ? JSON.stringify(requests.body) : undefined,
     })
     console.log(data)
 

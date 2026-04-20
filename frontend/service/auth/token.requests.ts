@@ -19,16 +19,18 @@ async function requests(path: string,  request: RequestDto) {
     const response = await fetch(url, {
         method: request.method,
         headers,
-        body: JSON.stringify(request.body)
+        body: JSON.stringify(request.body),
+        credentials: 'include',
     })
     const result = await response.json()
 
-    if(!result.success) {
-        throw new Error(result)
+    if (!result.success) {
+        throw result;
     }
+
     console.log('Result: ', result);
     await setToken(result.data.accessToken);
-    return result
+    return result;
 }
 
 async function postJson(path: string, payload: unknown) {
