@@ -252,6 +252,8 @@ export default function CreateStory({
                                             <Image
                                               src={imageUrl}
                                               alt="Preview"
+                                              width={25}
+                                              height={15}
                                               className="object-cover w-full rounded-md h-36 bg-muted"
                                             />
                                           </div>
