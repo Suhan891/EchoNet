@@ -16,47 +16,53 @@ export class StoryListener {
 
   @OnEvent('story.create')
   async handleCreateStory(events: StoryCreateDto[]) {
-    const jobs: JobStoryCreateDto[] = events.map((event) => {
-      if (event.type === 'image')
-        return {
-          caption: event.caption,
-          storyId: event.storyId,
-          type: event.type,
-          imageFile: {
-            originalname: event.imageFile.originalname,
-            mimetype: event.imageFile.mimetype,
-            buffer: event.imageFile.buffer.toString('base64'),
-          },
-        };
-      if (event.type === 'video')
-        return {
-          caption: event.caption,
-          storyId: event.storyId,
-          type: event.type,
-          videoFile: {
-            originalname: event.videoFile.originalname,
-            mimetype: event.videoFile.mimetype,
-            buffer: event.videoFile.buffer.toString('base64'),
-          },
-        };
-      if (event.type === 'imageAudio') {
-        return {
-          caption: event.caption,
-          storyId: event.storyId,
-          type: event.type,
-          imageFile: {
-            originalname: event.imageFile.originalname,
-            mimetype: event.imageFile.mimetype,
-            buffer: event.imageFile.buffer.toString('base64'),
-          },
-          audioFile: {
-            originalname: event.audioFile.originalname,
-            mimetype: event.audioFile.mimetype,
-            buffer: event.audioFile.buffer.toString('base64'),
-          },
-        };
-      }
-    });
+    const jobs: JobStoryCreateDto[] = events
+      .map((event): JobStoryCreateDto | undefined => {
+        if (event.type === 'image')
+          return {
+            caption: event.caption,
+            storyId: event.storyId,
+            type: event.type,
+            order: event.order,
+            imageFile: {
+              originalname: event.imageFile.originalname,
+              mimetype: event.imageFile.mimetype,
+              buffer: event.imageFile.buffer.toString('base64'),
+            },
+          };
+        if (event.type === 'video')
+          return {
+            caption: event.caption,
+            storyId: event.storyId,
+            type: event.type,
+            order: event.order,
+            videoFile: {
+              originalname: event.videoFile.originalname,
+              mimetype: event.videoFile.mimetype,
+              buffer: event.videoFile.buffer.toString('base64'),
+            },
+          };
+        if (event.type === 'imageAudio') {
+          return {
+            caption: event.caption,
+            storyId: event.storyId,
+            type: event.type,
+            order: event.order,
+            imageFile: {
+              originalname: event.imageFile.originalname,
+              mimetype: event.imageFile.mimetype,
+              buffer: event.imageFile.buffer.toString('base64'),
+            },
+            audioFile: {
+              originalname: event.audioFile.originalname,
+              mimetype: event.audioFile.mimetype,
+              buffer: event.audioFile.buffer.toString('base64'),
+            },
+          };
+        }
+        return undefined;
+      })
+      .filter((job): job is JobStoryCreateDto => job !== undefined);
 
     await this.flowProducer.add({
       name: 'batch-complete',
