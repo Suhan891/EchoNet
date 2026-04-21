@@ -1,5 +1,5 @@
 import type { Method } from "@/types/common";
-import { Request } from "./common";
+import { Request } from "./common/requests";
 
 async function requests(path: string, { method, body }:{method: Method, body: unknown}) {
     return Request(`/story/${path}`, { method, body });

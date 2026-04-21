@@ -6,7 +6,7 @@ import { LoginType } from "@/validations/auth/login";
 import { RegisterType } from "@/validations/auth/register";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { LoginResult, RefreshResult, RegisterResult, VerifyRequestType, VerifyResult } from "@/types/auth.user";
-import { GetUser } from "@/service/common";
+import { GetUser } from "@/service/auth/authorise";
 
 export function useRegister() {
   return useMutation<SuccessResponse<RegisterResult>, ErrorResponse, RegisterType>({

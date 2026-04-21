@@ -1,19 +1,11 @@
-import Cookie from "js-cookie";
-import { getUrl } from "../common";
+import { cookies } from "next/headers";
 import { LoginType } from "@/validations/auth/login";
 import { RequestDto } from "@/types/common";
-
-async function setToken(token: string) {
-    Cookie.set('accessToken', token, {
-        expires:7,
-        secure: false,
-    })
-    console.log("Token ",token);
-    console.log("Cookie",Cookie.get('accessToken'))
-}
+import { getUrl } from "../common/requests";
+import { setAuthToken } from "../common/cookies";
 
 async function requests(path: string,  request: RequestDto) {
-    const url = getUrl(path)
+    const url = `${getUrl()}/auth${path}`
     const headers = {"Content-Type": "application/json"}
 
     const response = await fetch(url, {
@@ -29,7 +21,7 @@ async function requests(path: string,  request: RequestDto) {
     }
 
     console.log('Result: ', result);
-    await setToken(result.data.accessToken);
+    await setAuthToken(result.data.accessToken);
     return result;
 }
 
@@ -38,9 +30,9 @@ async function postJson(path: string, payload: unknown) {
 }
 
 export async function LoginRequest(payload: LoginType) {
-    return postJson('/auth/login', payload);
+    return postJson('/login', payload);
 }
 
 export async function RefreshTokenRequest(payload: void) {
-    return postJson('/auth/refresh', payload);
+    return postJson('/refresh', payload);
 }

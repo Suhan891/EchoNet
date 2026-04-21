@@ -1,6 +1,7 @@
 import { RegisterType } from "@/validations/auth/register";
 import { RequestDto } from "@/types/common";
 import { VerifyRequestType } from "@/types/auth.user";
+import { getUrl } from "../common/requests";
 
 async function requests(path: string, request: RequestDto) {
   let headers = {};
@@ -9,7 +10,7 @@ async function requests(path: string, request: RequestDto) {
     headers = {
       "Content-Type": "application/json",
     };
-  const response = await fetch(`http://localhost:3001/auth/${path}`, {
+  const response = await fetch(`${getUrl}/auth/${path}`, {
     method: request.method,
     headers,
     body: isFormData ? request.body as FormData : JSON.stringify(request.body),

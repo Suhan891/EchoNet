@@ -4,16 +4,8 @@ import axiosInstance from "./starter";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
-export const getUrl = (path: string) => {
-    return `${API_BASE}${path}`;
-}
-
-export const requestUrl = () => {
-    return `${API_BASE}`
-}
-
-export async function getToken() {
-    return Cookie.get('authToken')
+export const getUrl = () => {
+    return `${API_BASE}`;
 }
 
 export async function Request(path: string, requests: RequestDto) {
@@ -28,12 +20,4 @@ export async function Request(path: string, requests: RequestDto) {
         throw new Error(data)
 
     return data
-}
-
-async function getJson(path: string) {
-  return Request(path, {method: 'GET', body: null});
-}
-
-export async function GetUser() {
-  return getJson("/auth/me");
 }

@@ -69,5 +69,5 @@ export function useUserDetails() {
     setProfile,
   ]);
 
-  return { isSuccess, userId: user?.data?.id }; // ✅ expose userId for ProfileDetails in JSX
+  return isSuccess;
 }

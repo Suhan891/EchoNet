@@ -1,5 +1,6 @@
 import { UpdateProfileType } from "@/validations/profile/update.profile";
-import { Request } from "./common";
+import { Request } from "./common/requests";
+
 
 async function postJson(path: string, payload: unknown) {
   return Request(`/profile/${path}`, { method: "POST", body: payload });
