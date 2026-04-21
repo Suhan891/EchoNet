@@ -13,7 +13,6 @@ export async function Request(path: string, requests: RequestDto) {
         url: path,
         data: requests.body instanceof FormData ? requests.body : requests.body ? JSON.stringify(requests.body) : undefined,
     })
-    console.log(data)
 
     if(!data.success) 
         throw new Error(data)

@@ -1,4 +1,4 @@
-export type SlideType = 'image' | 'video' | 'imgAudio';
+export type SlideType = 'image' | 'video' | 'imageAudio';
 
 export interface ParsedSlideDto {
   type: SlideType;
@@ -11,7 +11,12 @@ export interface ParsedSlideDto {
   order: number;
 }
 
-export type RawMultipartBody = Record<string, string>;
+export type RawMultipartBody = {
+  slides: {
+    type: SlideType;
+    caption?: string;
+  }[];
+};
 
 export interface ImageMedia {
   storyId: string;
@@ -29,7 +34,7 @@ export interface VideoMedia {
 }
 export interface ImageAudioMedia {
   storyId: string;
-  type: 'imgAudio';
+  type: 'imageAudio';
   imageFile: Express.Multer.File;
   audioFile: Express.Multer.File;
   caption?: string;

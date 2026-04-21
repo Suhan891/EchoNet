@@ -1,9 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import {
-  ParsedSlideDto,
-  RawMultipartBody,
-  SlideType,
-} from '../dto/story.create.dto';
+import { ParsedSlideDto, RawMultipartBody } from '../dto/story.create.dto';
 
 type SlideMap = Record<number, Partial<ParsedSlideDto>>;
 
@@ -17,6 +13,7 @@ export class ParsedStoryPipe {
     const parsedFile = this.parseFile(files);
 
     const slide = this.merge(parseBody, parsedFile);
+    console.log('File data after merging: \n', slide);
 
     this.validateSlide(slide);
 
@@ -25,23 +22,15 @@ export class ParsedStoryPipe {
 
   private parseBody(body: RawMultipartBody): SlideMap {
     const result: SlideMap = {};
-    Object.entries(body).forEach(([key, value]) => {
-      const match = key.match(/slides\[(\d+)\]\[(.+)\]/);
-      if (!match) return;
+    if (!body.slides || !Array.isArray(body.slides)) return result;
 
-      const index = Number(match[1]);
-      const field = match[2] as keyof ParsedSlideDto;
-
-      if (!result[index]) result[index] = {};
-
-      if (field === 'type') {
-        result[index].type = value as SlideType;
-      }
-
-      if (field === 'caption') {
-        result[index].caption = value;
-      }
+    body.slides.forEach((slide, index) => {
+      result[index] = {
+        type: slide.type,
+        caption: slide.caption,
+      };
     });
+
     return result;
   }
 
@@ -95,7 +84,7 @@ export class ParsedStoryPipe {
         this.validateFile('video', slide.videoFile, i);
       }
 
-      if (slide.type === 'imgAudio') {
+      if (slide.type === 'imageAudio') {
         if (!slide.imageFile || !slide.audioFile)
           throw new BadRequestException(
             `Image and audio of order ${i + 1} is needed`,

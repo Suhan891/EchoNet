@@ -181,6 +181,7 @@ export class StoryService {
   }
   async createImageMedia(data: ImageMedia) {
     const fileName = `${crypto.randomUUID()}-${data.order}`;
+    console.log('Image FIle', data.imageFile);
     const uploaded = await this.cloudService.uploadImageStory(
       data.imageFile,
       fileName,
@@ -197,6 +198,7 @@ export class StoryService {
   }
   async createVideoMedia(data: VideoMedia) {
     const fileName = `${crypto.randomUUID()}-${data.order}`;
+    console.log('Video FIle', data.videoFile);
     const uploaded = await this.cloudService.uploadVideoStory(
       data.videoFile,
       fileName,

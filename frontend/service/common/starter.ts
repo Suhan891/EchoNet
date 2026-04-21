@@ -21,7 +21,6 @@ axiosInstance.interceptors.request.use(
     const profileCookie = Cookie.get('profile')
 
     const accessToken = Cookie.get('accessToken')
-    console.log('Starter:', accessToken);
 
     if (!accessToken) throw new Error("No token available");
 

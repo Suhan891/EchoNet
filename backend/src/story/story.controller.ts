@@ -28,7 +28,7 @@ export class StoryController {
 
   @Post('create')
   @ResponseMessage('Story Upload startted')
-  //@Throttle({ default: { ttl: 24 * 60 * 60 * 1000, limit: 1 } })
+  @Throttle({ default: { ttl: 24 * 60 * 60 * 1000, limit: 3 } })
   @UseInterceptors(AnyFilesInterceptor())
   async create(
     @UploadedFiles() files: Express.Multer.File[],

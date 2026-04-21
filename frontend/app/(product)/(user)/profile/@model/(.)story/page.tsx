@@ -1,7 +1,7 @@
 "use client";
 import { Spinner } from "@/components/ui/spinner";
 import { useOwnStories } from "@/hooks/useStory";
-import ViewStory from "@/pages/Profile/Story";
+import ViewStory from "@/pages/Story/ViewStory";
 import { useStoryStore } from "@/stores/StoryStore";
 import { useEffect } from "react";
 import { toast } from "sonner";
