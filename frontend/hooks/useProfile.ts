@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { GetOwnprofile, UpdateProfile } from "@/service/profile";
 import { ErrorResponse, SuccessResponse } from "@/types/common";
 import { OwnProfileResponse, UpProfileResult } from "@/types/profile.details";
@@ -9,7 +10,7 @@ export function useMyProfile(userId: string) {
   return useQuery<SuccessResponse<OwnProfileResponse>, ErrorResponse>({
     queryKey: [queryKeys.PROFILE, userId],
     queryFn: () => GetOwnprofile(),
-    enabled: !!userId,
+    enabled: !!userId && !!Cookies.get('profile'),
     staleTime: 1000* 60* 5
   });
 }

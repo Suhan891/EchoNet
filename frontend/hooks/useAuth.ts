@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import { RegisterRequest, VerifyRequest,  } from "@/service/auth/authentication";
 import { LoginRequest, RefreshTokenRequest } from "@/service/auth/token.requests";
 import { UserResponse } from "@/types/user.details";
@@ -35,6 +36,7 @@ export function useMyself() {
   return useQuery<SuccessResponse<UserResponse>, ErrorResponse>({
     queryKey: ["user"],
     queryFn: () => GetUser(),
-    staleTime: 1000* 60* 10
+    staleTime: 1000* 60* 10,
+    enabled: !!Cookies.get('accessToken')
   });
 }
