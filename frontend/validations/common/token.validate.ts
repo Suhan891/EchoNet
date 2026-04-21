@@ -1,6 +1,6 @@
 import z from "zod";
 
-const tokenSchema = z
+export const tokenSchema = z
   .string()
   .min(10, "Token is too Short")
   .regex(

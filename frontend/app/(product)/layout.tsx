@@ -12,7 +12,7 @@ export default function AuthLayout({
 }>) {
   const isUserDetailsLoaded = useUserDetails();
 
-  if(!isUserDetailsLoaded) return <Spinner className="size-3" />
+  if(!isUserDetailsLoaded) return <div className="h-screen w-screen flex justify-center items-center"><Spinner className="size-8" /></div>
   return (
     <SidebarProvider>
       <AppSidebar />

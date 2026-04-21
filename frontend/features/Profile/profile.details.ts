@@ -3,13 +3,8 @@ import { useProfileStore } from "@/stores/ProfileStore";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useMyProfile } from "@/hooks/useProfile";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-
-function removeAuthToken() {
-  Cookies.remove("accessToken");
-  Cookies.remove("profile");
-}
+import { deleteCookie } from "@/service/common/cookies";
 
 export function useProfileDetails(userId: string| undefined) {
   const router = useRouter();
@@ -38,7 +33,7 @@ export function useProfileDetails(userId: string| undefined) {
     if (isError) {
       console.error(error);
       toast.error(error?.message ?? "Profile details fetch failed");
-      removeAuthToken();
+      deleteCookie();
       router.push("/login");
       return;
     }

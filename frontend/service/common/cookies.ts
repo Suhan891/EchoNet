@@ -1,4 +1,6 @@
+"use server"
 import { cookies } from "next/headers";
+import { jwtDecode } from "jwt-decode";
 
 export async function setAuthToken(token: string) {
   const cookieStore = await cookies();
@@ -12,15 +14,20 @@ export async function setAuthToken(token: string) {
   console.log("Token: ", token);
   console.log("Cookie: ", cookieStore.get("accessToken"));
 }
-export async function setProfileToken(token: string) {
+export async function setProfileId(profileId: string) {
   const cookieStore = await cookies();
-  cookieStore.set("accessToken", token, {
-    httpOnly: false,
-    secure: false,
-    //expires: ,
-    sameSite: "lax",
-    path: "/",
-  });
+  const authToken = cookieStore.get("accessToken");
+  if (authToken) {
+    const decoded = jwtDecode(authToken.value);
+    const expiry = new Date(decoded.exp! * 1000); // to set the expiry time similar to token life sppan
+    cookieStore.set("profile", profileId, {
+      httpOnly: false,
+      secure: false,
+      expires: expiry,
+      sameSite: "lax",
+      path: "/",
+    });
+  }
 }
 export async function deleteCookie() {
   const cookieStore = await cookies();

@@ -1,7 +1,7 @@
 import { RefreshTokenRequest } from "@/service/auth/token.requests";
+import { deleteCookie } from "@/service/common/cookies";
 import { RefreshResult } from "@/types/auth.user";
 import { ErrorResponse, SuccessResponse } from "@/types/common";
-import Cookies from "js-cookie";
 import { toast } from "sonner";
 
 export async function RefreshUser() {
@@ -11,8 +11,7 @@ export async function RefreshUser() {
     return response.data.accessToken;
   } catch (error) {
     const err = error as ErrorResponse;
-    Cookies.remove('accessToken');
-    Cookies.remove('profile');
+    deleteCookie()
     console.error(err.error);
     toast.error(err.message)
     window.location.href = '/login';

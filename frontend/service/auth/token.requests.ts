@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { LoginType } from "@/validations/auth/login";
 import { RequestDto } from "@/types/common";
 import { getUrl } from "../common/requests";

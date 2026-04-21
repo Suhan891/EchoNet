@@ -10,7 +10,7 @@ async function requests(path: string, request: RequestDto) {
     headers = {
       "Content-Type": "application/json",
     };
-  const response = await fetch(`${getUrl}/auth/${path}`, {
+  const response = await fetch(`${getUrl()}/auth/${path}`, {
     method: request.method,
     headers,
     body: isFormData ? request.body as FormData : JSON.stringify(request.body),

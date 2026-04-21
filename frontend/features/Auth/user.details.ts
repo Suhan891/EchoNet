@@ -2,19 +2,10 @@
 import { useEffect } from "react";
 import { useMyself } from "@/hooks/useAuth";
 import { useUserStore } from "@/stores/UserStore";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useProfileDetails } from "../Profile/profile.details";
-
-function setCookieProfile(profileId: string) {
-  Cookies.set("profile", profileId, { sameSite: "lax", secure: false });
-}
-
-function removeAuthToken() {
-  Cookies.remove("accessToken");
-  Cookies.remove("profile");
-}
+import { deleteCookie, setProfileId } from "@/service/common/cookies";
 
 export function useUserDetails() {
   const router = useRouter();
@@ -34,8 +25,8 @@ export function useUserDetails() {
   useEffect(() => {
     if (isError) {
       console.error(error);
-      removeAuthToken();
-      toast.error(error?.message ?? "Something went wrong"); // ✅ null guard
+      deleteCookie()
+      toast.error(error.message ?? "Something went wrong");
       router.push("/login");
       return;
     }
@@ -45,7 +36,7 @@ export function useUserDetails() {
         (profile) => profile.isActive === true,
       );
 
-      if (activeProfile) setCookieProfile(activeProfile.id);
+      if (activeProfile) setProfileId(activeProfile.id);
 
       if (storeEmail !== user.data.email) setEmail(user.data.email);
       if (storeRole !== user.data.role) setRole(user.data.role);
