@@ -184,6 +184,9 @@ export class ProfileService {
           select: {
             followers: true,
             followings: true,
+            posts: true,
+            savedPosts: true,
+            reels: true,
             sentNotifications: true,
           },
         },

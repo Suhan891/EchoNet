@@ -166,7 +166,17 @@ export class AuthService {
     return await this.prisma.user.update({
       where: { id: user.id },
       data: { isActive: false },
-      select: { isActive: true, email: true },
+      select: {
+        id: true,
+        profile: {
+          where: {
+            isActive: true,
+          },
+          select: {
+            id: true,
+          },
+        },
+      },
     });
   }
 

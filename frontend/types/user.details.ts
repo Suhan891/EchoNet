@@ -23,12 +23,12 @@ export interface authAllProfiles {
 }
 
 export interface AuthState {
-  //userId: string;
+  userId: string;
   email: string;
   username: string;
   role: Role;
   profiles: authAllProfiles[];
-  //setUserId: (userId: string) => void;
+  setUserId: (userId: string) => void;
   setEmail: (email: string) => void;
   setRole: (role: Role) => void;
   setUserName: (name: string) => void;

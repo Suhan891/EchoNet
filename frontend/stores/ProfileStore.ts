@@ -11,6 +11,9 @@ export const useProfileStore = create<ProfileState>()(
     followers: 0,
     followings: 0,
     story: false,
+    posts: false,
+    savedPosts: false,
+    reels: false,
     sentNotifications: [],
 
     setId: (id) => set({ id }),
@@ -20,7 +23,10 @@ export const useProfileStore = create<ProfileState>()(
     setFollowers: (followers) => set({ followers }),
     setFollowinngs: (followings) => set({ followings }),
     setStory: (story) => set({ story }),
-    
+    setPosts: (posts) => set({ posts }),
+    setSavedPosts: (savedPosts) => set({ savedPosts }),
+    setReels: (reels) => set({ reels }),
+
     setNotification: (sentNotifications) => set({ sentNotifications }),
   })),
 );

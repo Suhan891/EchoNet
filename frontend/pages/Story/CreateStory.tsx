@@ -31,6 +31,7 @@ import {
   FieldContent,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateStory } from "@/hooks/useStory";
 import { cn } from "@/lib/utils";
@@ -165,7 +166,7 @@ export default function CreateStory({
             <Carousel
               opts={{ align: "start" }}
               orientation="vertical"
-              className="w-full max-w-3xl"
+              className="w-full max-w-3xl min-h-30vh"
             >
               <CarouselContent className="-mt-1 h-100">
                 {fields.length === 0 && (
@@ -190,6 +191,7 @@ export default function CreateStory({
                     )}
                   </div>
                 )}
+                <ScrollArea>
                 {fields.map((item, index) => {
                   // const isDisabled = item[item.length - 1]['imageFile'] === null 
                   const isImageSlide =
@@ -202,7 +204,7 @@ export default function CreateStory({
                     if (isSucess) append({ type });
                   };
                   return (
-                    <CarouselItem key={index} className="basis-1/2 pt-1">
+                    <CarouselItem key={index} className="basis-1/2 py-3">
                       <div className="p-1">
                         <Card>
                           <CardHeader>
@@ -546,6 +548,7 @@ export default function CreateStory({
                   );
                 })}
                 {/* </FieldGroup> */}
+                </ScrollArea>
               </CarouselContent>
             </Carousel>
           </div>

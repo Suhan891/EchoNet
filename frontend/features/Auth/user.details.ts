@@ -11,27 +11,29 @@ export function useUserDetails() {
   const router = useRouter();
   const { data: user, isSuccess, isError, error } = useMyself();
 
+  const setUserId = useUserStore((s) => s.setUserId);
   const setEmail = useUserStore((s) => s.setEmail);
   const setRole = useUserStore((s) => s.setRole);
   const setUserName = useUserStore((s) => s.setUserName);
   const setProfile = useUserStore((s) => s.setProfile);
+  const storeUserId = useUserStore((s) => s.userId);
   const storeEmail = useUserStore((s) => s.email);
   const storeRole = useUserStore((s) => s.role);
   const storeUsername = useUserStore((s) => s.username);
   const storeProfiles = useUserStore((s) => s.profiles);
 
-  useProfileDetails(user?.data?.id);
+  useProfileDetails();
 
   useEffect(() => {
     if (isError) {
       console.error(error);
-      deleteCookie()
+      deleteCookie();
       toast.error(error.message ?? "Something went wrong");
       router.push("/login");
       return;
     }
 
-    if (isSuccess && user?.data) {
+    if (isSuccess) {
       const activeProfile = user.data.profile?.find(
         (profile) => profile.isActive === true,
       );
@@ -39,10 +41,10 @@ export function useUserDetails() {
       if (activeProfile) setProfileId(activeProfile.id);
 
       if (storeEmail !== user.data.email) setEmail(user.data.email);
+      if (storeUserId !== user.data.id) setUserId(user.data.id);
       if (storeRole !== user.data.role) setRole(user.data.role);
       if (storeUsername !== user.data.username) setUserName(user.data.username);
       if (storeProfiles !== user.data.profile) setProfile(user.data.profile);
-
     }
   }, [
     isSuccess,
@@ -50,10 +52,12 @@ export function useUserDetails() {
     error,
     router,
     user,
+    storeUserId,
     storeEmail,
     storeRole,
     storeUsername,
     storeProfiles,
+    setUserId,
     setEmail,
     setRole,
     setUserName,

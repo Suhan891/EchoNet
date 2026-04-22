@@ -8,8 +8,8 @@ export interface RegisterResult {
 }
 
 export interface VerifyRequestType {
-    token: string;
-    formData: FormData;
+  token: string;
+  formData: FormData;
 }
 export interface VerifyResult {
   isEmailVerified: boolean;
@@ -23,4 +23,11 @@ export interface LoginResult {
 }
 export interface RefreshResult {
   accessToken: string;
+}
+
+export interface LogoutResult {
+  id: string;
+  profile: {
+    id: true;
+  }[];
 }

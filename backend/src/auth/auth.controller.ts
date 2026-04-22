@@ -5,6 +5,7 @@ import {
   HttpStatus,
   ParseFilePipeBuilder,
   Post,
+  Put,
   Query,
   UploadedFile,
   UseGuards,
@@ -25,6 +26,7 @@ import { CurrentUser } from './gaurds/refresh.decorator';
 import type { authUserDto } from './tokens/token.dto';
 import { Throttle } from '@nestjs/throttler';
 import { NotActive } from 'src/profile/decorator/no-profile';
+import type { Response } from 'express';
 
 @Controller('auth')
 @NoAccount(true)
@@ -91,10 +93,10 @@ export class AuthController {
     return this.authService.refreshHandler(user);
   }
 
-  @Post('logout')
-  @UseGuards(RefreshGaurd)
+  @Put('logout')
   @ResponseMessage('Logged out successfully')
-  async logout(@CurrentUser() user: RefreshAccessDto) {
+  async logout(@CurrentUser() user: RefreshAccessDto, response: Response) {
+    response.clearCookie('refreshToken');
     return this.authService.logout(user);
   }
 
