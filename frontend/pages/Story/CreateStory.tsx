@@ -191,7 +191,8 @@ export default function CreateStory({
                     )}
                   </div>
                 )}
-                <ScrollArea>
+                <ScrollArea> 
+                  {/* This has not responded */}
                 {fields.map((item, index) => {
                   // const isDisabled = item[item.length - 1]['imageFile'] === null 
                   const isImageSlide =

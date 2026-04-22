@@ -151,7 +151,7 @@ export default function Register() {
                     aria-invalid={!!errors.password}
                     id="password"
                     type={view ? 'password':'text'}
-                    placeholder="******"
+                    placeholder="••••••••"
                   />
                   <InputGroupAddon>
                     <InputGroupButton disabled={true} className="bg-gray-700">
