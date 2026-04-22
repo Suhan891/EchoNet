@@ -70,11 +70,8 @@ export class ProfileController {
 
   @Get('own-details')
   @ResponseMessage('Own Profile Details Received Successfull')
-  async getOwnProfile(
-    @CurrentUser() user: authUserDto,
-    @currentProfile() profile: profileDto,
-  ) {
-    return await this.profileService.getOwnProfile(profile, user);
+  async getOwnProfile(@currentProfile() profile: profileDto) {
+    return await this.profileService.getOwnProfile(profile);
   }
 
   // After toggling that new profile => access token refetch => active profile taking from /auth/me => calling with this new profile

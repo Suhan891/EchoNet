@@ -118,6 +118,9 @@ export default function CreateStory({
       },
     });
   };
+
+  // Embela carousal docs => Scrollbar creation
+
   const slides = useWatch({
     control,
     name: "slides",
@@ -158,7 +161,7 @@ export default function CreateStory({
             </DialogDescription>
           </DialogHeader>
           <DialogTitle className="sr-only">Upload Story</DialogTitle>
-          <div className="-mx-4 max-h-[50vh] overflow-y-auto px-4">
+          <div className="-mx-4 max-h-[50vh] overflow-y-auto scrollbar-thin px-4">
             <Carousel
               opts={{ align: "start" }}
               orientation="vertical"

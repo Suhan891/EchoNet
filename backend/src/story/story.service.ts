@@ -18,7 +18,6 @@ import {
   StoryCreateDto,
   VideoMedia,
 } from './dto/story.create.dto';
-import { authUserDto } from 'src/auth/tokens/token.dto';
 
 @Injectable()
 export class StoryService {
@@ -29,11 +28,7 @@ export class StoryService {
     private cacheService: AppCacheService,
   ) {}
 
-  async createStory(
-    slides: ParsedSlideDto[],
-    profile: profileDto,
-    user: authUserDto,
-  ) {
+  async createStory(slides: ParsedSlideDto[], profile: profileDto) {
     const existingStory = await this.prisma.story.findFirst({
       where: { profileId: profile.id },
       select: {
@@ -75,7 +70,7 @@ export class StoryService {
       'processing',
       1_000 * 60 * 60 * 24,
     );
-    const profileKey = `user:${user.userId}:profile:${profile.id}`;
+    const profileKey = `profile:${profile.id}`;
     await this.cacheService.delByPattern(profileKey);
     return {
       status: 'processing',
@@ -105,6 +100,9 @@ export class StoryService {
     if (dataUploadStatus) {
       if (dataUploadStatus === 'failed') {
         await this.cacheService.delete(storyStatKey);
+        await this.prisma.story.delete({
+          where: { id: story.id },
+        });
         throw new InternalServerErrorException('File Upload Unsuccessfull');
       }
       if (dataUploadStatus === 'processing') return dataUploadStatus;

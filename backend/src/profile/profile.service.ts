@@ -92,7 +92,7 @@ export class ProfileService {
 
     await this.cloudService.updateAvatar(avatar, fileName);
 
-    const key = `user:${user.userId}:profile:${profileData.id}`;
+    const key = `user:${user.userId}`;
     await this.cacheService.delete(key);
 
     return {
@@ -114,7 +114,7 @@ export class ProfileService {
       if (existingName)
         throw new BadRequestException('Profile name already exists');
     }
-    const key = `user:${user.userId}:profile:${profileData.id}`;
+    const key = `user:${user.userId}`;
     await this.cacheService.delete(key);
     return await this.prisma.profile.update({
       where: { id: profileData.id },
@@ -157,8 +157,8 @@ export class ProfileService {
     });
   }
 
-  async getOwnProfile(profile: profileDto, user: authUserDto) {
-    const key = `user:${user.userId}:profile:${profile.id}`;
+  async getOwnProfile(profile: profileDto) {
+    const key = `profile:${profile.id}`;
     const cachedProfile = await this.cacheService.get(key);
     if (cachedProfile) return cachedProfile;
     const profileData = await this.prisma.profile.findFirst({
@@ -198,10 +198,7 @@ export class ProfileService {
     profileId: string,
     user: authUserDto,
   ) {
-    if (!user.profile?.includes({ id: profileId }))
-      throw new BadRequestException('You are not allowed to delete');
-
-    if (!user.profile?.includes({ id: profileId }))
+    if (!user.profile?.some((p) => p.id === profileId))
       throw new BadRequestException(
         'No such profile exists within your registered email',
       );
@@ -210,7 +207,7 @@ export class ProfileService {
       throw new BadRequestException('Deactivate your profile to delete');
 
     const userKey = `user:${user.userId}`;
-    const key = `profile`;
+    const key = `profile:${profileId}`;
     await this.cacheService.delByPattern(userKey);
     await this.cacheService.delByPattern(key);
 

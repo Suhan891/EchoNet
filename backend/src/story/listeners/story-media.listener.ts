@@ -2,7 +2,6 @@ import { InjectFlowProducer } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { FlowProducer } from 'bullmq';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { StoryCreateDto } from '../dto/story.create.dto';
 import { JobStoryCreateDto } from '../dto/job.story-create';
 
@@ -10,7 +9,6 @@ import { JobStoryCreateDto } from '../dto/job.story-create';
 export class StoryListener {
   constructor(
     @InjectFlowProducer('story-task') private flowProducer: FlowProducer,
-    private readonly prisma: PrismaService,
   ) {}
   private readonly logger = new Logger(StoryListener.name);
 
@@ -26,7 +24,11 @@ export class StoryListener {
             order: event.order,
             imageFile: {
               originalname: event.imageFile.originalname,
+              fieldName: event.imageFile.fieldname,
               mimetype: event.imageFile.mimetype,
+              destination: event.imageFile.destination,
+              filename: event.imageFile.filename,
+              path: event.imageFile.path,
               buffer: event.imageFile.buffer.toString('base64'),
             },
           };
@@ -38,7 +40,11 @@ export class StoryListener {
             order: event.order,
             videoFile: {
               originalname: event.videoFile.originalname,
+              fieldName: event.videoFile.fieldname,
               mimetype: event.videoFile.mimetype,
+              destination: event.videoFile.destination,
+              filename: event.videoFile.filename,
+              path: event.videoFile.path,
               buffer: event.videoFile.buffer.toString('base64'),
             },
           };
@@ -50,12 +56,20 @@ export class StoryListener {
             order: event.order,
             imageFile: {
               originalname: event.imageFile.originalname,
+              destination: event.imageFile.destination,
+              filename: event.imageFile.filename,
+              path: event.imageFile.path,
+              fieldName: event.imageFile.fieldname,
               mimetype: event.imageFile.mimetype,
               buffer: event.imageFile.buffer.toString('base64'),
             },
             audioFile: {
               originalname: event.audioFile.originalname,
+              fieldName: event.audioFile.fieldname,
               mimetype: event.audioFile.mimetype,
+              destination: event.audioFile.destination,
+              filename: event.audioFile.filename,
+              path: event.audioFile.path,
               buffer: event.audioFile.buffer.toString('base64'),
             },
           };

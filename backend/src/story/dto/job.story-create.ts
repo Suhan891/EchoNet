@@ -3,6 +3,10 @@ import { SlideType } from './story.create.dto';
 export interface UploadJobFile {
   originalname: string;
   mimetype: string;
+  fieldName: string;
+  destination: string;
+  filename: string;
+  path: string;
   buffer: string; // base64 string
 }
 export interface JobStoryCreateDto {

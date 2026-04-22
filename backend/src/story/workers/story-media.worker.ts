@@ -4,6 +4,8 @@ import { Job } from 'bullmq';
 import { StoryService } from '../story.service';
 import { CacheStatus, StoryCreateDto } from '../dto/story.create.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
+import { JobStoryCreateDto } from '../dto/job.story-create';
+import { Readable } from 'node:stream';
 
 @Processor('story-task', { concurrency: 5 })
 export class StoryProcessor extends WorkerHost {
@@ -25,14 +27,91 @@ export class StoryProcessor extends WorkerHost {
     }
   }
 
-  private async processChild(job: Job) {
-    const data = job.data as StoryCreateDto;
-    if (data.type === 'image')
-      return await this.storyService.createImageMedia(data);
-    if (data.type === 'video')
-      return await this.storyService.createVideoMedia(data);
-    if (data.type === 'imgAudio')
-      return await this.storyService.createImageAudioMedia(data);
+  private async processChild(job: Job<JobStoryCreateDto>) {
+    const data = job.data;
+    console.log('From Workers: ', data);
+
+    if (data.type === 'image' && data.imageFile) {
+      const imgBuffer = Buffer.from(data.imageFile.buffer, 'base64');
+      const result = {
+        caption: data.caption,
+        storyId: data.storyId,
+        type: data.type,
+        order: data.order,
+        imageFile: {
+          originalname: data.imageFile.originalname,
+          mimetype: data.imageFile.mimetype,
+          fieldname: data.imageFile.fieldName,
+          encoding: '7bit',
+          destination: data.imageFile.destination,
+          filename: data.imageFile.filename,
+          path: data.imageFile.path,
+          size: imgBuffer.length,
+          stream: Readable.from(imgBuffer),
+          buffer: imgBuffer,
+        },
+      };
+      return await this.storyService.createImageMedia(result);
+    }
+    //return await this.storyService.createImageMedia(data);
+    if (data.type === 'video' && data.videoFile) {
+      const vidBuffer = Buffer.from(data.videoFile.buffer, 'base64');
+      const result = {
+        caption: data.caption,
+        storyId: data.storyId,
+        type: data.type,
+        order: data.order,
+        videoFile: {
+          originalname: data.videoFile.originalname,
+          mimetype: data.videoFile.mimetype,
+          fieldname: data.videoFile.fieldName,
+          encoding: '7bit',
+          destination: data.videoFile.destination,
+          filename: data.videoFile.filename,
+          path: data.videoFile.path,
+          size: vidBuffer.length,
+          stream: Readable.from(vidBuffer),
+          buffer: vidBuffer,
+        },
+      };
+      return await this.storyService.createVideoMedia(result);
+    }
+
+    if (data.type === 'imageAudio' && data.imageFile && data.audioFile) {
+      const imgBuffer = Buffer.from(data.imageFile.buffer, 'base64');
+      const audioBuffer = Buffer.from(data.audioFile.buffer, 'base64');
+      const result = {
+        caption: data.caption,
+        storyId: data.storyId,
+        type: data.type,
+        order: data.order,
+        imageFile: {
+          originalname: data.imageFile.originalname,
+          mimetype: data.imageFile.mimetype,
+          fieldname: data.imageFile.fieldName,
+          encoding: '7bit',
+          destination: data.imageFile.destination,
+          filename: data.imageFile.filename,
+          path: data.imageFile.path,
+          size: imgBuffer.length,
+          stream: Readable.from(imgBuffer),
+          buffer: imgBuffer,
+        },
+        audioFile: {
+          originalname: data.audioFile.originalname,
+          mimetype: data.audioFile.mimetype,
+          fieldname: data.audioFile.fieldName,
+          encoding: '7bit',
+          destination: data.audioFile.destination,
+          filename: data.audioFile.filename,
+          path: data.audioFile.path,
+          size: audioBuffer.length,
+          stream: Readable.from(audioBuffer),
+          buffer: audioBuffer,
+        },
+      };
+      return await this.storyService.createImageAudioMedia(result);
+    }
   }
 
   private processParent(job: Job) {

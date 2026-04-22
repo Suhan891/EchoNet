@@ -104,10 +104,7 @@ export class CloudinaryService implements OnModuleInit {
           folder: `social_media/reels`,
           public_id: filename,
           resource_type: 'video',
-          transformation: [
-            { duration: '15.0', crop: 'trim' },
-            { quality: 'auto' },
-          ],
+          transformation: [{ duration: '15.0' }, { quality: 'auto' }],
           // This will run in background
           eager: [{ height: 1080, width: 1350, crop: 'fill', gravity: 'auto' }],
           eager_async: true,
@@ -159,11 +156,7 @@ export class CloudinaryService implements OnModuleInit {
           folder: `social_media/story`,
           public_id: filename,
           resource_type: 'video',
-          transformation: [
-            { duration: '15.0', crop: 'trim' },
-            { quality: 'auto' },
-          ],
-          // This will run in background
+          transformation: [{ duration: '15.0' }, { quality: 'auto' }],
           eager: [{ height: 1080, width: 1350, crop: 'fill', gravity: 'auto' }],
           eager_async: true,
         },
@@ -195,9 +188,13 @@ export class CloudinaryService implements OnModuleInit {
           resource_type: 'video',
           transformation: [
             { width: 1080, height: 1350, crop: 'fill' },
+
             { underlay: imgPublicId.replace(/\//g, ':') },
+
             { flags: 'layer_apply' },
-            { duration: '15.0', crop: 'trim' }, // Trim to 15s
+
+            { end_offset: '15' },
+
             { quality: 'auto', fetch_format: 'mp4' },
           ],
         },

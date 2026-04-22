@@ -1,10 +1,14 @@
 import { Request } from "../common/requests";
 
 async function getJson(path: string) {
-  return Request(path, { method: "GET", body: null });
+  return Request(`/auth${path}`, { method: "GET", body: null });
 }
 
 // Fetching user details
 export async function GetUser() {
-  return getJson("/auth/me");
+  return getJson("/me");
+}
+
+export async function Logout() {
+  return getJson('/logout')
 }

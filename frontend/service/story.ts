@@ -9,7 +9,7 @@ async function postJson(path: string, payload: unknown) {
   return requests(path, { method: "POST", body: payload });
 }
 async function getJson(path: string) {
-  return requests(path, { method: "POST", body: null });
+  return requests(path, { method: 'GET', body: null });
 }
 
 export async function CreateStoryRequest(payload: FormData) {

@@ -19,8 +19,6 @@ import type { StoryDto, StoryMediaDataDto } from './dto/story.usage.dto';
 import { ValidateStoryMediaPipe } from './pipes/existing-storymedia';
 import { ParsedStoryPipe } from './pipes/story.create.validate';
 import type { RawMultipartBody } from './dto/story.create.dto';
-import { CurrentUser } from 'src/common/gaurds/current-user.decorator';
-import type { authUserDto } from 'src/auth/tokens/token.dto';
 
 @Controller('story')
 export class StoryController {
@@ -33,12 +31,17 @@ export class StoryController {
   async create(
     @UploadedFiles() files: Express.Multer.File[],
     @Body() body: RawMultipartBody,
-    @CurrentUser() user: authUserDto,
     @currentProfile() profile: profileDto,
   ) {
     console.log('Files', files, body);
     const data = new ParsedStoryPipe().transform(files, body);
-    return await this.storyService.createStory(data, profile, user);
+    return await this.storyService.createStory(data, profile);
+  }
+
+  @Get('status')
+  @ResponseMessage('Story Upload data received')
+  async storyStatus(@currentProfile() profile: profileDto) {
+    return await this.storyService.getOwnStory(profile);
   }
 
   @Get(':storyId')
