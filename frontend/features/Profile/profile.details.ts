@@ -5,9 +5,12 @@ import { toast } from "sonner";
 import { useMyProfile } from "@/hooks/useProfile";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "@/service/common/cookies";
+import { useUserStore } from "@/stores/UserStore";
 
-export function useProfileDetails(userId: string| undefined) {
+export function useProfileDetails() {
   const router = useRouter();
+
+  const userId = useUserStore((s) => s.userId);
 
   const setAvatar = useProfileStore((s) => s.setAvatar);
   const setId = useProfileStore((s) => s.setId);
@@ -16,6 +19,9 @@ export function useProfileDetails(userId: string| undefined) {
   const setName = useProfileStore((s) => s.setName);
   const setBio = useProfileStore((s) => s.setBio);
   const setStory = useProfileStore((s) => s.setStory);
+  const setPostexists = useProfileStore(s => s.setPosts);
+  const setReels = useProfileStore(s => s.setReels)
+  const setSavedPosts = useProfileStore(s => s.setSavedPosts)
 
   const storeAvatar = useProfileStore((s) => s.avatarUrl);
   const storeId = useProfileStore((s) => s.id);
@@ -25,7 +31,7 @@ export function useProfileDetails(userId: string| undefined) {
   const storeBio = useProfileStore((s) => s.bio);
   const storeStory = useProfileStore((s) => s.story);
 
-  const { data: profile, isSuccess, isError, error } = useMyProfile(userId!);
+  const { data: profile, isSuccess, isError, error } = useMyProfile(userId);
 
   useEffect(() => {
     if (!userId) return;
@@ -72,4 +78,5 @@ export function useProfileDetails(userId: string| undefined) {
     setBio,
     setStory,
   ]);
+  return isSuccess;
 }

@@ -9,6 +9,9 @@ export interface OwnProfileResponse {
   _count: {
     followers: number;
     followings: number;
+    posts: number;
+    savedPosts: number;
+    reels: number;
     sentNotifications: number;
   };
 }
@@ -28,17 +31,23 @@ export interface ProfileState {
   name: string;
   bio?: string;
   avatarUrl: string;
-  followers?: number | null;
-  followings?: number | null;
+  posts: boolean;
+  savedPosts: boolean;
+  reels: boolean;
+  followers: number;
+  followings: number;
   story: boolean;
   sentNotifications: Notifications[] | undefined;
 
   setId: (id: string) => void;
+  setPosts: (posts: boolean) => void;
+  setSavedPosts: (savedPosts: boolean) => void;
+  setReels: (reels: boolean) => void;
   setName: (name: string) => void;
   setBio: (bio: string | undefined) => void;
   setAvatar: (avatarUrl: string) => void;
-  setFollowers: (followers: number | null) => void;
-  setFollowinngs: (followings: number | null) => void;
+  setFollowers: (followers: number) => void;
+  setFollowinngs: (followings: number) => void;
   setStory: (story: boolean) => void;
   setNotification: (sentNotifications: Notifications[] | undefined) => void;
 }

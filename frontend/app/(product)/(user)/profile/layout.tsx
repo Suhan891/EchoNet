@@ -40,13 +40,13 @@ export default function AuthLayout({
             </TabsTrigger>
           </TabsList>
           <div className="w-full max-w-4xl mx-auto pt-4">
-            <TabsContent value="saved" className="mt-0">
+            <TabsContent value="saved" className="min-w-full">
               {savedPosts}
             </TabsContent>
-            <TabsContent value="posts" className="mt-0">
+            <TabsContent value="posts" className="min-w-full">
               {posts}
             </TabsContent>
-            <TabsContent value="reels" className="mt-0">
+            <TabsContent value="reels" className="min-w-full">
               {reels}
             </TabsContent>
           </div>
