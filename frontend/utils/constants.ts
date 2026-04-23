@@ -20,4 +20,4 @@ export const ALLOWED_STORY_MEDIA = {
   COMBINED: 5,
   VIDEO: 5,
 };
-export const ALLOWED_POSTS = 15 // Maximum 15 photos can be uploaded all together
+export const MAX_ALLOWED_POSTS = 15 // Maximum 15 photos can be uploaded all together

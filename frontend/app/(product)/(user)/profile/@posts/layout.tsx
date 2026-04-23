@@ -8,8 +8,10 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import CreatePost from "@/pages/Posts/CreatePost";
 import { useProfileStore } from "@/stores/ProfileStore";
 import { Amphora } from "lucide-react";
+import { useState } from "react";
 
 export default function PostLayout({
   children,
@@ -17,6 +19,9 @@ export default function PostLayout({
   children: React.ReactNode;
 }) {
   const posts = useProfileStore((s) => s.posts);
+  const [open, setOpen] = useState(false);
+  if(open)
+    return <CreatePost open={open} setOpen={setOpen} />
   if (!posts)
     return (
       <Empty className="border border-dashed">
@@ -28,7 +33,7 @@ export default function PostLayout({
           <EmptyDescription>Upload a post to access</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button variant={"link"}>Create Posts</Button>
+          <Button variant={"link"} onClick={() => setOpen(true)}>Create Posts</Button>
         </EmptyContent>
       </Empty>
     );
