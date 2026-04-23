@@ -1,8 +1,10 @@
+"use client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
@@ -19,8 +21,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { storySchema, storyType } from "@/validations/story/story.create";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import {
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import Slide from "./Slides";
+import { ALLOWED_STORY_MEDIA } from "@/utils/constants";
+import { ButtonGroup } from "@/components/ui/button-group";
 
 export default function Create({
   open,
@@ -33,17 +42,31 @@ export default function Create({
     resolver: zodResolver(storySchema),
     mode: "onSubmit",
   });
-  const { fields } = useFieldArray({
+  const { fields, remove, append } = useFieldArray({
     control,
     name: "slides",
   });
-  const onSubmit = (data) => {};
+  const onSubmit: SubmitHandler<storyType> = (data) => {
+    console.log(data);
+  };
   const watchSlides = useWatch({
     control,
+    defaultValue: {
+      slides: [],
+    },
   });
+  const imageSlides = watchSlides.slides?.filter(
+    (slide) => slide.type === "image",
+  );
+  const videoSlides = watchSlides.slides?.filter(
+    (slide) => slide.type === "video",
+  );
+  const combinedSlides = watchSlides.slides?.filter(
+    (slide) => slide.type === "imageAudio",
+  );
   return (
     <Dialog onOpenChange={setOpen} open={open}>
-      <DialogContent showCloseButton={false}>
+      <DialogContent showCloseButton={false} className="w-2xl">
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle>Create Story</DialogTitle>
@@ -52,13 +75,60 @@ export default function Create({
             </DialogDescription>
           </DialogHeader>
           <ScrollArea>
-            <Card>
-              <CardHeader>
-                <Badge>Image</Badge>
-                <Badge>Video</Badge>
-                <Badge>Img+Aud</Badge>
+            <Card className="w-full p-1.5">
+              <CardHeader className="flex justify-center">
+                {fields.length === 0 ? (
+                  <ButtonGroup>
+                    <Button
+                      variant={"outline"}
+                      size={"sm"}
+                      onClick={() => append({ type: "image" })}
+                    >
+                      <Plus />
+                      Image
+                    </Button>
+                    <Button
+                      variant={"outline"}
+                      size={"sm"}
+                      onClick={() => append({ type: "video" })}
+                    >
+                      <Plus />
+                      Video
+                    </Button>
+                    <Button
+                      variant={"outline"}
+                      size={"sm"}
+                      onClick={() => append({ type: "imageAudio" })}
+                    >
+                      <Plus />
+                      Img+Audio
+                    </Button>
+                  </ButtonGroup>
+                ) : (
+                  <CardDescription>
+                    <Badge className="flex-col">
+                      <h3>Image</h3>
+                      <span>
+                        {imageSlides?.length ?? 0}/{ALLOWED_STORY_MEDIA.IMAGES}
+                      </span>
+                    </Badge>
+                    <Badge className="flex-col">
+                      <h3>Video</h3>
+                      <span>
+                        {videoSlides?.length ?? 0}/{ALLOWED_STORY_MEDIA.VIDEO}
+                      </span>
+                    </Badge>
+                    <Badge className="flex-col">
+                      <h3>Img+Aud</h3>
+                      <span>
+                        {combinedSlides?.length ?? 0}/
+                        {ALLOWED_STORY_MEDIA.COMBINED}
+                      </span>
+                    </Badge>
+                  </CardDescription>
+                )}
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-col gap-2">
                 {fields.map((field, index) => {
                   const isImageSlide =
                     field.type === "image" || field.type === "imageAudio";
@@ -73,6 +143,7 @@ export default function Create({
                       isCombinedSlide={isCombinedSlide}
                       isVideoSlide={isVideoSlide}
                       control={control}
+                      onRemove={() => remove(index)}
                     />
                   );
                 })}

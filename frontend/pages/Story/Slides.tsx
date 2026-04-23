@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,8 +16,15 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@/components/ui/input-group";
 import { Control, Controller, FieldArrayWithId } from "react-hook-form";
+import PreviewMedia from "./PreviewMedia";
+import UploadMedia from "./UploadMedia";
 
 interface SlideProps {
   item: FieldArrayWithId<
@@ -45,6 +53,7 @@ interface SlideProps {
   isImageSlide: boolean;
   isCombinedSlide: boolean;
   isVideoSlide: boolean;
+  onRemove: () => void;
 }
 export default function Slide({
   item,
@@ -53,6 +62,7 @@ export default function Slide({
   isImageSlide,
   isVideoSlide,
   isCombinedSlide,
+  onRemove,
 }: SlideProps) {
   return (
     <Card>
@@ -60,10 +70,12 @@ export default function Slide({
         <CardTitle>Add Image Status</CardTitle>
         <CardDescription>Image is a required field</CardDescription>
         <CardAction>
-          <Button variant={"destructive"}>Delete</Button>
+          <Button variant={"destructive"} onClick={onRemove}>
+            Delete
+          </Button>
         </CardAction>
         <CardContent>
-          <FieldGroup>
+          <FieldGroup className="flex">
             {isImageSlide && (
               <Controller
                 control={control}
@@ -80,10 +92,14 @@ export default function Slide({
                     >
                       <FieldContent>
                         <FieldLabel htmlFor={`image-${item.id}`}>
-                          {/* Calling a component which shall => Either preview if imgUrl present => upload or preview */}
+                          {imageUrl ? (
+                            <PreviewMedia imageUrl={imageUrl} />
+                          ) : (
+                            <UploadMedia isImage={true} />
+                          )}
                         </FieldLabel>
                         <Input
-                          {...value}
+                          //{...value}
                           id={`image-${item.id}`}
                           type="file"
                           accept="image/jpeg,image/png,image/webp,image/jpg"
@@ -99,17 +115,32 @@ export default function Slide({
                 }}
               />
             )}
-            <Field>
-                <FieldLabel htmlFor={`description-${item.id}`}>Description (optional) </FieldLabel>
-                <InputGroup>
+            <Controller
+              control={control}
+              name={`slides.${index}.caption`}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                 // orientation={"horizontal"}
+                >
+                  <FieldLabel htmlFor={`description-${item.id}`}>
+                    Description (optional){" "}
+                  </FieldLabel>
+                  <InputGroup>
                     <InputGroupTextarea
-                    id={`description-${item.id}`}
-                    placeholder="Write a short decription" />
+                      id={`description-${item.id}`}
+                      {...field}
+                      placeholder="Write a short decription"
+                    />
                     <InputGroupAddon align="block-end">
-                        <InputGroupText>{0}/{120}</InputGroupText>
+                      <InputGroupText>
+                        {field.value?.length ?? 0}/{120}
+                      </InputGroupText>
                     </InputGroupAddon>
-                </InputGroup>
-            </Field>
+                  </InputGroup>
+                </Field>
+              )}
+            />
           </FieldGroup>
         </CardContent>
 
