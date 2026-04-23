@@ -160,11 +160,12 @@ export class AuthService {
     });
   }
 
-  async logout(user: RefreshAccessDto) {
-    const key = `user:${user.id}`;
+  async logout(user: authUserDto) {
+    console.log('User: ', user);
+    const key = `user:${user.userId}`;
     await this.cacheService.delByPattern(key);
     return await this.prisma.user.update({
-      where: { id: user.id },
+      where: { id: user.userId },
       data: { isActive: false },
       select: {
         id: true,

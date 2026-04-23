@@ -94,9 +94,12 @@ export class AuthController {
   }
 
   @Put('logout')
+  @ActivateMe(false)
+  @NoAccount(false)
+  @NotActive()
   @ResponseMessage('Logged out successfully')
-  async logout(@CurrentUser() user: RefreshAccessDto, response: Response) {
-    response.clearCookie('refreshToken');
+  async logout(@CurrentUser() user: authUserDto) {
+    //response.clearCookie('refreshToken');
     return this.authService.logout(user);
   }
 
