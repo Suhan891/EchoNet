@@ -1,6 +1,7 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Image as ImageIcon, Video, Images } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -30,6 +31,7 @@ import {
 import Slide from "./Slides";
 import { ALLOWED_STORY_MEDIA } from "@/utils/constants";
 import { ButtonGroup } from "@/components/ui/button-group";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function Create({
   open,
@@ -58,23 +60,46 @@ export default function Create({
   const imageSlides = watchSlides.slides?.filter(
     (slide) => slide.type === "image",
   );
+  const isImgAvail = (imageSlides?.length ?? 0) < ALLOWED_STORY_MEDIA.IMAGES;
+  const areAllImagesPresent = imageSlides?.every(
+    (slide) => slide.imageFile !== undefined,
+  );
   const videoSlides = watchSlides.slides?.filter(
     (slide) => slide.type === "video",
+  );
+  const isVidAvail = (videoSlides?.length ?? 0) < ALLOWED_STORY_MEDIA.VIDEO;
+  const areAllVidPresent = videoSlides?.every(
+    (slide) => slide.videoFile !== undefined,
   );
   const combinedSlides = watchSlides.slides?.filter(
     (slide) => slide.type === "imageAudio",
   );
+  const isCombiAvail =
+    (combinedSlides?.length ?? 0) < ALLOWED_STORY_MEDIA.COMBINED;
+  const areAllCombinedPresent = combinedSlides?.every(
+    (slide) => slide.audioFile !== undefined && slide.imageFile !== undefined,
+  );
+
+  const hasMissingFiles =
+    !areAllCombinedPresent || !areAllImagesPresent || !areAllVidPresent;
+
   return (
     <Dialog onOpenChange={setOpen} open={open}>
-      <DialogContent showCloseButton={false} className="w-2xl">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DialogHeader>
+      <DialogContent
+        showCloseButton={false}
+        className="sm:max-w-[650px] max-h-[90vh] flex flex-col p-0"
+      >
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col h-full overflow-hidden p-6"
+        >
+          <DialogHeader className="mb-4">
             <DialogTitle>Create Story</DialogTitle>
             <DialogDescription>
               Story shall expire after 24 hrs of upload
             </DialogDescription>
           </DialogHeader>
-          <ScrollArea>
+          <ScrollArea className="h-[60vh] w-full pr-4" type="auto">
             <Card className="w-full p-1.5">
               <CardHeader className="flex justify-center">
                 {fields.length === 0 ? (
@@ -105,30 +130,76 @@ export default function Create({
                     </Button>
                   </ButtonGroup>
                 ) : (
-                  <CardDescription>
-                    <Badge className="flex-col">
-                      <h3>Image</h3>
-                      <span>
-                        {imageSlides?.length ?? 0}/{ALLOWED_STORY_MEDIA.IMAGES}
-                      </span>
-                    </Badge>
-                    <Badge className="flex-col">
-                      <h3>Video</h3>
-                      <span>
+                  <CardDescription className="flex flex-wrap items-center gap-3 pt-2">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge
+                          variant="secondary"
+                          className="h-auto flex flex-col items-center justify-center gap-1 px-4 py-3 rounded-lg border shadow-sm"
+                        >
+                          <div className="flex items-center gap-1.5 opacity-70">
+                            <ImageIcon size={14} />
+                            <h3 className="text-[10px] font-medium uppercase tracking-wider">
+                              Image
+                            </h3>
+                          </div>
+                          <span className="text-sm font-bold tracking-tight">
+                            {imageSlides?.length ?? 0}/
+                            {ALLOWED_STORY_MEDIA.IMAGES}
+                          </span>
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Max {ALLOWED_STORY_MEDIA.IMAGES} Images allowed</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                    <Badge
+                      variant="secondary"
+                      className="h-auto flex flex-col items-center justify-center gap-1 px-4 py-3 rounded-lg border shadow-sm"
+                    >
+                      <div className="flex items-center gap-1.5 opacity-70">
+                        <Video size={14} />
+                        <h3 className="text-[10px] font-medium uppercase tracking-wider">
+                          Video
+                        </h3>
+                      </div>
+                      <span className="text-sm font-bold tracking-tight">
                         {videoSlides?.length ?? 0}/{ALLOWED_STORY_MEDIA.VIDEO}
                       </span>
                     </Badge>
-                    <Badge className="flex-col">
-                      <h3>Img+Aud</h3>
-                      <span>
+                    </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Max {ALLOWED_STORY_MEDIA.VIDEO} Video allowed</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                    <Badge
+                      variant="secondary"
+                      className="h-auto flex flex-col items-center justify-center gap-1 px-4 py-3 rounded-lg border shadow-sm"
+                    >
+                      <div className="flex items-center gap-1.5 opacity-70">
+                        <Images size={14} />
+                        <h3 className="text-[10px] font-medium uppercase tracking-wider">
+                          Img+Aud
+                        </h3>
+                      </div>
+                      <span className="text-sm font-bold tracking-tight">
                         {combinedSlides?.length ?? 0}/
                         {ALLOWED_STORY_MEDIA.COMBINED}
                       </span>
                     </Badge>
+                    </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Max {ALLOWED_STORY_MEDIA.COMBINED} Combinations allowed</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </CardDescription>
                 )}
               </CardHeader>
-              <CardContent className="flex-col gap-2">
+              <CardContent className="flex flex-col gap-2 p-0 mt-4">
                 {fields.map((field, index) => {
                   const isImageSlide =
                     field.type === "image" || field.type === "imageAudio";
@@ -150,26 +221,51 @@ export default function Create({
               </CardContent>
               {fields.length !== 0 && (
                 <CardFooter className="flex justify-center">
-                  <Button variant={"secondary"} className="rounded-xl">
-                    <Plus /> Image
-                  </Button>
-                  <Button variant={"secondary"} className="rounded-xl">
-                    <Plus /> Video
-                  </Button>
-                  <Button variant={"secondary"} className="rounded-xl">
-                    <Plus /> Img+Aud
-                  </Button>
+                  {isImgAvail && (
+                    <Button
+                      variant={"secondary"}
+                      className="rounded-xl"
+                      disabled={hasMissingFiles}
+                      onClick={() => append({ type: "image" })}
+                    >
+                      <Plus /> Image
+                    </Button>
+                  )}
+                  {isVidAvail && (
+                    <Button
+                      variant={"secondary"}
+                      className="rounded-xl"
+                      disabled={hasMissingFiles}
+                      onClick={() => append({ type: "video" })}
+                    >
+                      <Plus /> Video
+                    </Button>
+                  )}
+                  {isCombiAvail && (
+                    <Button
+                      variant={"secondary"}
+                      className="rounded-xl"
+                      disabled={hasMissingFiles}
+                      onClick={() => append({ type: "imageAudio" })}
+                    >
+                      <Plus /> Img+Aud
+                    </Button>
+                  )}
                 </CardFooter>
               )}
             </Card>
           </ScrollArea>
-          <DialogFooter>
+          <DialogFooter className="mt-6 pt-4 border-t">
             <DialogClose asChild>
               <Button type="button" variant={"outline"}>
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" variant={"secondary"}>
+            <Button
+              type="submit"
+              variant={"secondary"}
+              disabled={hasMissingFiles}
+            >
               Submit
             </Button>
           </DialogFooter>

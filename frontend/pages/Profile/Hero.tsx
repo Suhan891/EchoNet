@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import CreateStory from "../Story/CreateStory";
+import Create from "../Story/Create";
 
 export default function ProfileHero() {
   const [followerOpen, setFollowerOpen] = useState(false);
@@ -104,7 +105,7 @@ export default function ProfileHero() {
           </DropdownMenuContent>
         </DropdownMenu>
         {createStoryOpen && (
-          <CreateStory open={createStoryOpen} setOpen={setCreateStoryOpen} />
+          <Create open={createStoryOpen} setOpen={setCreateStoryOpen} />
         )}
 
         <div className="flex flex-col items-center md:items-start gap-4 flex-1">

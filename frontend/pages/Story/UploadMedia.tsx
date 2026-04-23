@@ -10,7 +10,7 @@ interface UploadMediaProps {
 
 export default function UploadMedia({isImage, isAudio, isVideo}: UploadMediaProps) {
     return (
-        <Card size={'sm'} className="border-dashed">
+        <Card size={'sm'} className="w-32 rounded-lg border border-dashed">
             <EmptyHeader>
                 <EmptyMedia variant={'icon'}>
                     <Upload />

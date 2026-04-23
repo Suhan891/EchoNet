@@ -65,7 +65,7 @@ export default function Slide({
   onRemove,
 }: SlideProps) {
   return (
-    <Card>
+    <Card className="w-full mb-4">
       <CardHeader>
         <CardTitle>Add Image Status</CardTitle>
         <CardDescription>Image is a required field</CardDescription>
@@ -75,7 +75,7 @@ export default function Slide({
           </Button>
         </CardAction>
         <CardContent>
-          <FieldGroup className="flex">
+          <Field orientation={'horizontal'}>
             {isImageSlide && (
               <Controller
                 control={control}
@@ -99,7 +99,6 @@ export default function Slide({
                           )}
                         </FieldLabel>
                         <Input
-                          //{...value}
                           id={`image-${item.id}`}
                           type="file"
                           accept="image/jpeg,image/png,image/webp,image/jpg"
@@ -141,7 +140,7 @@ export default function Slide({
                 </Field>
               )}
             />
-          </FieldGroup>
+          </Field>
         </CardContent>
 
         {/* <CardFooter>This will be only shown if any error</CardFooter> */}
