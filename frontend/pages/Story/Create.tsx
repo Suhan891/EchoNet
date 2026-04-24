@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { storySchema, storyType } from "@/validations/story/story.create";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
@@ -44,7 +44,7 @@ export default function Create({
     resolver: zodResolver(storySchema),
     mode: "onSubmit",
   });
-  const { fields, remove, append } = useFieldArray({
+  const { fields, remove, append, move } = useFieldArray({
     control,
     name: "slides",
   });
@@ -87,19 +87,19 @@ export default function Create({
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogContent
         showCloseButton={false}
-        className="sm:max-w-[650px] max-h-[90vh] flex flex-col p-0"
+        className="sm:max-w-[650px] h-[80vh] flex flex-col p-0"
       >
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col h-full overflow-hidden p-6"
+          className="flex flex-col flex-1 h-full overflow-hidden p-6"
         >
-          <DialogHeader className="mb-4">
+          <DialogHeader className="mb-4 shrink-0">
             <DialogTitle>Create Story</DialogTitle>
             <DialogDescription>
               Story shall expire after 24 hrs of upload
             </DialogDescription>
           </DialogHeader>
-          <ScrollArea className="h-[60vh] w-full pr-4" type="auto">
+          <div className="flex-1 min-h-0 w-full pr-4 pb-4 overflow-y-auto custom-scrollbar">
             <Card className="w-full p-1.5">
               <CardHeader className="flex justify-center">
                 {fields.length === 0 ? (
@@ -199,21 +199,24 @@ export default function Create({
                   </CardDescription>
                 )}
               </CardHeader>
-              <CardContent className="flex flex-col gap-2 p-0 mt-4">
+              <CardContent className="flex flex-col gap-2 p-0 mt-4 min-h-[200px]">
                 {fields.map((field, index) => {
-                  const isImageSlide =
+                  const isImageField =
                     field.type === "image" || field.type === "imageAudio";
-                  const isCombinedSlide = field.type === "imageAudio";
-                  const isVideoSlide = field.type === "video";
+                  const isAudioField = field.type === "imageAudio";
+                  const isVideoField = field.type === "video";
                   return (
                     <Slide
                       key={field.id}
                       item={field}
                       index={index}
-                      isImageSlide={isImageSlide}
-                      isCombinedSlide={isCombinedSlide}
-                      isVideoSlide={isVideoSlide}
+                      isImageField={isImageField}
+                      isAudioField={isAudioField}
+                      isVideoField={isVideoField}
                       control={control}
+                      isFirst={index === 0}
+                      isLast={index === (fields.length - 1)}
+                      move={move}
                       onRemove={() => remove(index)}
                     />
                   );
@@ -254,8 +257,8 @@ export default function Create({
                 </CardFooter>
               )}
             </Card>
-          </ScrollArea>
-          <DialogFooter className="mt-6 pt-4 border-t">
+          </div>
+          <DialogFooter className="mt-6 pt-4 border-t shrink-0">
             <DialogClose asChild>
               <Button type="button" variant={"outline"}>
                 Cancel
