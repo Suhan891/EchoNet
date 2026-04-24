@@ -27,6 +27,20 @@ export default function PreviewMedia({
           />
         </AspectRatio>
       )}
+      {videoUrl && (
+        <AspectRatio ratio={1/1}>
+          <video
+          controls
+          src={videoUrl}
+          className="object-cover h-36 rounded-lg" />
+        </AspectRatio>
+      )}
+      {audioUrl && (
+        <audio
+        src={audioUrl}
+        controls
+        className="z-5" />
+      )}
     </Card>
   );
 }
