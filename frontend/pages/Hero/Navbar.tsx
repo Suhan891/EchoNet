@@ -38,12 +38,12 @@ export default function Navbar() {
     logout.mutate(undefined, {
       onSuccess: (result) => {
         deleteCookie();
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.USER, result.data.id],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.PROFILE, result.data.profile[0].id], // Later key checking shall be done
-        });
+        // queryClient.invalidateQueries({
+        //   queryKey: [queryKeys.USER, result.data.id],
+        // });
+        // queryClient.invalidateQueries({
+        //   queryKey: [queryKeys.PROFILE, result.data.profile[0].id], // Later key checking shall be done
+        // });
         toast.success(result.message);
         router.push("/login");
       },
