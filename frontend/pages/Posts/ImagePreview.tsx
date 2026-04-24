@@ -1,41 +1,24 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 import { Label } from "@/components/ui/label";
 import UploadImagePost from "./UploadImage";
 
-// ---------------------------------------------------------------------------
-// Primitives
-// ---------------------------------------------------------------------------
-
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return <p className="mt-1 text-xs text-destructive">{message}</p>;
 }
-
-// ---------------------------------------------------------------------------
-// ImageSlot — handles ONE grid tile, either filled or empty
-//
-// When value is undefined  → renders UploadTile (empty state)
-// When value is a File     → renders image preview with Replace / Remove
-//
-// AppendSlot is intentionally deleted — CreatePost renders ImageSlot with
-// value={undefined} for the append tile, controlling only what onChange does.
-// ---------------------------------------------------------------------------
-
 interface ImageSlotPreviewProps {
-  /** Stable id: field.id from useFieldArray, or useId() for the append tile */
   inputId: string;
   value: File | undefined;
   onChange: (file: File) => void;
   onRemove: () => void;
   isInvalid: boolean;
   errorMessage?: string;
-  /** Passed through to UploadTile — "primary" for the append tile */
   accent?: "default" | "primary";
 }
 
@@ -48,27 +31,18 @@ export default function ImagePreview({
   errorMessage,
   accent = "default",
 }: ImageSlotPreviewProps) {
-  // Keep a ref to the current object URL so we can revoke it correctly
   const urlRef = useRef<string | null>(null);
-  const imageUrl = value instanceof File ? URL.createObjectURL(value) : null;
+  const imageUrl = useMemo(() => (value instanceof File ? URL.createObjectURL(value) : null), [value]);
 
   useEffect(() => {
-    // Revoke the previous URL when value changes
-    if (urlRef.current && urlRef.current !== imageUrl) {
-      URL.revokeObjectURL(urlRef.current);
-    }
     urlRef.current = imageUrl;
-
     return () => {
-      // Revoke on unmount
       if (urlRef.current) {
         URL.revokeObjectURL(urlRef.current);
         urlRef.current = null;
       }
     };
-    // imageUrl is derived from value — rerun only when value changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [value, imageUrl]);
 
   const handleReplaceChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +53,6 @@ export default function ImagePreview({
     [onChange]
   );
 
-  // ── Empty state → delegate entirely to UploadTile ──────────────────────
   if (!imageUrl) {
     return (
       <div className="flex flex-col gap-1">

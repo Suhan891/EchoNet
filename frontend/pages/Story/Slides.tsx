@@ -79,7 +79,7 @@ export default function Slide({
   return (
     <Card className="w-full mb-4 shrink-0">
       <CardHeader>
-        <CardTitle>Add Image Status (order:{index + 1})</CardTitle>
+        <CardTitle>Add {isAudioField ? "Combined" : isVideoField ? "Video" : "Image"} Status (order:{index + 1})</CardTitle>
         <CardDescription>Image is a required field</CardDescription>
         <CardAction>
           <Button variant={"destructive"} onClick={onRemove}>
@@ -94,10 +94,6 @@ export default function Slide({
               control={control}
               name={`slides.${index}.imageFile`}
               render={({ field: { onChange, value }, fieldState }) => {
-                const imageUrl =
-                  value instanceof File
-                    ? URL.createObjectURL(value)
-                    : undefined;
                 return (
                   <Field
                     data-invalid={fieldState.invalid}
@@ -108,8 +104,8 @@ export default function Slide({
                         Image(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`image-${item.id}`}>
-                        {imageUrl ? (
-                          <PreviewMedia imageUrl={imageUrl} />
+                        {value instanceof File ? (
+                          <PreviewMedia imageFile={value} />
                         ) : (
                           <UploadMedia isImage={true} />
                         )}
@@ -135,10 +131,6 @@ export default function Slide({
               control={control}
               name={`slides.${index}.videoFile`}
               render={({ field: { value, onChange }, fieldState }) => {
-                const videoUrl =
-                  value instanceof File
-                    ? URL.createObjectURL(value)
-                    : undefined;
                 return (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldContent>
@@ -146,8 +138,8 @@ export default function Slide({
                         Video(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`video-${item.id}`}>
-                        {videoUrl ? (
-                          <PreviewMedia videoUrl={videoUrl} />
+                        {value instanceof File ? (
+                          <PreviewMedia videoFile={value} />
                         ) : (
                           <UploadMedia isVideo={true} />
                         )}
@@ -173,10 +165,6 @@ export default function Slide({
               control={control}
               name={`slides.${index}.audioFile`}
               render={({ field: { value, onChange }, fieldState }) => {
-                const audioUrl =
-                  value instanceof File
-                    ? URL.createObjectURL(value)
-                    : undefined;
                 return (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldContent>
@@ -184,8 +172,8 @@ export default function Slide({
                         Audio(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`audio-${item.id}`}>
-                        {audioUrl ? (
-                          <PreviewMedia audioUrl={audioUrl} />
+                        {value instanceof File ? (
+                          <PreviewMedia audioFile={value} />
                         ) : (
                           <UploadMedia isAudio={true} />
                         )}

@@ -27,19 +27,19 @@ export default function UploadMedia({
         <EmptyTitle>Upload</EmptyTitle>
         <EmptyDescription>
           {isImage && (
-            <div className="flex-col items-center">
+            <div className="flex-col justify-center items-center">
               <p>PNG, JPG, WEBP</p>
               <p>Max 5MB</p>
             </div>
           )}
           {isVideo && (
-            <div className="flex-col items-center">
+            <div className="flex-col justify-center items-center">
               <p>MP4, MOV</p>
               <p>Max 100MB</p>
             </div>
           )}
           {isAudio && (
-            <div className="flex-col items-center">
+            <div className="flex-col justify-center items-center">
               <p>MP3, WAV</p>
               <p>Max 20MB</p>
             </div>

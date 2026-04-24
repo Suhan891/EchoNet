@@ -267,7 +267,7 @@ export default function Create({
             <Button
               type="submit"
               variant={"secondary"}
-              disabled={hasMissingFiles}
+              disabled={hasMissingFiles || fields.length === 0}
             >
               Submit
             </Button>

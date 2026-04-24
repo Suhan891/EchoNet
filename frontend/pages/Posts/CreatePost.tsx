@@ -12,7 +12,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { createPostSchema, createPostType } from "@/validations/posts/create.post";
+import {
+  createPostSchema,
+  createPostType,
+} from "@/validations/posts/create.post";
 import { MAX_ALLOWED_POSTS } from "@/utils/constants";
 
 import { Badge } from "@/components/ui/badge";
@@ -82,13 +85,13 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
   const canAddMore = imageCount < MAX_ALLOWED_POSTS;
 
   const onSubmit: SubmitHandler<createPostType> = (data) => {
-    const formData = new FormData()
-    formData.append('caption', data.caption)
-    if(data.description) formData.append('description', data.description)
-    data.images.forEach(image => {
-      formData.append('image',image.file)
-    })
-    console.log("Data: ",data);
+    const formData = new FormData();
+    formData.append("caption", data.caption);
+    if (data.description) formData.append("description", data.description);
+    data.images.forEach((image) => {
+      formData.append("image", image.file);
+    });
+    console.log("Data: ", data);
     console.log("Form data: ", formData);
   };
 
@@ -99,7 +102,7 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
       <DialogContent
         className={cn(
           "flex max-h-[90dvh] w-full flex-col overflow-hidden p-0",
-          "sm:max-w-xl"
+          "sm:max-w-xl",
         )}
       >
         {/* ── Header ───────────────────────────────────────────────────── */}
@@ -123,9 +126,9 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
           noValidate
           className="flex flex-1 flex-col overflow-hidden"
         >
-          <div className="flex-1 space-y-5 overflow-y-auto px-6 py-5">
-
-            {/* Caption */}
+          <div className="flex-1 min-h-0 w-full overflow-y-auto custom-scrollbar">
+            <div className="space-y-5 px-6 py-5">
+              {/* Caption */}
             <div className="space-y-1.5">
               <Label htmlFor="caption">Caption</Label>
               <Input
@@ -136,7 +139,7 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
                 aria-invalid={!!errors.caption}
                 className={cn(
                   errors.caption &&
-                    "border-destructive focus-visible:ring-destructive"
+                    "border-destructive focus-visible:ring-destructive",
                 )}
               />
               {errors.caption ? (
@@ -163,7 +166,7 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
                 className={cn(
                   "resize-none",
                   errors.description &&
-                    "border-destructive focus-visible:ring-destructive"
+                    "border-destructive focus-visible:ring-destructive",
                 )}
               />
               {errors.description ? (
@@ -172,59 +175,53 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
                 <FieldHint>Min 10 characters if provided</FieldHint>
               )}
             </div>
+            
+              {/* Image grid */}
+              <div className="space-y-2">
+                <Label>
+                  Images{" "}
+                  <span className="text-xs font-normal text-muted-foreground">
+                    (up to {MAX_ALLOWED_POSTS})
+                  </span>
+                </Label>
 
-            {/* Image grid */}
-            <div className="space-y-2">
-              <Label>
-                Images{" "}
-                <span className="text-xs font-normal text-muted-foreground">
-                  (up to {MAX_ALLOWED_POSTS})
-                </span>
-              </Label>
-
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-
-                {/* Existing entries — each has a stable field.id from RHF */}
-                {fields.map((field, index) => (
-                  <Controller
-                    key={field.id}
-                    control={control}
-                    name={`images.${index}.file`}
-                    render={({ field: { value, onChange }, fieldState }) => (
-                      <ImagePreview
-                        inputId={field.id}       // ← RHF-generated UUID, always unique
-                        value={value as File | undefined}
-                        onChange={onChange}
-                        onRemove={() => remove(index)}
-                        isInvalid={fieldState.invalid}
-                        errorMessage={fieldState.error?.message}
-                      />
-                    )}
-                  />
-                ))}
-
-                {/*
-                  Append tile — ImageSlot with value={undefined} so it renders
-                  UploadTile. onChange calls append() instead of updating an
-                  existing field. Uses useId() since it has no field.id.
-                  Disappears automatically when imageCount === MAX_ALLOWED_POSTS.
-                */}
-                {canAddMore && (
-                  <ImagePreview
-                    inputId={appendTileId}       // ← useId(), stable + SSR-safe
-                    value={undefined}
-                    onChange={(file) => append({ file })}
-                    onRemove={() => {}}           // never called — value is always undefined
-                    isInvalid={false}
-                    accent="primary"             // visually distinct from filled slots
-                  />
-                )}
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {/* Existing entries — each has a stable field.id from RHF */}
+                  {fields.map((field, index) => (
+                    <Controller
+                      key={field.id}
+                      control={control}
+                      name={`images.${index}.file`}
+                      render={({ field: { value, onChange }, fieldState }) => (
+                        <ImagePreview
+                          inputId={field.id} // ← RHF-generated UUID, always unique
+                          value={value as File | undefined}
+                          onChange={onChange}
+                          onRemove={() => remove(index)}
+                          isInvalid={fieldState.invalid}
+                          errorMessage={fieldState.error?.message}
+                        />
+                      )}
+                    />
+                  ))}
+                  {canAddMore && (
+                    <ImagePreview
+                      inputId={appendTileId}
+                      value={undefined}
+                      onChange={(file) => append({ file })}
+                      onRemove={() => {}}
+                      isInvalid={false}
+                      accent="primary"
+                    />
+                  )}
+                </div>
               </div>
 
               {/* Array-level errors — .min/.max live on errors.images.root in RHF v7+ */}
               {errors.images?.root?.message && (
                 <FieldError message={errors.images.root.message} />
               )}
+            
             </div>
           </div>
 
