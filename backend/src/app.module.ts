@@ -24,6 +24,7 @@ import { CommonModule } from './common/common.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { RoleGaurd } from './common/gaurds/roles.gaurd';
 import { JwtAuthGaurd } from './common/gaurds/jwt-auth';
+import { JobsModule } from './jobs/jobs.module';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { JwtAuthGaurd } from './common/gaurds/jwt-auth';
     LikeModule,
     CommentModule,
     CommonModule,
+    JobsModule,
   ],
   controllers: [AppController],
   providers: [
