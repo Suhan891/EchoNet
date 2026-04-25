@@ -34,3 +34,20 @@ export const Purpose = {
 } as const
 
 export type Purpose = (typeof Purpose)[keyof typeof Purpose]
+
+
+export const JobName = {
+  STORY: 'STORY',
+  POST: 'POST'
+} as const
+
+export type JobName = (typeof JobName)[keyof typeof JobName]
+
+
+export const JobStatus = {
+  PROGRESS: 'PROGRESS',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED'
+} as const
+
+export type JobStatus = (typeof JobStatus)[keyof typeof JobStatus]

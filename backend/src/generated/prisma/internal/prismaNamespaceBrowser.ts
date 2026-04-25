@@ -63,7 +63,8 @@ export const ModelName = {
   StoryViews: 'StoryViews',
   Likes: 'Likes',
   Comments: 'Comments',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  Job: 'Job'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -90,7 +91,6 @@ export const UserScalarFieldEnum = {
   role: 'role',
   isEmailVerified: 'isEmailVerified',
   isActive: 'isActive',
-  tokenVersion: 'tokenVersion',
   passResetToken: 'passResetToken',
   passResetExpTime: 'passResetExpTime',
   createdAt: 'createdAt',
@@ -239,6 +239,18 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const JobScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  name: 'name',
+  status: 'status',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type JobScalarFieldEnum = (typeof JobScalarFieldEnum)[keyof typeof JobScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -394,4 +406,13 @@ export const NotificationOrderByRelevanceFieldEnum = {
 } as const
 
 export type NotificationOrderByRelevanceFieldEnum = (typeof NotificationOrderByRelevanceFieldEnum)[keyof typeof NotificationOrderByRelevanceFieldEnum]
+
+
+export const JobOrderByRelevanceFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  userId: 'userId'
+} as const
+
+export type JobOrderByRelevanceFieldEnum = (typeof JobOrderByRelevanceFieldEnum)[keyof typeof JobOrderByRelevanceFieldEnum]
 

@@ -26,12 +26,12 @@ model User {
   // Also add enum of :role:
 
   isEmailVerified Boolean @default(false)
-  //refreshToken String? @db.Text   // must be removed
-  isActive        Boolean @default(false) // After login become true
-  tokenVersion    Int     @default(0) // Changes after reset password
+  isActive        Boolean @default(false) // Later shall be removed
 
-  passResetToken   String?
-  passResetExpTime DateTime?
+  passResetToken   String? // Shall be removed
+  passResetExpTime DateTime?  // Shall be removed
+
+  jobs Job[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -262,4 +262,26 @@ model Notification {
 
   @@index([receiverId])
   @@index([senderId])
+}
+
+enum JobName {
+  STORY
+  POST
+}
+enum JobStatus {
+  PROGRESS
+  SUCCESS
+  FAILED
+}
+model Job {
+  id String @id @default(uuid())
+
+  jobId String
+  name JobName
+  status JobStatus
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
 }

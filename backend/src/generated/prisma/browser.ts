@@ -82,3 +82,8 @@ export type Comments = Prisma.CommentsModel
  * 
  */
 export type Notification = Prisma.NotificationModel
+/**
+ * Model Job
+ * 
+ */
+export type Job = Prisma.JobModel
