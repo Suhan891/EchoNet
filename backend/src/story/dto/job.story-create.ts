@@ -1,3 +1,4 @@
+import { Job } from 'bullmq';
 import { SlideType } from './story.create.dto';
 
 export interface UploadJobFile {
@@ -20,3 +21,11 @@ export interface JobStoryCreateDto {
 
   order: number;
 }
+export interface JobParentCreateDto {
+  profileId: string;
+  storyId: string;
+}
+
+export type AppJob =
+  | (Job<JobStoryCreateDto> & { name: 'process-task' })
+  | (Job<JobParentCreateDto> & { name: 'batch-complete' });

@@ -3,7 +3,7 @@ import { authUserDto } from 'src/auth/tokens/token.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JobData } from './dto/job.status.view.dto';
 import { InjectQueue } from '@nestjs/bullmq/dist';
-import { Queue } from 'bullmq/dist/esm';
+import { Queue } from 'bullmq';
 import { JobStatus } from 'src/generated/prisma/enums';
 
 @Injectable()
@@ -20,6 +20,7 @@ export class JobsService {
       );
     if (jobData.status === 'SUCCESS' || jobData.status === 'FAILED') {
       return {
+        id: true,
         name: jobData.name,
         status: jobData.status,
       };
@@ -37,6 +38,7 @@ export class JobsService {
 
     return {
       // Else all shall return => progress
+      id: true,
       name: jobData.name,
       status: jobData.status, // 'PROGRESS'
     };
@@ -47,6 +49,7 @@ export class JobsService {
       where: { id },
       data: { status },
       select: {
+        id: true,
         name: true,
         status: true,
       },
