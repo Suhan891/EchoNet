@@ -172,8 +172,9 @@ export class ProfileService {
         avatarUrl: true,
         story: {
           where: {
+            isReady: true,
             expiresAt: {
-              lt: new Date(Date.now()),
+              gt: new Date(Date.now()),
             },
           },
           select: {
@@ -184,7 +185,7 @@ export class ProfileService {
           select: {
             followers: true,
             followings: true,
-            posts: true,
+            posts: true, // Similarly like posts
             savedPosts: true,
             reels: true,
             sentNotifications: true,

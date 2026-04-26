@@ -5,10 +5,9 @@ export class PostMediaValidatorPipe extends FileValidator {
   isValid(file: Express.Multer.File): boolean {
     if (!file) return false;
 
-    const maxSize = 500 * 1024; // 5kb
+    const maxSize = 5 * 1024 * 1024; // 5mb
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
 
-    // If EITHER fails, return false
     if (file.size > maxSize || !allowedTypes.includes(file.mimetype)) {
       return false;
     }
@@ -17,6 +16,6 @@ export class PostMediaValidatorPipe extends FileValidator {
   }
 
   buildErrorMessage(): string {
-    return 'Each file must be a PNG/JPG and smaller than 500KB';
+    return 'Each file must be a PNG/JPG and smaller than 5MB';
   }
 }

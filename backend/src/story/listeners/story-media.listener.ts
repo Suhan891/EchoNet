@@ -2,8 +2,8 @@ import { InjectFlowProducer } from '@nestjs/bullmq';
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { FlowProducer } from 'bullmq';
-import { StoryCreateDto } from '../dto/story.create.dto';
-import { JobStoryCreateDto } from '../dto/job.story-create';
+import type { StoryCreateEvent } from '../dto/story.create.dto';
+import { JobParentCreateDto, JobStoryCreateDto } from '../dto/job.story-create';
 
 @Injectable()
 export class StoryListener {
@@ -13,8 +13,13 @@ export class StoryListener {
   private readonly logger = new Logger(StoryListener.name);
 
   @OnEvent('story.create')
-  async handleCreateStory(events: StoryCreateDto[]) {
-    const jobs: JobStoryCreateDto[] = events
+  async handleCreateStory(event: StoryCreateEvent) {
+    const { stories, storyId, profileId } = event;
+    const parentData = {
+      storyId,
+      profileId,
+    } as JobParentCreateDto;
+    const jobs: JobStoryCreateDto[] = stories
       .map((event): JobStoryCreateDto | undefined => {
         if (event.type === 'image')
           return {
@@ -78,10 +83,10 @@ export class StoryListener {
       })
       .filter((job): job is JobStoryCreateDto => job !== undefined);
 
-    await this.flowProducer.add({
+    const work = await this.flowProducer.add({
       name: 'batch-complete',
       queueName: 'story-task',
-      data: events[0].storyId,
+      data: parentData,
 
       children: jobs.map((job) => ({
         name: 'process-task',
@@ -94,5 +99,6 @@ export class StoryListener {
       })),
     });
     this.logger.log('Story Job created');
+    return work.job.id; // This job id shall be saved for future quering
   }
 }

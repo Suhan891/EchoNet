@@ -43,4 +43,10 @@ export interface ImageAudioMedia {
 
 export type StoryCreateDto = ImageAudioMedia | ImageMedia | VideoMedia;
 
+export interface StoryCreateEvent {
+  stories: StoryCreateDto[];
+  profileId: string;
+  storyId: string;
+}
+
 export type CacheStatus = 'processing' | 'successfull' | 'failed';

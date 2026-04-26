@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { profileDto } from 'src/profile/dto/profile.dto';
-import { Media } from 'src/generated/prisma/enums';
+import { JobName, JobStatus, Media } from 'src/generated/prisma/enums';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { StoryDto, StoryMediaDataDto } from './dto/story.usage.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
@@ -16,8 +16,10 @@ import {
   ImageMedia,
   ParsedSlideDto,
   StoryCreateDto,
+  StoryCreateEvent,
   VideoMedia,
 } from './dto/story.create.dto';
+import { authUserDto } from 'src/auth/tokens/token.dto';
 
 @Injectable()
 export class StoryService {
@@ -28,7 +30,11 @@ export class StoryService {
     private cacheService: AppCacheService,
   ) {}
 
-  async createStory(slides: ParsedSlideDto[], profile: profileDto) {
+  async createStory(
+    slides: ParsedSlideDto[],
+    profile: profileDto,
+    user: authUserDto,
+  ) {
     const existingStory = await this.prisma.story.findFirst({
       where: { profileId: profile.id },
       select: {
@@ -49,6 +55,7 @@ export class StoryService {
       data: {
         profileId: profile.id,
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        isReady: false,
       },
       select: {
         id: true,
@@ -63,18 +70,32 @@ export class StoryService {
       } as StoryCreateDto;
     });
 
-    this.eventEmitter.emit('story.create', stories);
-    const key = `story:${story.id}`;
-    await this.cacheService.set<CacheStatus>(
-      key,
-      'processing',
-      1_000 * 60 * 60 * 24,
-    );
+    const eventData = {
+      stories,
+      storyId: story.id,
+      profileId: profile.id,
+    } as StoryCreateEvent;
+
+    const jobId = (await this.eventEmitter.emitAsync(
+      'story.create',
+      eventData,
+    )) as string[];
+
     const profileKey = `profile:${profile.id}`;
     await this.cacheService.delByPattern(profileKey);
-    return {
-      status: 'processing',
-    };
+    return await this.prisma.job.create({
+      data: {
+        userId: user.userId,
+        jobId: jobId[0],
+        name: JobName.STORY,
+        status: JobStatus.PROGRESS,
+      },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+      },
+    });
   }
 
   async getOwnStory(profile: profileDto) {

@@ -32,7 +32,7 @@ export class PostsController {
   @Post('create')
   @Throttle({ default: { limit: 2, ttl: 24 * 60 * 60 * 1000 } }) // Allow only 2 requests every 24 hrs
   @ResponseMessage('Post created')
-  @UseInterceptors(FilesInterceptor('postMedia', 5))
+  @UseInterceptors(FilesInterceptor('postMedia', 15))
   async create(
     @Body() data: CreatePostDto,
     @currentProfile() profile: profileDto,

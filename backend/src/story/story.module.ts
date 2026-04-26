@@ -11,7 +11,6 @@ import { ParsedStoryPipe } from './pipes/story.create.validate';
   imports: [
     CommonModule,
     BullModule.registerFlowProducer({ name: 'story-task' }),
-    BullModule.registerQueue({ name: 'story-queue' }),
   ],
   controllers: [StoryController],
   providers: [StoryService, StoryListener, StoryProcessor, ParsedStoryPipe],
