@@ -422,14 +422,6 @@ export type PostPhotoUncheckedUpdateManyWithoutPostNestedInput = {
   deleteMany?: Prisma.PostPhotoScalarWhereInput | Prisma.PostPhotoScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type PostPhotoCreateNestedOneWithoutSavedPostsInput = {
   create?: Prisma.XOR<Prisma.PostPhotoCreateWithoutSavedPostsInput, Prisma.PostPhotoUncheckedCreateWithoutSavedPostsInput>
   connectOrCreate?: Prisma.PostPhotoCreateOrConnectWithoutSavedPostsInput

@@ -28,6 +28,7 @@ export type StoryMinAggregateOutputType = {
   id: string | null
   profileId: string | null
   expiresAt: Date | null
+  isReady: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -36,6 +37,7 @@ export type StoryMaxAggregateOutputType = {
   id: string | null
   profileId: string | null
   expiresAt: Date | null
+  isReady: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +46,7 @@ export type StoryCountAggregateOutputType = {
   id: number
   profileId: number
   expiresAt: number
+  isReady: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -54,6 +57,7 @@ export type StoryMinAggregateInputType = {
   id?: true
   profileId?: true
   expiresAt?: true
+  isReady?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -62,6 +66,7 @@ export type StoryMaxAggregateInputType = {
   id?: true
   profileId?: true
   expiresAt?: true
+  isReady?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -70,6 +75,7 @@ export type StoryCountAggregateInputType = {
   id?: true
   profileId?: true
   expiresAt?: true
+  isReady?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -151,6 +157,7 @@ export type StoryGroupByOutputType = {
   id: string
   profileId: string
   expiresAt: Date
+  isReady: boolean
   createdAt: Date
   updatedAt: Date
   _count: StoryCountAggregateOutputType | null
@@ -180,6 +187,7 @@ export type StoryWhereInput = {
   id?: Prisma.StringFilter<"Story"> | string
   profileId?: Prisma.StringFilter<"Story"> | string
   expiresAt?: Prisma.DateTimeFilter<"Story"> | Date | string
+  isReady?: Prisma.BoolFilter<"Story"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
@@ -190,6 +198,7 @@ export type StoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  isReady?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   profile?: Prisma.ProfileOrderByWithRelationInput
@@ -204,6 +213,7 @@ export type StoryWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.StoryWhereInput[]
   NOT?: Prisma.StoryWhereInput | Prisma.StoryWhereInput[]
   expiresAt?: Prisma.DateTimeFilter<"Story"> | Date | string
+  isReady?: Prisma.BoolFilter<"Story"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
@@ -214,6 +224,7 @@ export type StoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  isReady?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.StoryCountOrderByAggregateInput
@@ -228,6 +239,7 @@ export type StoryScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Story"> | string
   profileId?: Prisma.StringWithAggregatesFilter<"Story"> | string
   expiresAt?: Prisma.DateTimeWithAggregatesFilter<"Story"> | Date | string
+  isReady?: Prisma.BoolWithAggregatesFilter<"Story"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Story"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Story"> | Date | string
 }
@@ -235,6 +247,7 @@ export type StoryScalarWhereWithAggregatesInput = {
 export type StoryCreateInput = {
   id?: string
   expiresAt: Date | string
+  isReady?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutStoryInput
@@ -245,6 +258,7 @@ export type StoryUncheckedCreateInput = {
   id?: string
   profileId: string
   expiresAt: Date | string
+  isReady?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   storyMedia?: Prisma.StoryMediaUncheckedCreateNestedManyWithoutStoryInput
@@ -253,6 +267,7 @@ export type StoryUncheckedCreateInput = {
 export type StoryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutStoryNestedInput
@@ -263,6 +278,7 @@ export type StoryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   storyMedia?: Prisma.StoryMediaUncheckedUpdateManyWithoutStoryNestedInput
@@ -272,6 +288,7 @@ export type StoryCreateManyInput = {
   id?: string
   profileId: string
   expiresAt: Date | string
+  isReady?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -279,6 +296,7 @@ export type StoryCreateManyInput = {
 export type StoryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -287,6 +305,7 @@ export type StoryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -306,6 +325,7 @@ export type StoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  isReady?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -314,6 +334,7 @@ export type StoryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  isReady?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -322,6 +343,7 @@ export type StoryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
+  isReady?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -380,6 +402,7 @@ export type StoryUpdateOneRequiredWithoutStoryMediaNestedInput = {
 export type StoryCreateWithoutProfileInput = {
   id?: string
   expiresAt: Date | string
+  isReady?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   storyMedia?: Prisma.StoryMediaCreateNestedManyWithoutStoryInput
@@ -388,6 +411,7 @@ export type StoryCreateWithoutProfileInput = {
 export type StoryUncheckedCreateWithoutProfileInput = {
   id?: string
   expiresAt: Date | string
+  isReady?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   storyMedia?: Prisma.StoryMediaUncheckedCreateNestedManyWithoutStoryInput
@@ -412,6 +436,7 @@ export type StoryUpdateToOneWithWhereWithoutProfileInput = {
 export type StoryUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   storyMedia?: Prisma.StoryMediaUpdateManyWithoutStoryNestedInput
@@ -420,6 +445,7 @@ export type StoryUpdateWithoutProfileInput = {
 export type StoryUncheckedUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   storyMedia?: Prisma.StoryMediaUncheckedUpdateManyWithoutStoryNestedInput
@@ -428,6 +454,7 @@ export type StoryUncheckedUpdateWithoutProfileInput = {
 export type StoryCreateWithoutStoryMediaInput = {
   id?: string
   expiresAt: Date | string
+  isReady?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutStoryInput
@@ -437,6 +464,7 @@ export type StoryUncheckedCreateWithoutStoryMediaInput = {
   id?: string
   profileId: string
   expiresAt: Date | string
+  isReady?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -460,6 +488,7 @@ export type StoryUpdateToOneWithWhereWithoutStoryMediaInput = {
 export type StoryUpdateWithoutStoryMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutStoryNestedInput
@@ -469,6 +498,7 @@ export type StoryUncheckedUpdateWithoutStoryMediaInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -508,6 +538,7 @@ export type StorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   id?: boolean
   profileId?: boolean
   expiresAt?: boolean
+  isReady?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
@@ -519,6 +550,7 @@ export type StorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   profileId?: boolean
   expiresAt?: boolean
+  isReady?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
@@ -528,6 +560,7 @@ export type StorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   profileId?: boolean
   expiresAt?: boolean
+  isReady?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
@@ -537,11 +570,12 @@ export type StorySelectScalar = {
   id?: boolean
   profileId?: boolean
   expiresAt?: boolean
+  isReady?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type StoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "expiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["story"]>
+export type StoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "expiresAt" | "isReady" | "createdAt" | "updatedAt", ExtArgs["result"]["story"]>
 export type StoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   storyMedia?: boolean | Prisma.Story$storyMediaArgs<ExtArgs>
@@ -564,6 +598,7 @@ export type $StoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     id: string
     profileId: string
     expiresAt: Date
+    isReady: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["story"]>
@@ -994,6 +1029,7 @@ export interface StoryFieldRefs {
   readonly id: Prisma.FieldRef<"Story", 'String'>
   readonly profileId: Prisma.FieldRef<"Story", 'String'>
   readonly expiresAt: Prisma.FieldRef<"Story", 'DateTime'>
+  readonly isReady: Prisma.FieldRef<"Story", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Story", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Story", 'DateTime'>
 }

@@ -91,6 +91,7 @@ export const UserScalarFieldEnum = {
   role: 'role',
   isEmailVerified: 'isEmailVerified',
   isActive: 'isActive',
+  tokenVersion: 'tokenVersion',
   passResetToken: 'passResetToken',
   passResetExpTime: 'passResetExpTime',
   createdAt: 'createdAt',
@@ -128,6 +129,7 @@ export type FollowScalarFieldEnum = (typeof FollowScalarFieldEnum)[keyof typeof 
 export const PostScalarFieldEnum = {
   id: 'id',
   profileId: 'profileId',
+  isReady: 'isReady',
   caption: 'caption',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -173,6 +175,7 @@ export const StoryScalarFieldEnum = {
   id: 'id',
   profileId: 'profileId',
   expiresAt: 'expiresAt',
+  isReady: 'isReady',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

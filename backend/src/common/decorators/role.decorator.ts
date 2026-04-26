@@ -3,7 +3,7 @@ import { Role } from 'src/auth/tokens/token.dto';
 
 export const ROLE_KEY = 'ROLE';
 
-export const ResponseMessage = (allowedRole: Role) => {
+export const AllowedROles = (allowedRole: Role) => {
   const role = allowedRole ?? 'USER';
   return SetMetadata(ROLE_KEY, role);
 };

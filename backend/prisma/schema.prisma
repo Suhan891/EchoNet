@@ -27,6 +27,7 @@ model User {
 
   isEmailVerified Boolean @default(false)
   isActive        Boolean @default(false) // Later shall be removed
+  tokenVersion Int @default(0)
 
   passResetToken   String? // Shall be removed
   passResetExpTime DateTime?  // Shall be removed
@@ -94,6 +95,8 @@ model Post {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
+  isReady Boolean @default(false)
+  
   caption   String?
   postPhoto PostPhoto[]
 
@@ -151,6 +154,7 @@ model Story {
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime
+  isReady Boolean @default(false)
 
   storyMedia StoryMedia[]
 
