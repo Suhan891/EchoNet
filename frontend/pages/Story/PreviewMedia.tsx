@@ -1,47 +1,25 @@
-"use client"
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
-import { useEffect, useMemo, useRef } from "react";
 
 interface PreviewMediaProps {
-  imageFile?: File;
-  videoFile?: File;
-  audioFile?: File;
+  imageUrl?: string;
+  videoUrl?: string;
+  audioUrl?: string;
 }
 
 export default function PreviewMedia({
-  imageFile,
-  videoFile,
-  audioFile,
+  imageUrl,
+  videoUrl,
+  audioUrl
 }: PreviewMediaProps) {
-  const file = imageFile || videoFile || audioFile;
-
-  const url = useMemo(() => {
-    return file instanceof File ? URL.createObjectURL(file) : null;
-  }, [file]);
-
-  const urlRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    urlRef.current = url;
-
-    return () => {
-      if (urlRef.current) {
-        URL.revokeObjectURL(urlRef.current);
-        urlRef.current = null;
-      }
-    };
-  }, [url]);
-
-  if (!url) return null;
 
   return (
     <Card className="w-32">
-      {imageFile && (
+      {imageUrl && (
         <AspectRatio ratio={1 / 1}>
           <Image
-            src={url}
+            src={imageUrl}
             alt="Img preview"
             fill
             unoptimized
@@ -49,17 +27,17 @@ export default function PreviewMedia({
           />
         </AspectRatio>
       )}
-      {videoFile && (
+      {videoUrl && (
         <AspectRatio ratio={1 / 1}>
           <video
             controls
-            src={url}
+            src={videoUrl}
             className="object-cover h-36 rounded-lg w-full"
           />
         </AspectRatio>
       )}
-      {audioFile && (
-        <audio controls src={url} className="z-5 w-full" />
+      {audioUrl && (
+        <audio controls src={audioUrl} className="z-5 w-full" />
       )}
     </Card>
   );

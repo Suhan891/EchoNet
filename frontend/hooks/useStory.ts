@@ -1,11 +1,11 @@
 import { CreateStoryRequest, GetStory, StoriesOwnRequest } from "@/service/story";
-import { ErrorResponse, SuccessResponse } from "@/types/common";
+import { ErrorResponse, JobCreate, SuccessResponse } from "@/types/common";
 import { StoryMedia, StoryResponseType } from "@/types/story.detils";
 import { queryKeys } from "@/utils/query.key";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function useCreateStory() {
-    return useMutation<SuccessResponse<StoryResponseType>,ErrorResponse,FormData>({
+    return useMutation<SuccessResponse<JobCreate>,ErrorResponse,FormData>({
         mutationFn: (payload) => CreateStoryRequest(payload)
     })
 }

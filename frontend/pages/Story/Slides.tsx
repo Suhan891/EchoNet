@@ -9,11 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Field,
-  FieldContent,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   InputGroup,
@@ -26,11 +22,13 @@ import {
   Controller,
   FieldArrayWithId,
   UseFieldArrayMove,
+  useWatch,
 } from "react-hook-form";
 import PreviewMedia from "./PreviewMedia";
 import UploadMedia from "./UploadMedia";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+import { useEffect, useReducer } from "react";
 
 interface SlideProps {
   item: FieldArrayWithId<
@@ -76,10 +74,33 @@ export default function Slide({
   isFirst,
   onRemove,
 }: SlideProps) {
+  const imageFile = useWatch({ control, name: `slides.${index}.imageFile` });
+  const videoFile = useWatch({ control, name: `slides.${index}.videoFile` });
+  const audioFile = useWatch({ control, name: `slides.${index}.audioFile` });
+
+  const file = imageFile || videoFile || audioFile;
+
+  const [previewUrl, dispatch] = useReducer(
+    (_: string | null, action: string | null) => action,
+    null,
+  );
+
+  useEffect(() => {
+    if (!(file instanceof File)) {
+      dispatch(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    dispatch(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
   return (
     <Card className="w-full mb-4 shrink-0">
       <CardHeader>
-        <CardTitle>Add {isAudioField ? "Combined" : isVideoField ? "Video" : "Image"} Status (order:{index + 1})</CardTitle>
+        <CardTitle>
+          Add {isAudioField ? "Combined" : isVideoField ? "Video" : "Image"}{" "}
+          Status (order:{index + 1})
+        </CardTitle>
         <CardDescription>Image is a required field</CardDescription>
         <CardAction>
           <Button variant={"destructive"} onClick={onRemove}>
@@ -88,7 +109,10 @@ export default function Slide({
         </CardAction>
       </CardHeader>
       <CardContent>
-        <Field orientation={"horizontal"} className="flex justify-around items-center">
+        <Field
+          orientation={"horizontal"}
+          className="flex justify-around items-center"
+        >
           {isImageField && (
             <Controller
               control={control}
@@ -104,8 +128,8 @@ export default function Slide({
                         Image(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`image-${item.id}`}>
-                        {value instanceof File ? (
-                          <PreviewMedia imageFile={value} />
+                        {previewUrl ? (
+                          <PreviewMedia imageUrl={previewUrl} />
                         ) : (
                           <UploadMedia isImage={true} />
                         )}
@@ -138,8 +162,8 @@ export default function Slide({
                         Video(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`video-${item.id}`}>
-                        {value instanceof File ? (
-                          <PreviewMedia videoFile={value} />
+                        {previewUrl ? (
+                          <PreviewMedia videoUrl={previewUrl} />
                         ) : (
                           <UploadMedia isVideo={true} />
                         )}
@@ -172,8 +196,8 @@ export default function Slide({
                         Audio(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`audio-${item.id}`}>
-                        {value instanceof File ? (
-                          <PreviewMedia audioFile={value} />
+                        {previewUrl ? (
+                          <PreviewMedia audioUrl={previewUrl} />
                         ) : (
                           <UploadMedia isAudio={true} />
                         )}
@@ -228,6 +252,7 @@ export default function Slide({
         <ButtonGroup>
           {!isFirst && (
             <Button
+              type="button"
               variant="outline"
               size="icon-lg"
               onClick={() => move(index, index - 1)}
@@ -237,6 +262,7 @@ export default function Slide({
           )}
           {!isLast && (
             <Button
+              type="button"
               variant="outline"
               size="icon-lg"
               onClick={() => move(index, index + 1)}

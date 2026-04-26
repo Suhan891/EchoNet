@@ -7,11 +7,11 @@ export const useStoryStore = create<StoryState>()(
     stories: [],
     story: "",
     expiresAt: "",
-    isUploaded: false,
+    isUploaded: false, // Shall be removed
 
     setStory: (story) => set({ story }),
     setExpiresAt: (expiresAt) => set({ expiresAt }),
-    setIsUploaded: (isUploaded) => set({ isUploaded }),
+    setIsUploaded: (isUploaded) => set({ isUploaded }), // Shall be removed
     setStories: (stories) => set({ stories }),
     addStory: (story) =>
       set((state) => ({ stories: [...state.stories, story] })),
