@@ -3,4 +3,5 @@ export const queryKeys = {
     PROFILE: 'profile',
     STORY: 'story',
     STORY_STATUS: 'story_status',
+    JOBS: 'job',
 }

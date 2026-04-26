@@ -6,7 +6,7 @@ import { useStoryStore } from "@/stores/StoryStore";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-export default function StoryOverlayPage() {
+export default function StoryPage() {
   const storyId = useStoryStore((state) => state.story);
   const {
     data: stories,

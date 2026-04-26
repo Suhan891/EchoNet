@@ -1,5 +1,6 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useJobStatusUpdate } from "@/features/Common/job.status";
 
 export default function AuthLayout({
   children,
@@ -14,6 +15,7 @@ export default function AuthLayout({
   reels: React.ReactNode;
   model: React.ReactNode;
 }>) {
+  useJobStatusUpdate();
   return (
     <div className="relative">
       <main>
