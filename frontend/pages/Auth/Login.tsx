@@ -29,7 +29,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import Hovertext from "@/components/card-hover";
+import HoverText from "@/components/card-hover";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -52,7 +52,7 @@ export default function Login() {
     mode: "onSubmit",
   });
   const login = useLogin();
-  const [view, setView] = useState(false);
+  const [view, setView] = useState(true);
 
   const onSubmit: SubmitHandler<LoginType> = (data) => {
     login.mutate(data, {
@@ -178,10 +178,11 @@ export default function Login() {
             )}
             <CardDescription className="text-gray-600 flex px-auto">
               All the data are end to end encrypted.{" "}
-              <Hovertext
-                title="Privacy"
+              <HoverText
                 description="No data shall go outside of this account"
-              />
+              >
+                <Button type="button" variant="link">Privacy</Button>
+                </HoverText>
             </CardDescription>
           </CardFooter>
         </form>

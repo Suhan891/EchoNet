@@ -21,16 +21,28 @@ export interface authAllProfiles {
   avatarUrl: string;
   name: string;
 }
-
+interface Job {
+  name: 'POST' | 'STORY';
+  id: string;
+  status: "PROGRESS" | "FAILED";
+}
+// interface StatusUpdate {
+//   id: string;
+//   status: "PROGRESS" | "SUCCESS" | "FAILED";
+// }
 export interface AuthState {
   userId: string;
   email: string;
   username: string;
   role: Role;
   profiles: authAllProfiles[];
+  jobs: Job[],
   setUserId: (userId: string) => void;
   setEmail: (email: string) => void;
   setRole: (role: Role) => void;
   setUserName: (name: string) => void;
   setProfile: (profiles: authAllProfiles[]) => void;
+  setJob: (job: Job ) => void
+  updateJobStatus: (id: string, status: "PROGRESS" | "FAILED") => void
+  removeJob: (id: string) => void
 }

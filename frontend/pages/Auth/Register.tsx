@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,6 +11,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Field,
+  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
@@ -31,7 +32,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import Hovertext from "@/components/card-hover";
+import HoverText from "@/components/card-hover";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { RegisterSchema, RegisterType } from "@/validations/auth/register";
@@ -39,10 +40,12 @@ import { useRegister } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function Register() {
   const registers = useRegister();
-  const [view, setView] = useState(false)
+  const [view, setView] = useState(true);
+  const [isChecked, setIsChecked] = useState(false)
   const {
     register,
     handleSubmit,
@@ -57,8 +60,7 @@ export default function Register() {
       password: "",
     },
   });
-  if(errors)
-    console.log(errors)
+  if (errors) console.log(errors);
   const onSubmit: SubmitHandler<RegisterType> = (data) => {
     registers.mutate(data, {
       onSuccess: (result) => {
@@ -76,12 +78,12 @@ export default function Register() {
     <div>
       <Card className="flex-5 w-7xl max-w-sm">
         <form onSubmit={handleSubmit(onSubmit)}>
-        <CardHeader className="w-full ">
-          <CardTitle className="text-2xl mx-auto">
-            Register the experience
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          <CardHeader className="w-full ">
+            <CardTitle className="text-2xl mx-auto">
+              Register the experience
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
             <FieldGroup>
               <Field>
                 <FieldLabel
@@ -150,7 +152,7 @@ export default function Register() {
                     {...register("password")}
                     aria-invalid={!!errors.password}
                     id="password"
-                    type={view ? 'password':'text'}
+                    type={view ? "password" : "text"}
                     placeholder="••••••••"
                   />
                   <InputGroupAddon>
@@ -159,7 +161,13 @@ export default function Register() {
                     </InputGroupButton>
                   </InputGroupAddon>
                   <InputGroupAddon align="inline-end">
-                    <Button variant={"ghost"} onClick={(e) => {e.preventDefault();setView(!view);}}>
+                    <Button
+                      variant={"ghost"}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setView(!view);
+                      }}
+                    >
                       {view ? <Eye /> : <EyeClosed />}
                     </Button>
                   </InputGroupAddon>
@@ -173,46 +181,58 @@ export default function Register() {
                 )}
               </Field>
             </FieldGroup>
-          
-        </CardContent>
-        <CardContent className="w-full flex justify-center gap-2.5 my-1.5">
-          <Button variant="outline" className="">
-            <RectangleGogglesIcon />
-            Google
-          </Button>
-          <Button variant="outline" className="px-1.5">
-            <GitBranchIcon /> Github
-          </Button>
-        </CardContent>
-        <CardContent className="w-full flex justify-center text-gray-800">
-          <CardDescription>
-            Already have an account{" "}
-            <Link href={"/login"} className="hover:text-blue-500">
-              SignIn
-            </Link>{" "}
-          </CardDescription>
-        </CardContent>
-        <CardFooter className="flex-col gap-2">
-          {registers.isPending ? (
-            <Button variant="outline" disabled>
-              <Spinner data-icon="inline-start" />
-              Registering
+          </CardContent>
+          <CardContent className="w-full flex justify-center gap-2.5 my-1.5">
+            <Button variant="outline" className="">
+              <RectangleGogglesIcon />
+              Google
             </Button>
-          ) : (
-            <Button type="submit" variant={"default"} className="w-full">
-              Register
+            <Button variant="outline" className="px-1.5">
+              <GitBranchIcon /> Github
             </Button>
-          )}
-          <CardDescription className="text-gray-600 flex px-auto">
-            By registering you agree to our extensive{" "}
-            <Hovertext
-              title="Terms"
-              description="Valid email should be provided as verification link shall be shared in inbox"
-            />{" "}
-            and Conditions
-          </CardDescription>
-      
-        </CardFooter>
+          </CardContent>
+          <CardContent className="w-full flex justify-center text-gray-800">
+            <CardDescription>
+              Already have an account{" "}
+              <Link href={"/login"} className="hover:text-blue-500">
+                SignIn
+              </Link>{" "}
+            </CardDescription>
+          </CardContent>
+          <CardContent>
+            <Field orientation={'horizontal'}>
+            <Checkbox id={'register-checkbox'} checked={isChecked} onCheckedChange={() => setIsChecked(!isChecked)} />
+              <FieldContent>
+                <FieldLabel htmlFor={'register-checkbox'}>Provided email is my own</FieldLabel>
+                <FieldDescription>As email verification shall be sent</FieldDescription>
+              </FieldContent>
+              </Field>
+          </CardContent>
+          <CardFooter className="flex-col gap-2">
+            {registers.isPending ? (
+              <Button variant="outline" disabled>
+                <Spinner data-icon="inline-start" />
+                Registering
+              </Button>
+            ) : (
+              <Button type="submit" variant={"default"} className="w-full" disabled={!isChecked}>
+                Register
+              </Button>
+            )}
+            <CardDescription className="text-gray-600 flex px-auto">
+              By registering you agree to our extensive{" "}
+              <HoverText description="Valid email should be provided as verification link shall be shared in inbox">
+                <Button
+                type="button"
+                  variant="link"
+                  size={"icon-sm"}
+                >
+                  Terms and Conditions
+                </Button>
+              </HoverText>
+              and Conditions
+            </CardDescription>
+          </CardFooter>
         </form>
       </Card>
     </div>

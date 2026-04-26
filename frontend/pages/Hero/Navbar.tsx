@@ -38,6 +38,7 @@ export default function Navbar() {
     logout.mutate(undefined, {
       onSuccess: (result) => {
         deleteCookie();
+        console.log("Result", result);
         // queryClient.invalidateQueries({
         //   queryKey: [queryKeys.USER, result.data.id],
         // });
@@ -46,11 +47,12 @@ export default function Navbar() {
         // });
         toast.success(result.message);
         router.push("/login");
+        router.refresh(); // To forget all data
       },
       onError: (error) => {
-        toast.error(error.message)
+        toast.error(error.message);
         console.error(error.error);
-      }
+      },
     });
   }
   const avatarUrl = useProfileStore((state) => state.avatarUrl);

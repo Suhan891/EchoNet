@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button"
 import {
   HoverCard,
   HoverCardContent,
@@ -6,15 +5,15 @@ import {
 } from "@/components/ui/hover-card"
 
 interface params {
-    title: string;
+    children: React.ReactNode;
     description: string;
 }
 
-export default function Hovertext({title, description}: params) {
+export default function HoverText({children, description}: params) {
   return (
     <HoverCard openDelay={10} closeDelay={100}>
       <HoverCardTrigger asChild>
-        <Button variant="link" size={"icon-sm"} className="inline align-baseline  text-blue-200 cursor-pointer">{title}</Button>
+        {children}
       </HoverCardTrigger>
       <HoverCardContent className="flex w-64 flex-col gap-0.5">
         <div className="font-semibold">EchoNet</div>
