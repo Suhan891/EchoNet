@@ -44,6 +44,29 @@ export class JobsService {
     };
   }
 
+  async jobRetry(user: authUserDto, jobData: JobData) {
+    if (user.userId !== jobData.userId)
+      throw new BadRequestException(
+        'You are not allowed to restart others job',
+      );
+
+    if (jobData.status === 'SUCCESS')
+      throw new BadRequestException('Job is already successfull');
+
+    if (jobData.status === 'PROGRESS')
+      throw new BadRequestException('Job is in progress');
+
+    const job = await this.storyQueue.getJob(jobData.jobId);
+    if (!job) {
+      // Means success , as it deletes after success
+      await this.JobStatusUpdate(jobData.id, 'SUCCESS');
+      throw new BadRequestException('Job is already successfull');
+    }
+
+    await job.retry('failed'); // As it was a failed job
+    return this.JobStatusUpdate(jobData.id, 'PROGRESS');
+  }
+
   private async JobStatusUpdate(id: string, status: JobStatus) {
     return await this.prisma.job.update({
       where: { id },

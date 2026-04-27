@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Put } from '@nestjs/common';
 import { JobsService } from './jobs.service';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 import { CurrentUser } from 'src/common/gaurds/current-user.decorator';
@@ -17,5 +17,14 @@ export class JobsController {
     @Param('id', ParseUUIDPipe, JobValidatePipe) jobData: JobData,
   ) {
     return await this.jobService.jobStatus(user, jobData);
+  }
+
+  @Put('retry')
+  @ResponseMessage('Job restarted successfully')
+  async retryJob(
+    @CurrentUser() user: authUserDto,
+    @Param('id', ParseUUIDPipe, JobValidatePipe) jobData: JobData,
+  ) {
+    return await this.jobService.jobRetry(user, jobData);
   }
 }
