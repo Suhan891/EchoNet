@@ -212,6 +212,9 @@ export type LikesOrderByWithRelationInput = {
 
 export type LikesWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  profileId_postId?: Prisma.LikesProfileIdPostIdCompoundUniqueInput
+  profileId_reelId?: Prisma.LikesProfileIdReelIdCompoundUniqueInput
+  profileId_storyMediaId?: Prisma.LikesProfileIdStoryMediaIdCompoundUniqueInput
   AND?: Prisma.LikesWhereInput | Prisma.LikesWhereInput[]
   OR?: Prisma.LikesWhereInput[]
   NOT?: Prisma.LikesWhereInput | Prisma.LikesWhereInput[]
@@ -224,7 +227,7 @@ export type LikesWhereUniqueInput = Prisma.AtLeast<{
   post?: Prisma.XOR<Prisma.PostNullableScalarRelationFilter, Prisma.PostWhereInput> | null
   reel?: Prisma.XOR<Prisma.ReelNullableScalarRelationFilter, Prisma.ReelWhereInput> | null
   storyMedia?: Prisma.XOR<Prisma.StoryMediaNullableScalarRelationFilter, Prisma.StoryMediaWhereInput> | null
-}, "id">
+}, "id" | "profileId_postId" | "profileId_reelId" | "profileId_storyMediaId">
 
 export type LikesOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -323,6 +326,21 @@ export type LikesOrderByRelevanceInput = {
   fields: Prisma.LikesOrderByRelevanceFieldEnum | Prisma.LikesOrderByRelevanceFieldEnum[]
   sort: Prisma.SortOrder
   search: string
+}
+
+export type LikesProfileIdPostIdCompoundUniqueInput = {
+  profileId: string
+  postId: string
+}
+
+export type LikesProfileIdReelIdCompoundUniqueInput = {
+  profileId: string
+  reelId: string
+}
+
+export type LikesProfileIdStoryMediaIdCompoundUniqueInput = {
+  profileId: string
+  storyMediaId: string
 }
 
 export type LikesCountOrderByAggregateInput = {

@@ -215,9 +215,9 @@ model Likes {
 
   createdAt DateTime @default(now())
 
-  @@index([profileId, postId]) // Index can store nullable feature
-  @@index([profileId, reelId])
-  @@index([profileId, storyMediaId])
+  @@unique([profileId, postId])
+  @@unique([profileId, reelId])
+  @@unique([profileId, storyMediaId])
 }
 
 model Comments {
