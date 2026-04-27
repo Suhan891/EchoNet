@@ -214,6 +214,6 @@ export class CloudinaryService implements OnModuleInit {
   }
 
   async delete(publicId: string): Promise<any> {
-    return this.cloudinary.uploader.destroy(publicId);
+    return await this.cloudinary.uploader.destroy(publicId);
   }
 }

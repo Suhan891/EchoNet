@@ -45,7 +45,7 @@ export class JobsService {
   }
 
   private async JobStatusUpdate(id: string, status: JobStatus) {
-    await this.prisma.job.update({
+    return await this.prisma.job.update({
       where: { id },
       data: { status },
       select: {

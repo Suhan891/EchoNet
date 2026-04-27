@@ -164,7 +164,7 @@ export class AuthService {
     console.log('User: ', user);
     const key = `user:${user.userId}`;
     await this.cacheService.delByPattern(key);
-    return await this.prisma.user.update({
+    await this.prisma.user.update({
       where: { id: user.userId },
       data: { isActive: false },
       select: {
