@@ -11,20 +11,34 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
+  DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Item, ItemContent, ItemHeader, ItemTitle } from "@/components/ui/item";
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { searchSchema, searchType } from "@/validations/profile/create.avatar";
+import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import {
+  avatarSchema,
+  avatarType,
+  searchSchema,
+  searchType,
+} from "@/validations/profile/create.avatar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "lucide-react";
 
 function avatarOptions(name: string | undefined) {
-  if(!name) return null;
+  if (!name) return null;
   const styles: Style<object>[] = [lorelei, bottts, avataaars, pixelArt];
   return styles.map((style) => {
     return createAvatar(style, {
@@ -37,12 +51,13 @@ function avatarOptions(name: string | undefined) {
 console.log(avatarOptions("hello"));
 export default function CreateAvatar({
   open,
-  setOpen,
+  setOpen
 }: {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  setOpen: (open:boolean) => void
+
 }) {
-  const [submittedName, setSubmittedName] = useState<string>()
+  const [submittedName, setSubmittedName] = useState<string>();
   const {
     control: searchControl,
     register,
@@ -58,75 +73,121 @@ export default function CreateAvatar({
     },
   });
   const canSearch = !searchWatch.name;
-  const onSubmit: SubmitHandler<searchType> = (data) => {
+  const onSearchSubmit: SubmitHandler<searchType> = (data) => {
     console.log(data);
-    setSubmittedName(data.name)
+    setSubmittedName(data.name);
     // How to make a call to avatar options functions to get data
+  };
+  const { control, handleSubmit } = useForm<avatarType>({
+    resolver: zodResolver(avatarSchema),
+    mode: "onSubmit",
+    defaultValues: {
+      avatar: "",
+    },
+  });
+  const onSubmit: SubmitHandler<avatarType> = (data) => {
+    console.log(data);
   };
   const avatars = useMemo(() => avatarOptions(submittedName), [submittedName]);
   console.log(avatars);
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle>Select Avatar</DrawerTitle>
-            <DrawerDescription>Select the best</DrawerDescription>
-          </DrawerHeader>
-          <FieldGroup>
-            <Form onSubmit={handleSearchSubmit(onSubmit)}>
-            <Field>
-              <FieldLabel htmlFor="input-button-group">Search</FieldLabel>
-              <ButtonGroup>
-                <Input
-                  id="input-button-group"
-                  placeholder="Type to search..."
-                  {...register("name")}
+    <Drawer onOpenChange={setOpen} open={open}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DrawerContent>
+          <div className="mx-auto w-full max-w-sm">
+            <DrawerHeader>
+              <DrawerTitle>Select Avatar</DrawerTitle>
+              <DrawerDescription>Select the best</DrawerDescription>
+            </DrawerHeader>
+            <FieldGroup>
+              
+                <Field>
+                  <FieldLabel htmlFor="input-button-group">Search</FieldLabel>
+                  <ButtonGroup>
+                    <Input
+                      id="input-button-group"
+                      placeholder="Type to search..."
+                      {...register("name")}
+                    />
+                    <Button
+                      variant="outline"
+                      disabled={canSearch}
+                      type="button"
+                      onClick={handleSearchSubmit(onSearchSubmit)}
+                    >
+                      Search
+                    </Button>
+                  </ButtonGroup>
+                </Field>
+             
+              {errors.name ? (
+                <FieldError errors={[errors.name]} />
+              ) : (
+                <FieldDescription>
+                  Enter a minimum 3 characters name
+                </FieldDescription>
+              )}
+            </FieldGroup>
+            {avatars && (
+              <FieldGroup>
+                <Controller
+                  control={control}
+                  name="avatar"
+                  render={({ field, fieldState }) => (
+                    <FieldSet>
+                      <FieldLegend>Select a avatar</FieldLegend>
+                      <FieldDescription>
+                        Atleast a item has to be selected
+                      </FieldDescription>
+                      <RadioGroup
+                        name={field.name}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        aria-invalid={fieldState.invalid}
+                        className="grid grid-cols-4 gap-4 w-full"
+                      >
+                        {avatars.map((avatar, index) => (
+                          <FieldLabel key={index} htmlFor={`radio-${index}`}>
+                            <Item
+                              variant={"outline"}
+                              aria-invalid={fieldState.invalid}
+                            >
+                              <ItemHeader>
+                                <Image
+                                  src={avatar}
+                                  width={128}
+                                  alt={`Generated avatar ${index}`}
+                                  height={128}
+                                  className="aspect-square w-full rounded-sm object-cover"
+                                />
+                              </ItemHeader>
+                              <ItemContent>
+                                <ItemTitle>
+                                  <RadioGroupItem
+                                    value={avatar}
+                                    id={`radio-${index}`}
+                                    aria-invalid={fieldState.invalid}
+                                  />
+                                </ItemTitle>
+                              </ItemContent>
+                            </Item>
+                          </FieldLabel>
+                        ))}
+                      </RadioGroup>
+                    </FieldSet>
+                  )}
                 />
-                <Button variant="outline" disabled={canSearch} type="submit">
-                  Search
-                </Button>
-              </ButtonGroup>
-            </Field>
-            </Form>
-            {errors.name ? (
-              <FieldError errors={[errors.name]} />
-            ) : (
-              <FieldDescription>Enter a minimum 3 characters name</FieldDescription>
+              </FieldGroup>
             )}
-          </FieldGroup>
-          {avatars && (
-            <RadioGroup className="grid grid-cols-4 gap-4 w-full">
-              {avatars.map((avatar, index) => (
-                <FieldLabel key={index} htmlFor={`radio-${index}`}>
-                  <Item variant={"outline"}>
-                    <ItemHeader>
-                      <Image
-                        src={avatar}
-                        width={128}
-                        alt={`Generated avatar ${index}`}
-                        height={128}
-                        className="aspect-square w-full rounded-sm object-cover"
-                      />
-                    </ItemHeader>
-                    <ItemContent>
-                      <ItemTitle>
-                        <RadioGroupItem value="do" id={`radio-${index}`} />
-                      </ItemTitle>
-                    </ItemContent>
-                  </Item>
-                </FieldLabel>
-              ))}
-            </RadioGroup>
-          )}
-          <DrawerFooter>
-            <Button>Submit</Button>
-            <DrawerClose asChild>
-              <Button variant={"outline"}>Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </div>
-      </DrawerContent>
+            <DrawerFooter>
+              <Button type="submit">Submit</Button>
+              <DrawerClose asChild>
+                <Button variant={"outline"}>Cancel</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </div>
+        </DrawerContent>
+      </form>
     </Drawer>
   );
 }
