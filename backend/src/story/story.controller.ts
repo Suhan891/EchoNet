@@ -5,6 +5,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -47,6 +48,12 @@ export class StoryController {
   // async storyStatus(@currentProfile() profile: profileDto) {
   //   return await this.storyService.getOwnStory(profile);
   // }
+
+  @Put('remove')
+  @ResponseMessage('Story Deleted successfully')
+  async removeStory(@currentProfile() profile: profileDto) {
+    return await this.storyService.removeStory(profile);
+  }
 
   @Get(':storyId')
   @ResponseMessage('Story Media Id"s Received')

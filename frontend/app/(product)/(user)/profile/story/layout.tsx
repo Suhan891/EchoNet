@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/empty";
 import { Amphora } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import CreateStory from "@/pages/Story/CreateStory";
+import CreateStory from "@/pages/Story/Create";
 import { useUserStore } from "@/stores/UserStore";
 
 export default function StoryLayout({

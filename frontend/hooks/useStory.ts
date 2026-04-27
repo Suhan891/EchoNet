@@ -1,4 +1,4 @@
-import { CreateStoryRequest, GetStory, StoriesOwnRequest } from "@/service/story";
+import { CreateStoryRequest, GetStory, RemoveStroy, StoriesOwnRequest } from "@/service/story";
 import { ErrorResponse, JobCreate, SuccessResponse } from "@/types/common";
 import { StoryMedia, StoryResponseType } from "@/types/story.detils";
 import { queryKeys } from "@/utils/query.key";
@@ -9,6 +9,17 @@ export function useCreateStory() {
         mutationFn: (payload) => CreateStoryRequest(payload)
     })
 }
+export function useDeleteStory() {
+    return useMutation<SuccessResponse<null>,ErrorResponse>({
+        mutationFn:() => RemoveStroy()
+    })
+}
+
+
+
+
+
+
 export function useAvailStory(profileId: string) {
     return useQuery<SuccessResponse<StoryResponseType>, ErrorResponse>({
         queryKey: [queryKeys.STORY_STATUS, profileId],

@@ -98,6 +98,19 @@ export class StoryService {
     });
   }
 
+  async removeStory(profile: profileDto) {
+    const story = await this.prisma.story.findFirst({
+      where: { profileId: profile.id },
+      select: { id: true },
+    });
+    if (!story)
+      throw new BadRequestException('No story wxists for the profile');
+
+    await this.deleteStory(story.id);
+    const profileKey = `profile:${profile.id}`;
+    await this.cacheService.delByPattern(profileKey);
+  }
+
   async getOwnStory(profile: profileDto) {
     const story = await this.prisma.story.findFirst({
       where: { profileId: profile.id },
@@ -313,7 +326,7 @@ export class StoryService {
         cloudId: true,
       },
     });
-
+    console.log('Story media:', storyMedias);
     const deletePromises = storyMedias.map(async (media) => {
       const publicId = media.cloudId;
 
