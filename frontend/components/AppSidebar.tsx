@@ -27,23 +27,18 @@ import {
 } from "./ui/dropdown-menu";
 import { items } from "@/utils/bar.icons";
 import { useUserStore } from "@/stores/UserStore";
-import { useProfileStore } from "@/stores/ProfileStore";
-import { useShallow } from "zustand/react/shallow";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { usePathname } from "next/navigation";
 
 function AppSidebar() {
   const pathname = usePathname();
   const profiles = useUserStore((state) => state.profiles);
-  const { name, id, avatarUrl } = useProfileStore(
-    useShallow((state) => ({
-      id: state.id,
-      name: state.name,
-      avatarUrl: state.avatarUrl,
-    })),
-  );
 
-  const inactiveProfiles = profiles.filter((profile) => profile.id !== id);
+  const activeProfile = profiles.find(profile => profile.isActive === true)
+  const name = activeProfile?.name
+  const avatarUrl = activeProfile?.avatarUrl
+
+  const inactiveProfiles = profiles.filter((profile) => profile.id !== activeProfile?.id);
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>

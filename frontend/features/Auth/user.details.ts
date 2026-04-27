@@ -4,7 +4,6 @@ import { useMyself } from "@/hooks/useAuth";
 import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useProfileDetails } from "../Profile/profile.details";
 import { deleteCookie, setProfileId } from "@/service/common/cookies";
 
 export function useUserDetails() {
@@ -21,8 +20,6 @@ export function useUserDetails() {
   const storeRole = useUserStore((s) => s.role);
   const storeUsername = useUserStore((s) => s.username);
   const storeProfiles = useUserStore((s) => s.profiles);
-
-  useProfileDetails();
 
   useEffect(() => {
     if (isError) {

@@ -230,7 +230,6 @@ export default function Register() {
                   Terms and Conditions
                 </Button>
               </HoverText>
-              and Conditions
             </CardDescription>
           </CardFooter>
         </form>

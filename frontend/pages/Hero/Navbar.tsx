@@ -13,7 +13,6 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useLogout } from "@/hooks/useAuth";
 import { deleteCookie } from "@/service/common/cookies";
-import { useProfileStore } from "@/stores/ProfileStore";
 import { useUserStore } from "@/stores/UserStore";
 import { queryKeys } from "@/utils/query.key";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,42 +20,42 @@ import { BadgeCheckIcon, Bell, LogOut, Moon, Sun, User } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useShallow } from "zustand/react/shallow";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { username, email } = useUserStore(
-    useShallow((state) => ({
-      username: state.username,
-      email: state.email,
-    })),
-  );
+
+  const username = useUserStore(state => state.username)
+  const email = useUserStore(state => state.email)
+  const userId = useUserStore((state) => state.userId);
+  const activeProfile = useUserStore(state => state.profiles).find(profile => profile.isActive === true)
+  const profileId = activeProfile?.id
   const logout = useLogout();
   function onLogout() {
     logout.mutate(undefined, {
       onSuccess: (result) => {
-        deleteCookie();
         console.log("Result", result);
-        // queryClient.invalidateQueries({
-        //   queryKey: [queryKeys.USER, result.data.id],
-        // });
-        // queryClient.invalidateQueries({
-        //   queryKey: [queryKeys.PROFILE, result.data.profile[0].id], // Later key checking shall be done
-        // });
         toast.success(result.message);
-        router.push("/login");
-        router.refresh(); // To forget all data
       },
       onError: (error) => {
         toast.error(error.message);
         console.error(error.error);
       },
+      onSettled() {
+        deleteCookie();
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.USER, userId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.PROFILE, profileId], // Later key checking shall be done
+        });
+        router.push("/login");
+      },
     });
   }
-  const avatarUrl = useProfileStore((state) => state.avatarUrl);
-  const name = useProfileStore((state) => state.name);
+  const avatarUrl = activeProfile?.avatarUrl;
+  const name = activeProfile?.name;
   return (
     <nav className="sticky top-0 z-50 flex w-full items-center justify-between p-4 md:px-6 pointer-events-none">
       <div className="pointer-events-auto">

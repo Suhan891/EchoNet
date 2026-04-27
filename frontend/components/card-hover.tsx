@@ -15,7 +15,7 @@ export default function HoverText({children, description}: params) {
       <HoverCardTrigger asChild>
         {children}
       </HoverCardTrigger>
-      <HoverCardContent className="flex w-64 flex-col gap-0.5">
+      <HoverCardContent>
         <div className="font-semibold">EchoNet</div>
         <div>{description}</div>
         <div className="mt-1 text-xs text-muted-foreground">
