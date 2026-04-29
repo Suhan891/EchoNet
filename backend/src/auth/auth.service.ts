@@ -40,7 +40,7 @@ export class AuthService {
       throw new ConflictException('Email already registered');
     }
 
-    const hashedPassword = await this.hashPassword(registerData.password);
+    const hashedPassword = this.hashPassword(registerData.password);
 
     const user = await this.prisma.user.create({
       data: {
@@ -105,11 +105,11 @@ export class AuthService {
       where: { email: data.email },
       select: { id: true, password: true },
     });
-    if (!user) return new NotFoundException('No such user exists');
+    if (!user) throw new NotFoundException('No such user exists');
 
     const isValidPass = bcrypt.compareSync(data.password, user.password);
     if (!isValidPass)
-      return new ForbiddenException('Please provide a valid password');
+      throw new ForbiddenException('Please provide a valid password');
 
     return await this.prisma.user.update({
       where: { id: user.id },
@@ -126,7 +126,7 @@ export class AuthService {
     const key = `user:${user.userId}`;
     const cachedData = await this.cacheService.get(key);
     if (cachedData) return cachedData;
-    const authUser = await this.prisma.user.findFirst({
+    const authUser = await this.prisma.user.findUnique({
       where: { id: user.userId },
       select: {
         id: true,
@@ -150,7 +150,7 @@ export class AuthService {
   async refreshHandler(user: RefreshAccessDto) {
     const key = `user:${user.id}`;
     await this.cacheService.delByPattern(key);
-    return await this.prisma.user.findFirst({
+    return await this.prisma.user.findUnique({
       where: { id: user.id },
       select: {
         id: true,
@@ -182,14 +182,14 @@ export class AuthService {
   }
 
   async reset(data: resetDto) {
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findUnique({
       where: { email: data.email },
       select: { id: true, isEmailVerified: true },
     });
-    if (!user) return new NotFoundException('No such user exists');
+    if (!user) throw new NotFoundException('No such user exists');
 
     if (user.isEmailVerified !== true)
-      return new UnauthorizedException('Firstly verify your email');
+      throw new UnauthorizedException('Firstly verify your email');
 
     const rawToken = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto
@@ -222,7 +222,7 @@ export class AuthService {
     return updatedUser;
   }
 
-  private async hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 10);
+  private hashPassword(password: string): string {
+    return bcrypt.hashSync(password, 10);
   }
 }

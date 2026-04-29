@@ -29,6 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         isEmailVerified: true,
         isActive: true,
         role: true,
+        tokenVersion: true,
         profile: {
           select: {
             id: true,
@@ -43,7 +44,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new NotAcceptableException('Role not matching');
 
     if (user.isEmailVerified !== true)
-      throw new BadGatewayException('Verify your email firstly');
+      throw new BadRequestException('Verify your email firstly');
 
     if (user.isActive !== true)
       throw new BadRequestException('Your account is not yet active');

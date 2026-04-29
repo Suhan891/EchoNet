@@ -70,16 +70,16 @@ export class CloudinaryService implements OnModuleInit {
     });
   }
 
-  uploadPost(file: Express.Multer.File, filename: string, profileName: string) {
+  uploadPost(file: Express.Multer.File, filename: string) {
     return new Promise<UploadApiResponse>((resolve, reject) => {
       const uploadStream = this.cloudinary.uploader.upload_stream(
         {
-          folder: `social_media/posts/${profileName}`,
+          folder: `social_media/posts`,
           public_id: filename,
           resource_type: 'image',
           transformation: [
             { height: 1080, width: 1350, crop: 'fill', gravity: 'auto' },
-          ], // Combined into one object
+          ],
         },
         (
           error: UploadApiErrorResponse | undefined,
