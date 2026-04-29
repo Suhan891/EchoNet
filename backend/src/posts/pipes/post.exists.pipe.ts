@@ -6,7 +6,7 @@ export class PostExistsPipe implements PipeTransform {
   constructor(private prisma: PrismaService) {}
 
   async transform(postId: string): Promise<PostDto> {
-    const post = await this.prisma.post.findFirst({
+    const post = await this.prisma.post.findUnique({
       where: { id: postId },
       select: { id: true, profileId: true },
     });

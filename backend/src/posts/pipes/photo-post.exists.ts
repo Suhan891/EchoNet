@@ -5,7 +5,7 @@ export class PostsPhotoExistsPipe implements PipeTransform {
   constructor(private prisma: PrismaService) {}
 
   async transform(postsPhotoId: string) {
-    const postsPhoto = await this.prisma.postPhoto.findFirst({
+    const postsPhoto = await this.prisma.postMedia.findFirst({
       where: { id: postsPhotoId },
       select: { id: true },
     });
