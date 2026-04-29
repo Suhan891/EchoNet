@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { authUserDto } from 'src/auth/tokens/token.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JobData } from './dto/job.status.view.dto';
-import { InjectQueue } from '@nestjs/bullmq/dist';
+import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { JobStatus } from 'src/generated/prisma/enums';
 
@@ -37,10 +37,9 @@ export class JobsService {
     if (state === 'failed') return this.JobStatusUpdate(jobData.id, 'FAILED');
 
     return {
-      // Else all shall return => progress
-      id: true,
+      id: jobData.id,
       name: jobData.name,
-      status: jobData.status, // 'PROGRESS'
+      status: jobData.status,
     };
   }
 

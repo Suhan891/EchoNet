@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JobsController } from './jobs.controller';
 import { JobsService } from './jobs.service';
-import { BullModule } from '@nestjs/bullmq/dist';
+import { BullModule } from '@nestjs/bullmq';
 import { JobValidatePipe } from './pipe/job.validate.pipe';
 
 @Module({

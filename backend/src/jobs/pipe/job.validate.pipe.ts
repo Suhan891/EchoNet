@@ -6,7 +6,7 @@ import { JobData } from '../dto/job.status.view.dto';
 export class JobValidatePipe implements PipeTransform {
   constructor(private prisma: PrismaService) {}
   async transform(jobId: string): Promise<JobData> {
-    const job = await this.prisma.job.findFirst({
+    const job = await this.prisma.job.findUnique({
       where: { id: jobId },
       select: {
         id: true,
