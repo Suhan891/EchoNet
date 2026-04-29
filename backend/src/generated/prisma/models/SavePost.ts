@@ -26,19 +26,19 @@ export type AggregateSavePost = {
 
 export type SavePostMinAggregateOutputType = {
   id: string | null
-  postPhotoId: string | null
+  postMediaId: string | null
   profileId: string | null
 }
 
 export type SavePostMaxAggregateOutputType = {
   id: string | null
-  postPhotoId: string | null
+  postMediaId: string | null
   profileId: string | null
 }
 
 export type SavePostCountAggregateOutputType = {
   id: number
-  postPhotoId: number
+  postMediaId: number
   profileId: number
   _all: number
 }
@@ -46,19 +46,19 @@ export type SavePostCountAggregateOutputType = {
 
 export type SavePostMinAggregateInputType = {
   id?: true
-  postPhotoId?: true
+  postMediaId?: true
   profileId?: true
 }
 
 export type SavePostMaxAggregateInputType = {
   id?: true
-  postPhotoId?: true
+  postMediaId?: true
   profileId?: true
 }
 
 export type SavePostCountAggregateInputType = {
   id?: true
-  postPhotoId?: true
+  postMediaId?: true
   profileId?: true
   _all?: true
 }
@@ -137,7 +137,7 @@ export type SavePostGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type SavePostGroupByOutputType = {
   id: string
-  postPhotoId: string
+  postMediaId: string
   profileId: string
   _count: SavePostCountAggregateOutputType | null
   _min: SavePostMinAggregateOutputType | null
@@ -164,17 +164,17 @@ export type SavePostWhereInput = {
   OR?: Prisma.SavePostWhereInput[]
   NOT?: Prisma.SavePostWhereInput | Prisma.SavePostWhereInput[]
   id?: Prisma.StringFilter<"SavePost"> | string
-  postPhotoId?: Prisma.StringFilter<"SavePost"> | string
+  postMediaId?: Prisma.StringFilter<"SavePost"> | string
   profileId?: Prisma.StringFilter<"SavePost"> | string
-  post?: Prisma.XOR<Prisma.PostPhotoScalarRelationFilter, Prisma.PostPhotoWhereInput>
+  post?: Prisma.XOR<Prisma.PostMediaScalarRelationFilter, Prisma.PostMediaWhereInput>
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
 }
 
 export type SavePostOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  postPhotoId?: Prisma.SortOrder
+  postMediaId?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
-  post?: Prisma.PostPhotoOrderByWithRelationInput
+  post?: Prisma.PostMediaOrderByWithRelationInput
   profile?: Prisma.ProfileOrderByWithRelationInput
   _relevance?: Prisma.SavePostOrderByRelevanceInput
 }
@@ -184,15 +184,15 @@ export type SavePostWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.SavePostWhereInput | Prisma.SavePostWhereInput[]
   OR?: Prisma.SavePostWhereInput[]
   NOT?: Prisma.SavePostWhereInput | Prisma.SavePostWhereInput[]
-  postPhotoId?: Prisma.StringFilter<"SavePost"> | string
+  postMediaId?: Prisma.StringFilter<"SavePost"> | string
   profileId?: Prisma.StringFilter<"SavePost"> | string
-  post?: Prisma.XOR<Prisma.PostPhotoScalarRelationFilter, Prisma.PostPhotoWhereInput>
+  post?: Prisma.XOR<Prisma.PostMediaScalarRelationFilter, Prisma.PostMediaWhereInput>
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
 }, "id">
 
 export type SavePostOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  postPhotoId?: Prisma.SortOrder
+  postMediaId?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
   _count?: Prisma.SavePostCountOrderByAggregateInput
   _max?: Prisma.SavePostMaxOrderByAggregateInput
@@ -204,37 +204,37 @@ export type SavePostScalarWhereWithAggregatesInput = {
   OR?: Prisma.SavePostScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SavePostScalarWhereWithAggregatesInput | Prisma.SavePostScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"SavePost"> | string
-  postPhotoId?: Prisma.StringWithAggregatesFilter<"SavePost"> | string
+  postMediaId?: Prisma.StringWithAggregatesFilter<"SavePost"> | string
   profileId?: Prisma.StringWithAggregatesFilter<"SavePost"> | string
 }
 
 export type SavePostCreateInput = {
   id?: string
-  post: Prisma.PostPhotoCreateNestedOneWithoutSavedPostsInput
+  post: Prisma.PostMediaCreateNestedOneWithoutSavedPostsInput
   profile: Prisma.ProfileCreateNestedOneWithoutSavedPostsInput
 }
 
 export type SavePostUncheckedCreateInput = {
   id?: string
-  postPhotoId: string
+  postMediaId: string
   profileId: string
 }
 
 export type SavePostUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  post?: Prisma.PostPhotoUpdateOneRequiredWithoutSavedPostsNestedInput
+  post?: Prisma.PostMediaUpdateOneRequiredWithoutSavedPostsNestedInput
   profile?: Prisma.ProfileUpdateOneRequiredWithoutSavedPostsNestedInput
 }
 
 export type SavePostUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  postPhotoId?: Prisma.StringFieldUpdateOperationsInput | string
+  postMediaId?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type SavePostCreateManyInput = {
   id?: string
-  postPhotoId: string
+  postMediaId: string
   profileId: string
 }
 
@@ -244,7 +244,7 @@ export type SavePostUpdateManyMutationInput = {
 
 export type SavePostUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  postPhotoId?: Prisma.StringFieldUpdateOperationsInput | string
+  postMediaId?: Prisma.StringFieldUpdateOperationsInput | string
   profileId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -266,19 +266,19 @@ export type SavePostOrderByRelevanceInput = {
 
 export type SavePostCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  postPhotoId?: Prisma.SortOrder
+  postMediaId?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
 }
 
 export type SavePostMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  postPhotoId?: Prisma.SortOrder
+  postMediaId?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
 }
 
 export type SavePostMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  postPhotoId?: Prisma.SortOrder
+  postMediaId?: Prisma.SortOrder
   profileId?: Prisma.SortOrder
 }
 
@@ -368,12 +368,12 @@ export type SavePostUncheckedUpdateManyWithoutPostNestedInput = {
 
 export type SavePostCreateWithoutProfileInput = {
   id?: string
-  post: Prisma.PostPhotoCreateNestedOneWithoutSavedPostsInput
+  post: Prisma.PostMediaCreateNestedOneWithoutSavedPostsInput
 }
 
 export type SavePostUncheckedCreateWithoutProfileInput = {
   id?: string
-  postPhotoId: string
+  postMediaId: string
 }
 
 export type SavePostCreateOrConnectWithoutProfileInput = {
@@ -407,7 +407,7 @@ export type SavePostScalarWhereInput = {
   OR?: Prisma.SavePostScalarWhereInput[]
   NOT?: Prisma.SavePostScalarWhereInput | Prisma.SavePostScalarWhereInput[]
   id?: Prisma.StringFilter<"SavePost"> | string
-  postPhotoId?: Prisma.StringFilter<"SavePost"> | string
+  postMediaId?: Prisma.StringFilter<"SavePost"> | string
   profileId?: Prisma.StringFilter<"SavePost"> | string
 }
 
@@ -449,22 +449,22 @@ export type SavePostUpdateManyWithWhereWithoutPostInput = {
 
 export type SavePostCreateManyProfileInput = {
   id?: string
-  postPhotoId: string
+  postMediaId: string
 }
 
 export type SavePostUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  post?: Prisma.PostPhotoUpdateOneRequiredWithoutSavedPostsNestedInput
+  post?: Prisma.PostMediaUpdateOneRequiredWithoutSavedPostsNestedInput
 }
 
 export type SavePostUncheckedUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  postPhotoId?: Prisma.StringFieldUpdateOperationsInput | string
+  postMediaId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type SavePostUncheckedUpdateManyWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  postPhotoId?: Prisma.StringFieldUpdateOperationsInput | string
+  postMediaId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type SavePostCreateManyPostInput = {
@@ -491,57 +491,57 @@ export type SavePostUncheckedUpdateManyWithoutPostInput = {
 
 export type SavePostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  postPhotoId?: boolean
+  postMediaId?: boolean
   profileId?: boolean
-  post?: boolean | Prisma.PostPhotoDefaultArgs<ExtArgs>
+  post?: boolean | Prisma.PostMediaDefaultArgs<ExtArgs>
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["savePost"]>
 
 export type SavePostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  postPhotoId?: boolean
+  postMediaId?: boolean
   profileId?: boolean
-  post?: boolean | Prisma.PostPhotoDefaultArgs<ExtArgs>
+  post?: boolean | Prisma.PostMediaDefaultArgs<ExtArgs>
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["savePost"]>
 
 export type SavePostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  postPhotoId?: boolean
+  postMediaId?: boolean
   profileId?: boolean
-  post?: boolean | Prisma.PostPhotoDefaultArgs<ExtArgs>
+  post?: boolean | Prisma.PostMediaDefaultArgs<ExtArgs>
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["savePost"]>
 
 export type SavePostSelectScalar = {
   id?: boolean
-  postPhotoId?: boolean
+  postMediaId?: boolean
   profileId?: boolean
 }
 
-export type SavePostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "postPhotoId" | "profileId", ExtArgs["result"]["savePost"]>
+export type SavePostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "postMediaId" | "profileId", ExtArgs["result"]["savePost"]>
 export type SavePostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  post?: boolean | Prisma.PostPhotoDefaultArgs<ExtArgs>
+  post?: boolean | Prisma.PostMediaDefaultArgs<ExtArgs>
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }
 export type SavePostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  post?: boolean | Prisma.PostPhotoDefaultArgs<ExtArgs>
+  post?: boolean | Prisma.PostMediaDefaultArgs<ExtArgs>
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }
 export type SavePostIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  post?: boolean | Prisma.PostPhotoDefaultArgs<ExtArgs>
+  post?: boolean | Prisma.PostMediaDefaultArgs<ExtArgs>
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
 }
 
 export type $SavePostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "SavePost"
   objects: {
-    post: Prisma.$PostPhotoPayload<ExtArgs>
+    post: Prisma.$PostMediaPayload<ExtArgs>
     profile: Prisma.$ProfilePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    postPhotoId: string
+    postMediaId: string
     profileId: string
   }, ExtArgs["result"]["savePost"]>
   composites: {}
@@ -937,7 +937,7 @@ readonly fields: SavePostFieldRefs;
  */
 export interface Prisma__SavePostClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  post<T extends Prisma.PostPhotoDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PostPhotoDefaultArgs<ExtArgs>>): Prisma.Prisma__PostPhotoClient<runtime.Types.Result.GetResult<Prisma.$PostPhotoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  post<T extends Prisma.PostMediaDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PostMediaDefaultArgs<ExtArgs>>): Prisma.Prisma__PostMediaClient<runtime.Types.Result.GetResult<Prisma.$PostMediaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   profile<T extends Prisma.ProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -969,7 +969,7 @@ export interface Prisma__SavePostClient<T, Null = never, ExtArgs extends runtime
  */
 export interface SavePostFieldRefs {
   readonly id: Prisma.FieldRef<"SavePost", 'String'>
-  readonly postPhotoId: Prisma.FieldRef<"SavePost", 'String'>
+  readonly postMediaId: Prisma.FieldRef<"SavePost", 'String'>
   readonly profileId: Prisma.FieldRef<"SavePost", 'String'>
 }
     

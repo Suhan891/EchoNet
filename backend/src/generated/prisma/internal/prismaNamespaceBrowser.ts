@@ -55,7 +55,7 @@ export const ModelName = {
   Profile: 'Profile',
   Follow: 'Follow',
   Post: 'Post',
-  PostPhoto: 'PostPhoto',
+  PostMedia: 'PostMedia',
   SavePost: 'SavePost',
   Reel: 'Reel',
   Story: 'Story',
@@ -131,6 +131,7 @@ export const PostScalarFieldEnum = {
   profileId: 'profileId',
   isReady: 'isReady',
   caption: 'caption',
+  description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -138,20 +139,20 @@ export const PostScalarFieldEnum = {
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
 
 
-export const PostPhotoScalarFieldEnum = {
+export const PostMediaScalarFieldEnum = {
   id: 'id',
   postId: 'postId',
-  imageUrl: 'imageUrl',
+  mediaUrl: 'mediaUrl',
   cloudId: 'cloudId',
-  order: 'order'
+  createdAt: 'createdAt'
 } as const
 
-export type PostPhotoScalarFieldEnum = (typeof PostPhotoScalarFieldEnum)[keyof typeof PostPhotoScalarFieldEnum]
+export type PostMediaScalarFieldEnum = (typeof PostMediaScalarFieldEnum)[keyof typeof PostMediaScalarFieldEnum]
 
 
 export const SavePostScalarFieldEnum = {
   id: 'id',
-  postPhotoId: 'postPhotoId',
+  postMediaId: 'postMediaId',
   profileId: 'profileId'
 } as const
 
@@ -315,25 +316,26 @@ export type FollowOrderByRelevanceFieldEnum = (typeof FollowOrderByRelevanceFiel
 export const PostOrderByRelevanceFieldEnum = {
   id: 'id',
   profileId: 'profileId',
-  caption: 'caption'
+  caption: 'caption',
+  description: 'description'
 } as const
 
 export type PostOrderByRelevanceFieldEnum = (typeof PostOrderByRelevanceFieldEnum)[keyof typeof PostOrderByRelevanceFieldEnum]
 
 
-export const PostPhotoOrderByRelevanceFieldEnum = {
+export const PostMediaOrderByRelevanceFieldEnum = {
   id: 'id',
   postId: 'postId',
-  imageUrl: 'imageUrl',
+  mediaUrl: 'mediaUrl',
   cloudId: 'cloudId'
 } as const
 
-export type PostPhotoOrderByRelevanceFieldEnum = (typeof PostPhotoOrderByRelevanceFieldEnum)[keyof typeof PostPhotoOrderByRelevanceFieldEnum]
+export type PostMediaOrderByRelevanceFieldEnum = (typeof PostMediaOrderByRelevanceFieldEnum)[keyof typeof PostMediaOrderByRelevanceFieldEnum]
 
 
 export const SavePostOrderByRelevanceFieldEnum = {
   id: 'id',
-  postPhotoId: 'postPhotoId',
+  postMediaId: 'postMediaId',
   profileId: 'profileId'
 } as const
 

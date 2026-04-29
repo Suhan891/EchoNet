@@ -38,10 +38,10 @@ export type Follow = Prisma.FollowModel
  */
 export type Post = Prisma.PostModel
 /**
- * Model PostPhoto
+ * Model PostMedia
  * 
  */
-export type PostPhoto = Prisma.PostPhotoModel
+export type PostMedia = Prisma.PostMediaModel
 /**
  * Model SavePost
  * 

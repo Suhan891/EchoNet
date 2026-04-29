@@ -388,7 +388,7 @@ export const ModelName = {
   Profile: 'Profile',
   Follow: 'Follow',
   Post: 'Post',
-  PostPhoto: 'PostPhoto',
+  PostMedia: 'PostMedia',
   SavePost: 'SavePost',
   Reel: 'Reel',
   Story: 'Story',
@@ -413,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "profile" | "follow" | "post" | "postPhoto" | "savePost" | "reel" | "story" | "storyMedia" | "storyViews" | "likes" | "comments" | "notification" | "job"
+    modelProps: "user" | "profile" | "follow" | "post" | "postMedia" | "savePost" | "reel" | "story" | "storyMedia" | "storyViews" | "likes" | "comments" | "notification" | "job"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -713,77 +713,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    PostPhoto: {
-      payload: Prisma.$PostPhotoPayload<ExtArgs>
-      fields: Prisma.PostPhotoFieldRefs
+    PostMedia: {
+      payload: Prisma.$PostMediaPayload<ExtArgs>
+      fields: Prisma.PostMediaFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.PostPhotoFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload> | null
+          args: Prisma.PostMediaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.PostPhotoFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload>
+          args: Prisma.PostMediaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload>
         }
         findFirst: {
-          args: Prisma.PostPhotoFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload> | null
+          args: Prisma.PostMediaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.PostPhotoFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload>
+          args: Prisma.PostMediaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload>
         }
         findMany: {
-          args: Prisma.PostPhotoFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload>[]
+          args: Prisma.PostMediaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload>[]
         }
         create: {
-          args: Prisma.PostPhotoCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload>
+          args: Prisma.PostMediaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload>
         }
         createMany: {
-          args: Prisma.PostPhotoCreateManyArgs<ExtArgs>
+          args: Prisma.PostMediaCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.PostPhotoCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload>[]
+          args: Prisma.PostMediaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload>[]
         }
         delete: {
-          args: Prisma.PostPhotoDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload>
+          args: Prisma.PostMediaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload>
         }
         update: {
-          args: Prisma.PostPhotoUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload>
+          args: Prisma.PostMediaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload>
         }
         deleteMany: {
-          args: Prisma.PostPhotoDeleteManyArgs<ExtArgs>
+          args: Prisma.PostMediaDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.PostPhotoUpdateManyArgs<ExtArgs>
+          args: Prisma.PostMediaUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.PostPhotoUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload>[]
+          args: Prisma.PostMediaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload>[]
         }
         upsert: {
-          args: Prisma.PostPhotoUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostPhotoPayload>
+          args: Prisma.PostMediaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PostMediaPayload>
         }
         aggregate: {
-          args: Prisma.PostPhotoAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregatePostPhoto>
+          args: Prisma.PostMediaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePostMedia>
         }
         groupBy: {
-          args: Prisma.PostPhotoGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PostPhotoGroupByOutputType>[]
+          args: Prisma.PostMediaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PostMediaGroupByOutputType>[]
         }
         count: {
-          args: Prisma.PostPhotoCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PostPhotoCountAggregateOutputType> | number
+          args: Prisma.PostMediaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PostMediaCountAggregateOutputType> | number
         }
       }
     }
@@ -1540,6 +1540,7 @@ export const PostScalarFieldEnum = {
   profileId: 'profileId',
   isReady: 'isReady',
   caption: 'caption',
+  description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1547,20 +1548,20 @@ export const PostScalarFieldEnum = {
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
 
 
-export const PostPhotoScalarFieldEnum = {
+export const PostMediaScalarFieldEnum = {
   id: 'id',
   postId: 'postId',
-  imageUrl: 'imageUrl',
+  mediaUrl: 'mediaUrl',
   cloudId: 'cloudId',
-  order: 'order'
+  createdAt: 'createdAt'
 } as const
 
-export type PostPhotoScalarFieldEnum = (typeof PostPhotoScalarFieldEnum)[keyof typeof PostPhotoScalarFieldEnum]
+export type PostMediaScalarFieldEnum = (typeof PostMediaScalarFieldEnum)[keyof typeof PostMediaScalarFieldEnum]
 
 
 export const SavePostScalarFieldEnum = {
   id: 'id',
-  postPhotoId: 'postPhotoId',
+  postMediaId: 'postMediaId',
   profileId: 'profileId'
 } as const
 
@@ -1724,25 +1725,26 @@ export type FollowOrderByRelevanceFieldEnum = (typeof FollowOrderByRelevanceFiel
 export const PostOrderByRelevanceFieldEnum = {
   id: 'id',
   profileId: 'profileId',
-  caption: 'caption'
+  caption: 'caption',
+  description: 'description'
 } as const
 
 export type PostOrderByRelevanceFieldEnum = (typeof PostOrderByRelevanceFieldEnum)[keyof typeof PostOrderByRelevanceFieldEnum]
 
 
-export const PostPhotoOrderByRelevanceFieldEnum = {
+export const PostMediaOrderByRelevanceFieldEnum = {
   id: 'id',
   postId: 'postId',
-  imageUrl: 'imageUrl',
+  mediaUrl: 'mediaUrl',
   cloudId: 'cloudId'
 } as const
 
-export type PostPhotoOrderByRelevanceFieldEnum = (typeof PostPhotoOrderByRelevanceFieldEnum)[keyof typeof PostPhotoOrderByRelevanceFieldEnum]
+export type PostMediaOrderByRelevanceFieldEnum = (typeof PostMediaOrderByRelevanceFieldEnum)[keyof typeof PostMediaOrderByRelevanceFieldEnum]
 
 
 export const SavePostOrderByRelevanceFieldEnum = {
   id: 'id',
-  postPhotoId: 'postPhotoId',
+  postMediaId: 'postMediaId',
   profileId: 'profileId'
 } as const
 
@@ -2081,7 +2083,7 @@ export type GlobalOmitConfig = {
   profile?: Prisma.ProfileOmit
   follow?: Prisma.FollowOmit
   post?: Prisma.PostOmit
-  postPhoto?: Prisma.PostPhotoOmit
+  postMedia?: Prisma.PostMediaOmit
   savePost?: Prisma.SavePostOmit
   reel?: Prisma.ReelOmit
   story?: Prisma.StoryOmit
