@@ -59,6 +59,11 @@ export class ProfileGaurd implements CanActivate {
       select: {
         name: true,
         id: true,
+        user: {
+          select: {
+            id: true,
+          },
+        },
         isActive: true,
         bio: true,
       },

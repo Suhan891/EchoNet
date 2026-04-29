@@ -79,7 +79,7 @@ export class ProfileService {
     avatar: Express.Multer.File,
     user: authUserDto,
   ) {
-    const profile = await this.prisma.profile.findFirstOrThrow({
+    const profile = await this.prisma.profile.findUniqueOrThrow({
       where: { id: profileData.id },
       select: {
         id: true,
@@ -161,7 +161,7 @@ export class ProfileService {
     const key = `profile:${profile.id}`;
     const cachedProfile = await this.cacheService.get(key);
     if (cachedProfile) return cachedProfile;
-    const profileData = await this.prisma.profile.findFirst({
+    const profileData = await this.prisma.profile.findUnique({
       where: {
         id: profile.id,
       },
@@ -225,7 +225,7 @@ export class ProfileService {
     const key = `profile:${profileId}`;
     const cachedProfile = await this.cacheService.get(key);
     if (cachedProfile) return cachedProfile;
-    const profile = this.prisma.profile.findFirst({
+    const profile = this.prisma.profile.findUnique({
       where: { id: profileId },
       select: {
         avatarUrl: true,

@@ -39,5 +39,8 @@ export interface profileDto {
   id: string;
   name: string;
   bio?: string;
+  user: {
+    id: string;
+  };
   isActive: boolean;
 }
