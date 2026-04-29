@@ -52,7 +52,7 @@ model Profile {
   isActive Boolean @default(false)
 
   bio       String?
-  avatarUrl String?
+  avatarUrl String?  // Later changed to required
   cloudId   String?
 
   posts         Post[]
@@ -97,8 +97,9 @@ model Post {
 
   isReady Boolean @default(false)
   
-  caption   String?
-  postPhoto PostPhoto[]
+  caption   String
+  description String?
+  postPhoto PostMedia[]
 
   likes    Likes[]
   comments Comments[]
@@ -107,26 +108,26 @@ model Post {
   updatedAt DateTime @updatedAt
 }
 
-model PostPhoto {
+model PostMedia {
   id     String @id @default(uuid())
   postId String
 
-  imageUrl String
+  mediaUrl String
   cloudId  String
-  order    Int    @default(0)
 
   savedPosts SavePost[]
 
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model SavePost {
   id          String @id @default(uuid())
-  postPhotoId String
+  postMediaId String
 
   profileId String // It will be the id of the user who saves
 
-  post    PostPhoto @relation(fields: [postPhotoId], references: [id], onDelete: Cascade)
+  post    PostMedia @relation(fields: [postMediaId], references: [id], onDelete: Cascade)
   profile Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
