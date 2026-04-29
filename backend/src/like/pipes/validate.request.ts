@@ -60,7 +60,7 @@ export class ValidateRequestPipe implements PipeTransform {
     name: string;
     profileId: string;
   }): Promise<boolean> {
-    const existingStoryMedia = await this.prisma.reel.count({
+    const existingStoryMedia = await this.prisma.storyMedia.count({
       where: { id: data.id },
     });
     if (!existingStoryMedia) return false;

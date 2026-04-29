@@ -30,8 +30,8 @@ export class PostsController {
   constructor(private postService: PostsService) {}
 
   @Post('create')
-  @Throttle({ default: { limit: 2, ttl: 24 * 60 * 60 * 1000 } }) // Allow only 2 requests every 24 hrs
-  @ResponseMessage('Post created')
+  @Throttle({ default: { limit: 5, ttl: 24 * 60 * 60 * 1000 } })
+  @ResponseMessage('Post Media Creation started')
   @UseInterceptors(FilesInterceptor('postMedia', 15))
   async create(
     @Body() data: CreatePostDto,
@@ -43,56 +43,58 @@ export class PostsController {
     )
     postMedia: Array<Express.Multer.File>,
   ) {
+    console.log('Body: ', data);
+    console.log('Files received: ', postMedia);
     return await this.postService.createPost(profile, data, postMedia);
   }
 
-  @Get('post')
-  @ResponseMessage('Post data retrived')
-  async getPost(@Param('postId', ParseUUIDPipe, PostExistsPipe) post: PostDto) {
-    return await this.postService.getPost(post);
-  }
+  // @Get('post')
+  // @ResponseMessage('Post data retrived')
+  // async getPost(@Param('postId', ParseUUIDPipe, PostExistsPipe) post: PostDto) {
+  //   return await this.postService.getPost(post);
+  // }
 
-  @Put('remove-post')
-  @ResponseMessage('Post data removed')
-  async removePost(
-    @Param('postId', ParseUUIDPipe, PostExistsPipe) post: PostDto,
-    @currentProfile() profile: profileDto,
-  ) {
-    return await this.postService.deletePost(post, profile);
-  }
+  // @Put('remove-post')
+  // @ResponseMessage('Post data removed')
+  // async removePost(
+  //   @Param('postId', ParseUUIDPipe, PostExistsPipe) post: PostDto,
+  //   @currentProfile() profile: profileDto,
+  // ) {
+  //   return await this.postService.deletePost(post, profile);
+  // }
 
-  @Put('remove-saved-post')
-  @ResponseMessage('Saved Post data removed')
-  async removeSavedPost(
-    @Param('savedpostId', ParseUUIDPipe, SavedPostExistsPipe)
-    savePost: SavedPostDto,
-    @currentProfile() profile: profileDto,
-  ) {
-    return await this.postService.deleteSavedPost(savePost, profile);
-  }
+  // @Put('remove-saved-post')
+  // @ResponseMessage('Saved Post data removed')
+  // async removeSavedPost(
+  //   @Param('savedpostId', ParseUUIDPipe, SavedPostExistsPipe)
+  //   savePost: SavedPostDto,
+  //   @currentProfile() profile: profileDto,
+  // ) {
+  //   return await this.postService.deleteSavedPost(savePost, profile);
+  // }
 
-  @Post('save-post')
-  @ResponseMessage('Post Saved successfull')
-  async savePost(
-    @Param('post-photo', ParseUUIDPipe, PostsPhotoExistsPipe)
-    postPhotoId: string,
-    @currentProfile() profile: profileDto,
-  ) {
-    return await this.postService.savePost(profile, postPhotoId);
-  }
+  // @Post('save-post')
+  // @ResponseMessage('Post Saved successfull')
+  // async savePost(
+  //   @Param('post-photo', ParseUUIDPipe, PostsPhotoExistsPipe)
+  //   postPhotoId: string,
+  //   @currentProfile() profile: profileDto,
+  // ) {
+  //   return await this.postService.savePost(profile, postPhotoId);
+  // }
 
-  @Get('post-all')
-  @ResponseMessage('Paginated post data sent')
-  async getAllPost(
-    @Query() paginatedData: FindPostQueryDto,
-    @currentProfile() profile: profileDto,
-  ) {
-    return this.postService.getAllPost(profile, paginatedData);
-  }
+  // @Get('post-all')
+  // @ResponseMessage('Paginated post data sent')
+  // async getAllPost(
+  //   @Query() paginatedData: FindPostQueryDto,
+  //   @currentProfile() profile: profileDto,
+  // ) {
+  //   return this.postService.getAllPost(profile, paginatedData);
+  // }
 
-  @Get('posts-saved')
-  @ResponseMessage('Retrieved Save Posts')
-  async getSavedPost(@currentProfile() profile: profileDto) {
-    return this.postService.getSavedPosts(profile);
-  }
+  // @Get('posts-saved')
+  // @ResponseMessage('Retrieved Save Posts')
+  // async getSavedPost(@currentProfile() profile: profileDto) {
+  //   return this.postService.getSavedPosts(profile);
+  // }
 }
