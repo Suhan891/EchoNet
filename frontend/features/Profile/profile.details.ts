@@ -19,7 +19,7 @@ export function useProfileDetails() {
   const setName = useProfileStore((s) => s.setName);
   const setBio = useProfileStore((s) => s.setBio);
   const setStory = useProfileStore((s) => s.setStory);
-  const setPostexists = useProfileStore(s => s.setPosts);
+  const setPosts = useProfileStore(s => s.setPosts);
   const setReels = useProfileStore(s => s.setReels)
   const setSavedPosts = useProfileStore(s => s.setSavedPosts)
 
@@ -30,6 +30,9 @@ export function useProfileDetails() {
   const storeName = useProfileStore((s) => s.name);
   const storeBio = useProfileStore((s) => s.bio);
   const storeStory = useProfileStore((s) => s.story);
+  const storePosts = useProfileStore(state => state.posts);
+  const storeReels = useProfileStore(state => state.reels)
+  const storeSavedPosts = useProfileStore(state => state.savedPosts)
 
   const { data: profile, isSuccess, isError, error } = useMyProfile(userId);
 
@@ -55,6 +58,9 @@ export function useProfileDetails() {
       if (storeName !== profile.data.name) setName(profile.data.name);
       if (storeBio !== profile.data.bio) setBio(profile.data.bio);
       if (storeStory !== !!profile.data.story) setStory(!!profile.data.story);
+      if(storePosts !== profile.data._count.posts) setPosts(profile.data._count.posts)
+        if(storeReels !== profile.data._count.reels) setReels(profile.data._count.reels)
+        if(storeSavedPosts !== profile.data._count.savedPosts) setSavedPosts(profile.data._count.savedPosts)
     }
   }, [
     userId,
@@ -70,6 +76,9 @@ export function useProfileDetails() {
     storeName,
     storeBio,
     storeStory,
+    storePosts,
+    storeReels,
+    storeSavedPosts,
     setAvatar,
     setId,
     setFollowers,
@@ -77,6 +86,9 @@ export function useProfileDetails() {
     setName,
     setBio,
     setStory,
+    setPosts,
+    setReels,
+    setSavedPosts
   ]);
   return isSuccess;
 }

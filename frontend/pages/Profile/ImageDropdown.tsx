@@ -13,7 +13,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import CreateStory from "../Story/Create";
-import CreateAvatar from "./CreateAvatar";
+import UpdateAvatar from "./UpdateAvatar";
 import { useDeleteStory } from "@/hooks/useStory";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -31,7 +31,7 @@ export default function ImageDropdown({
   isStory,
 }: ImageDropdownProps) {
   const [createStoryOpen, setCreateStoryOpen] = useState(false);
-  const [openCreateAvatar, setCreateOpenAvatar] = useState(false);
+  const [openUpdateAvatar, setUpdateOpenAvatar] = useState(false);
   const queryClient = useQueryClient();
   const story = useDeleteStory();
   const userId = useUserStore((state) => state.userId);
@@ -59,17 +59,9 @@ export default function ImageDropdown({
           <DropdownMenuPortal>
             <DropdownMenuSubContent>
               <DropdownMenuItem>View</DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>Update</DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuItem>Upload</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setCreateOpenAvatar(true)}>
-                      Create
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
+              <DropdownMenuItem onClick={() => setUpdateOpenAvatar(true)}>
+                Update
+              </DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
@@ -103,8 +95,8 @@ export default function ImageDropdown({
       {createStoryOpen && (
         <CreateStory open={createStoryOpen} setOpen={setCreateStoryOpen} />
       )}
-      {openCreateAvatar && (
-        <CreateAvatar open={openCreateAvatar} setOpen={setCreateOpenAvatar} />
+      {openUpdateAvatar && (
+        <UpdateAvatar open={openUpdateAvatar} setOpen={setUpdateOpenAvatar} />
       )}
     </DropdownMenu>
   );
