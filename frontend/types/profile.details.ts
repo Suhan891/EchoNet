@@ -31,18 +31,18 @@ export interface ProfileState {
   name: string;
   bio?: string;
   avatarUrl: string;
-  posts: boolean;
-  savedPosts: boolean;
-  reels: boolean;
+  posts: number;
+  savedPosts: number;
+  reels: number;
   followers: number;
   followings: number;
   story: boolean;
   sentNotifications: Notifications[] | undefined;
 
   setId: (id: string) => void;
-  setPosts: (posts: boolean) => void;
-  setSavedPosts: (savedPosts: boolean) => void;
-  setReels: (reels: boolean) => void;
+  setPosts: (posts: number) => void;
+  setSavedPosts: (savedPosts: number) => void;
+  setReels: (reels: number) => void;
   setName: (name: string) => void;
   setBio: (bio: string | undefined) => void;
   setAvatar: (avatarUrl: string) => void;
