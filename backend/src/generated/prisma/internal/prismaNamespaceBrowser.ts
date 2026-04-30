@@ -190,7 +190,8 @@ export const StoryMediaScalarFieldEnum = {
   mediaUrl: 'mediaUrl',
   cloudId: 'cloudId',
   mediaType: 'mediaType',
-  order: 'order'
+  order: 'order',
+  duration: 'duration'
 } as const
 
 export type StoryMediaScalarFieldEnum = (typeof StoryMediaScalarFieldEnum)[keyof typeof StoryMediaScalarFieldEnum]

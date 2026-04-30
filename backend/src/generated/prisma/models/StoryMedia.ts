@@ -28,10 +28,12 @@ export type AggregateStoryMedia = {
 
 export type StoryMediaAvgAggregateOutputType = {
   order: number | null
+  duration: number | null
 }
 
 export type StoryMediaSumAggregateOutputType = {
   order: number | null
+  duration: number | null
 }
 
 export type StoryMediaMinAggregateOutputType = {
@@ -41,6 +43,7 @@ export type StoryMediaMinAggregateOutputType = {
   cloudId: string | null
   mediaType: $Enums.Media | null
   order: number | null
+  duration: number | null
 }
 
 export type StoryMediaMaxAggregateOutputType = {
@@ -50,6 +53,7 @@ export type StoryMediaMaxAggregateOutputType = {
   cloudId: string | null
   mediaType: $Enums.Media | null
   order: number | null
+  duration: number | null
 }
 
 export type StoryMediaCountAggregateOutputType = {
@@ -59,16 +63,19 @@ export type StoryMediaCountAggregateOutputType = {
   cloudId: number
   mediaType: number
   order: number
+  duration: number
   _all: number
 }
 
 
 export type StoryMediaAvgAggregateInputType = {
   order?: true
+  duration?: true
 }
 
 export type StoryMediaSumAggregateInputType = {
   order?: true
+  duration?: true
 }
 
 export type StoryMediaMinAggregateInputType = {
@@ -78,6 +85,7 @@ export type StoryMediaMinAggregateInputType = {
   cloudId?: true
   mediaType?: true
   order?: true
+  duration?: true
 }
 
 export type StoryMediaMaxAggregateInputType = {
@@ -87,6 +95,7 @@ export type StoryMediaMaxAggregateInputType = {
   cloudId?: true
   mediaType?: true
   order?: true
+  duration?: true
 }
 
 export type StoryMediaCountAggregateInputType = {
@@ -96,6 +105,7 @@ export type StoryMediaCountAggregateInputType = {
   cloudId?: true
   mediaType?: true
   order?: true
+  duration?: true
   _all?: true
 }
 
@@ -192,6 +202,7 @@ export type StoryMediaGroupByOutputType = {
   cloudId: string
   mediaType: $Enums.Media
   order: number
+  duration: number
   _count: StoryMediaCountAggregateOutputType | null
   _avg: StoryMediaAvgAggregateOutputType | null
   _sum: StoryMediaSumAggregateOutputType | null
@@ -224,6 +235,7 @@ export type StoryMediaWhereInput = {
   cloudId?: Prisma.StringFilter<"StoryMedia"> | string
   mediaType?: Prisma.EnumMediaFilter<"StoryMedia"> | $Enums.Media
   order?: Prisma.IntFilter<"StoryMedia"> | number
+  duration?: Prisma.IntFilter<"StoryMedia"> | number
   storyViews?: Prisma.StoryViewsListRelationFilter
   likes?: Prisma.LikesListRelationFilter
   story?: Prisma.XOR<Prisma.StoryScalarRelationFilter, Prisma.StoryWhereInput>
@@ -236,6 +248,7 @@ export type StoryMediaOrderByWithRelationInput = {
   cloudId?: Prisma.SortOrder
   mediaType?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  duration?: Prisma.SortOrder
   storyViews?: Prisma.StoryViewsOrderByRelationAggregateInput
   likes?: Prisma.LikesOrderByRelationAggregateInput
   story?: Prisma.StoryOrderByWithRelationInput
@@ -252,6 +265,7 @@ export type StoryMediaWhereUniqueInput = Prisma.AtLeast<{
   cloudId?: Prisma.StringFilter<"StoryMedia"> | string
   mediaType?: Prisma.EnumMediaFilter<"StoryMedia"> | $Enums.Media
   order?: Prisma.IntFilter<"StoryMedia"> | number
+  duration?: Prisma.IntFilter<"StoryMedia"> | number
   storyViews?: Prisma.StoryViewsListRelationFilter
   likes?: Prisma.LikesListRelationFilter
   story?: Prisma.XOR<Prisma.StoryScalarRelationFilter, Prisma.StoryWhereInput>
@@ -264,6 +278,7 @@ export type StoryMediaOrderByWithAggregationInput = {
   cloudId?: Prisma.SortOrder
   mediaType?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  duration?: Prisma.SortOrder
   _count?: Prisma.StoryMediaCountOrderByAggregateInput
   _avg?: Prisma.StoryMediaAvgOrderByAggregateInput
   _max?: Prisma.StoryMediaMaxOrderByAggregateInput
@@ -281,6 +296,7 @@ export type StoryMediaScalarWhereWithAggregatesInput = {
   cloudId?: Prisma.StringWithAggregatesFilter<"StoryMedia"> | string
   mediaType?: Prisma.EnumMediaWithAggregatesFilter<"StoryMedia"> | $Enums.Media
   order?: Prisma.IntWithAggregatesFilter<"StoryMedia"> | number
+  duration?: Prisma.IntWithAggregatesFilter<"StoryMedia"> | number
 }
 
 export type StoryMediaCreateInput = {
@@ -289,6 +305,7 @@ export type StoryMediaCreateInput = {
   cloudId: string
   mediaType: $Enums.Media
   order?: number
+  duration?: number
   storyViews?: Prisma.StoryViewsCreateNestedManyWithoutStoryMediaInput
   likes?: Prisma.LikesCreateNestedManyWithoutStoryMediaInput
   story: Prisma.StoryCreateNestedOneWithoutStoryMediaInput
@@ -301,6 +318,7 @@ export type StoryMediaUncheckedCreateInput = {
   cloudId: string
   mediaType: $Enums.Media
   order?: number
+  duration?: number
   storyViews?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutStoryMediaInput
   likes?: Prisma.LikesUncheckedCreateNestedManyWithoutStoryMediaInput
 }
@@ -311,6 +329,7 @@ export type StoryMediaUpdateInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
   storyViews?: Prisma.StoryViewsUpdateManyWithoutStoryMediaNestedInput
   likes?: Prisma.LikesUpdateManyWithoutStoryMediaNestedInput
   story?: Prisma.StoryUpdateOneRequiredWithoutStoryMediaNestedInput
@@ -323,6 +342,7 @@ export type StoryMediaUncheckedUpdateInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
   storyViews?: Prisma.StoryViewsUncheckedUpdateManyWithoutStoryMediaNestedInput
   likes?: Prisma.LikesUncheckedUpdateManyWithoutStoryMediaNestedInput
 }
@@ -334,6 +354,7 @@ export type StoryMediaCreateManyInput = {
   cloudId: string
   mediaType: $Enums.Media
   order?: number
+  duration?: number
 }
 
 export type StoryMediaUpdateManyMutationInput = {
@@ -342,6 +363,7 @@ export type StoryMediaUpdateManyMutationInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type StoryMediaUncheckedUpdateManyInput = {
@@ -351,6 +373,7 @@ export type StoryMediaUncheckedUpdateManyInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type StoryMediaListRelationFilter = {
@@ -376,10 +399,12 @@ export type StoryMediaCountOrderByAggregateInput = {
   cloudId?: Prisma.SortOrder
   mediaType?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  duration?: Prisma.SortOrder
 }
 
 export type StoryMediaAvgOrderByAggregateInput = {
   order?: Prisma.SortOrder
+  duration?: Prisma.SortOrder
 }
 
 export type StoryMediaMaxOrderByAggregateInput = {
@@ -389,6 +414,7 @@ export type StoryMediaMaxOrderByAggregateInput = {
   cloudId?: Prisma.SortOrder
   mediaType?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  duration?: Prisma.SortOrder
 }
 
 export type StoryMediaMinOrderByAggregateInput = {
@@ -398,10 +424,12 @@ export type StoryMediaMinOrderByAggregateInput = {
   cloudId?: Prisma.SortOrder
   mediaType?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  duration?: Prisma.SortOrder
 }
 
 export type StoryMediaSumOrderByAggregateInput = {
   order?: Prisma.SortOrder
+  duration?: Prisma.SortOrder
 }
 
 export type StoryMediaScalarRelationFilter = {
@@ -496,6 +524,7 @@ export type StoryMediaCreateWithoutStoryInput = {
   cloudId: string
   mediaType: $Enums.Media
   order?: number
+  duration?: number
   storyViews?: Prisma.StoryViewsCreateNestedManyWithoutStoryMediaInput
   likes?: Prisma.LikesCreateNestedManyWithoutStoryMediaInput
 }
@@ -506,6 +535,7 @@ export type StoryMediaUncheckedCreateWithoutStoryInput = {
   cloudId: string
   mediaType: $Enums.Media
   order?: number
+  duration?: number
   storyViews?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutStoryMediaInput
   likes?: Prisma.LikesUncheckedCreateNestedManyWithoutStoryMediaInput
 }
@@ -546,6 +576,7 @@ export type StoryMediaScalarWhereInput = {
   cloudId?: Prisma.StringFilter<"StoryMedia"> | string
   mediaType?: Prisma.EnumMediaFilter<"StoryMedia"> | $Enums.Media
   order?: Prisma.IntFilter<"StoryMedia"> | number
+  duration?: Prisma.IntFilter<"StoryMedia"> | number
 }
 
 export type StoryMediaCreateWithoutStoryViewsInput = {
@@ -554,6 +585,7 @@ export type StoryMediaCreateWithoutStoryViewsInput = {
   cloudId: string
   mediaType: $Enums.Media
   order?: number
+  duration?: number
   likes?: Prisma.LikesCreateNestedManyWithoutStoryMediaInput
   story: Prisma.StoryCreateNestedOneWithoutStoryMediaInput
 }
@@ -565,6 +597,7 @@ export type StoryMediaUncheckedCreateWithoutStoryViewsInput = {
   cloudId: string
   mediaType: $Enums.Media
   order?: number
+  duration?: number
   likes?: Prisma.LikesUncheckedCreateNestedManyWithoutStoryMediaInput
 }
 
@@ -590,6 +623,7 @@ export type StoryMediaUpdateWithoutStoryViewsInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
   likes?: Prisma.LikesUpdateManyWithoutStoryMediaNestedInput
   story?: Prisma.StoryUpdateOneRequiredWithoutStoryMediaNestedInput
 }
@@ -601,6 +635,7 @@ export type StoryMediaUncheckedUpdateWithoutStoryViewsInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
   likes?: Prisma.LikesUncheckedUpdateManyWithoutStoryMediaNestedInput
 }
 
@@ -610,6 +645,7 @@ export type StoryMediaCreateWithoutLikesInput = {
   cloudId: string
   mediaType: $Enums.Media
   order?: number
+  duration?: number
   storyViews?: Prisma.StoryViewsCreateNestedManyWithoutStoryMediaInput
   story: Prisma.StoryCreateNestedOneWithoutStoryMediaInput
 }
@@ -621,6 +657,7 @@ export type StoryMediaUncheckedCreateWithoutLikesInput = {
   cloudId: string
   mediaType: $Enums.Media
   order?: number
+  duration?: number
   storyViews?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutStoryMediaInput
 }
 
@@ -646,6 +683,7 @@ export type StoryMediaUpdateWithoutLikesInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
   storyViews?: Prisma.StoryViewsUpdateManyWithoutStoryMediaNestedInput
   story?: Prisma.StoryUpdateOneRequiredWithoutStoryMediaNestedInput
 }
@@ -657,6 +695,7 @@ export type StoryMediaUncheckedUpdateWithoutLikesInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
   storyViews?: Prisma.StoryViewsUncheckedUpdateManyWithoutStoryMediaNestedInput
 }
 
@@ -666,6 +705,7 @@ export type StoryMediaCreateManyStoryInput = {
   cloudId: string
   mediaType: $Enums.Media
   order?: number
+  duration?: number
 }
 
 export type StoryMediaUpdateWithoutStoryInput = {
@@ -674,6 +714,7 @@ export type StoryMediaUpdateWithoutStoryInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
   storyViews?: Prisma.StoryViewsUpdateManyWithoutStoryMediaNestedInput
   likes?: Prisma.LikesUpdateManyWithoutStoryMediaNestedInput
 }
@@ -684,6 +725,7 @@ export type StoryMediaUncheckedUpdateWithoutStoryInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
   storyViews?: Prisma.StoryViewsUncheckedUpdateManyWithoutStoryMediaNestedInput
   likes?: Prisma.LikesUncheckedUpdateManyWithoutStoryMediaNestedInput
 }
@@ -694,6 +736,7 @@ export type StoryMediaUncheckedUpdateManyWithoutStoryInput = {
   cloudId?: Prisma.StringFieldUpdateOperationsInput | string
   mediaType?: Prisma.EnumMediaFieldUpdateOperationsInput | $Enums.Media
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  duration?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -743,6 +786,7 @@ export type StoryMediaSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   cloudId?: boolean
   mediaType?: boolean
   order?: boolean
+  duration?: boolean
   storyViews?: boolean | Prisma.StoryMedia$storyViewsArgs<ExtArgs>
   likes?: boolean | Prisma.StoryMedia$likesArgs<ExtArgs>
   story?: boolean | Prisma.StoryDefaultArgs<ExtArgs>
@@ -756,6 +800,7 @@ export type StoryMediaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   cloudId?: boolean
   mediaType?: boolean
   order?: boolean
+  duration?: boolean
   story?: boolean | Prisma.StoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["storyMedia"]>
 
@@ -766,6 +811,7 @@ export type StoryMediaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   cloudId?: boolean
   mediaType?: boolean
   order?: boolean
+  duration?: boolean
   story?: boolean | Prisma.StoryDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["storyMedia"]>
 
@@ -776,9 +822,10 @@ export type StoryMediaSelectScalar = {
   cloudId?: boolean
   mediaType?: boolean
   order?: boolean
+  duration?: boolean
 }
 
-export type StoryMediaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "storyId" | "mediaUrl" | "cloudId" | "mediaType" | "order", ExtArgs["result"]["storyMedia"]>
+export type StoryMediaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "storyId" | "mediaUrl" | "cloudId" | "mediaType" | "order" | "duration", ExtArgs["result"]["storyMedia"]>
 export type StoryMediaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   storyViews?: boolean | Prisma.StoryMedia$storyViewsArgs<ExtArgs>
   likes?: boolean | Prisma.StoryMedia$likesArgs<ExtArgs>
@@ -806,6 +853,7 @@ export type $StoryMediaPayload<ExtArgs extends runtime.Types.Extensions.Internal
     cloudId: string
     mediaType: $Enums.Media
     order: number
+    duration: number
   }, ExtArgs["result"]["storyMedia"]>
   composites: {}
 }
@@ -1238,6 +1286,7 @@ export interface StoryMediaFieldRefs {
   readonly cloudId: Prisma.FieldRef<"StoryMedia", 'String'>
   readonly mediaType: Prisma.FieldRef<"StoryMedia", 'Media'>
   readonly order: Prisma.FieldRef<"StoryMedia", 'Int'>
+  readonly duration: Prisma.FieldRef<"StoryMedia", 'Int'>
 }
     
 
