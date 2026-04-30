@@ -15,9 +15,9 @@ export class ValidateRequestPipe implements PipeTransform {
 
   private async validateName(data: RequestDto): Promise<boolean> {
     const { name } = data;
-    if (name === 'post') return await this.validatePost(data);
-    if (name === 'reel') return await this.validateReel(data);
-    if (name === 'story') return await this.validateStoryMedia(data);
+    if (name === 'POST') return await this.validatePost(data);
+    if (name === 'REEL') return await this.validateReel(data);
+    if (name === 'STORY') return await this.validateStoryMedia(data);
     return false;
   }
 

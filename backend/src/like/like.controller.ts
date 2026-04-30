@@ -30,11 +30,13 @@ export class LikeController {
   @ResponseMessage('Like created successfully')
   async create(
     @Param('id', ParseUUIDPipe) id: string,
-    @Query('name') name: string,
+    @Query('name') name: RequestType,
     @currentProfile() profile: profileDto,
   ) {
     if (!name || !id)
       throw new BadGatewayException('Both id and name is required');
+    if (name !== 'POST' && name !== 'REEL' && name !== 'STORY')
+      throw new BadRequestException('Type does not exists');
     const response = { id, name, profileId: profile.id };
     const data = await new ValidateRequestPipe(this.prisma).transform(response);
     return await this.likeService.create(data);
@@ -56,6 +58,8 @@ export class LikeController {
     @Param('id', ParseUUIDPipe) id: string,
     @Query('type') type: RequestType,
   ) {
+    if (!type || !id)
+      throw new BadGatewayException('Both id and type is required');
     if (type !== 'POST' && type !== 'REEL' && type !== 'STORY')
       throw new BadRequestException('Type does not exists');
     return await this.likeService.viewProfiles(profile, id, type);

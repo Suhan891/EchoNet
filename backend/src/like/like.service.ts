@@ -12,9 +12,9 @@ export class LikeService {
   ) {}
 
   async create(data: RequestDto) {
-    if (data.name === 'post') return await this.createPostLike(data);
-    if (data.name === 'reel') return await this.createReelLike(data);
-    if (data.name === 'story') return await this.createStoryLike(data);
+    if (data.name === 'POST') return await this.createPostLike(data);
+    if (data.name === 'REEL') return await this.createReelLike(data);
+    if (data.name === 'STORY') return await this.createStoryLike(data);
   }
 
   async remove(profile: profileDto, like: LikeDTo) {
