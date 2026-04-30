@@ -26,7 +26,7 @@ export class RefreshGaurd implements CanActivate {
     const payload = this.tokenService.refreshToken(refreshToken);
     if (!payload) throw new UnauthorizedException('Invalid token');
 
-    const user = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
       select: {
         isActive: true,
@@ -42,7 +42,7 @@ export class RefreshGaurd implements CanActivate {
       );
 
     if (user.tokenVersion !== payload.tokenVersion)
-      throw new BadRequestException(
+      throw new UnauthorizedException(
         'Token version has been rotated. Please login again',
       );
 
