@@ -26,7 +26,7 @@ model User {
   // Also add enum of :role:
 
   isEmailVerified Boolean @default(false)
-  isActive        Boolean @default(false) // Later shall be removed
+  isActive        Boolean @default(false) // Later shall be removed => To let user use from different browsers at the same time
   tokenVersion Int @default(0)
 
   passResetToken   String? // Shall be removed
@@ -70,6 +70,8 @@ model Profile {
   // Whenever this profile likes other post, reel, story media or writes comment
   pofileLikes      Likes[]
   profileCommentes Comments[]
+
+  // Job id shall be stored in Job table with the user id and job name to track the progress of the job
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -155,7 +157,7 @@ model Story {
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime
-  isReady Boolean @default(false)
+  isReady Boolean @default(false) // Later be removed => And have One to Many with Jobs
 
   storyMedia StoryMedia[]
 
@@ -177,6 +179,8 @@ model StoryMedia {
   cloudId   String
   mediaType Media
   order     Int    @default(0)
+
+  duration Int @default(3) // Only for video, for image it will be 0
 
   storyViews StoryViews[]
   likes      Likes[]
@@ -202,7 +206,7 @@ model StoryViews {
 model Likes {
   id String @id @default(uuid())
 
-  profileId String
+  profileId String 
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   postId String?
