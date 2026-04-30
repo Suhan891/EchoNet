@@ -8,3 +8,5 @@ export interface LikeDTo {
   id: string;
   profileId: string;
 }
+
+export type RequestType = 'STORY' | 'POST' | 'REEL';

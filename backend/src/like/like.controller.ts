@@ -1,7 +1,9 @@
 import {
   BadGatewayException,
+  BadRequestException,
   Body,
   Controller,
+  Get,
   Param,
   ParseUUIDPipe,
   Post,
@@ -14,7 +16,7 @@ import { currentProfile } from 'src/profile/decorator/get-profile';
 import type { profileDto } from 'src/profile/dto/profile.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ValidateLikePipe } from './pipes/validate.like_id';
-import type { LikeDTo } from './dto/request.dto';
+import type { LikeDTo, RequestType } from './dto/request.dto';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 
 @Controller('like')
@@ -45,5 +47,17 @@ export class LikeController {
     @currentProfile() profile: profileDto,
   ) {
     return await this.likeService.remove(profile, like);
+  }
+
+  @Get(':id')
+  @ResponseMessage('Likes data received')
+  async getProfiles(
+    @currentProfile() profile: profileDto,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query('type') type: RequestType,
+  ) {
+    if (type !== 'POST' && type !== 'REEL' && type !== 'STORY')
+      throw new BadRequestException('Type does not exists');
+    return await this.likeService.viewProfiles(profile, id, type);
   }
 }
