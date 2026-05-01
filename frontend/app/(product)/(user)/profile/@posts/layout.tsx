@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -20,8 +20,7 @@ export default function PostLayout({
 }) {
   const posts = useProfileStore((s) => s.posts);
   const [open, setOpen] = useState(false);
-  if(open)
-    return <CreatePost open={open} setOpen={setOpen} />
+  if (open) return <CreatePost open={open} setOpen={setOpen} />;
   if (!posts)
     return (
       <Empty className="border border-dashed">
@@ -33,9 +32,11 @@ export default function PostLayout({
           <EmptyDescription>Upload a post to access</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button variant={"link"} onClick={() => setOpen(true)}>Create Posts</Button>
+          <Button variant={"link"} onClick={() => setOpen(true)}>
+            Create Posts
+          </Button>
         </EmptyContent>
       </Empty>
     );
-  return { children };
+  return <>{children}</>;
 }

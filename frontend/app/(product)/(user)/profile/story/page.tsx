@@ -1,38 +1,24 @@
 "use client";
 import { Spinner } from "@/components/ui/spinner";
-import { useOwnStories } from "@/hooks/useStory";
+import { useOwnStory } from "@/hooks/useStory";
+import StorySkeleton from "@/pages/Story/Loading";
 import ViewStory from "@/pages/Story/ViewStory";
+import { useProfileStore } from "@/stores/ProfileStore";
+import { useStore } from "@/stores/Store";
 import { useStoryStore } from "@/stores/StoryStore";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { toast } from "sonner";
 
 export default function StoryPage() {
-  const storyId = useStoryStore((state) => state.story);
-  const {
-    data: stories,
-    isFetching,
-    isError,
-    error,
-    isSuccess,
-  } = useOwnStories(storyId);
+  const profileId = useProfileStore((state) => state.id);
+  const setStore = useStore((state) => state.setStore);
+  const { data } = useOwnStory(profileId);
   useEffect(() => {
-    if (isSuccess) {
-      const state = useStoryStore.getState();
-      state.setStories(stories.data)
-      toast.success(stories.message)
-    }
-    if(isError) {
-      toast.error(error.message)
-      console.error(error.error)
-      // To error page
-    }
-  }, [stories, isError, error, isSuccess]);
-  return isFetching ? (
-    <div className="min-w-2xl">
-      {" "}
-      <Spinner className="size-3" /> Getting Story details...{" "}
-    </div>
-  ) : (
-    <ViewStory />
+    setStore({ type: "STORY", data: data.data });
+  }, [data, setStore]);
+  return (
+    <Suspense fallback={<StorySkeleton />}>
+      <ViewStory />
+    </Suspense>
   );
 }
