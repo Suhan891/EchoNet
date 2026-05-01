@@ -26,7 +26,7 @@ export class LikeController {
     private prisma: PrismaService,
   ) {}
 
-  @Post('add')
+  @Post('add/:id')
   @ResponseMessage('Like created successfully')
   async create(
     @Param('id', ParseUUIDPipe) id: string,
@@ -42,7 +42,7 @@ export class LikeController {
     return await this.likeService.create(data);
   }
 
-  @Put('remove')
+  @Put('remove/:likeId')
   @ResponseMessage('Like removed successfully')
   async remove(
     @Param('likeId', ParseUUIDPipe, ValidateLikePipe) like: LikeDTo,
@@ -51,7 +51,7 @@ export class LikeController {
     return await this.likeService.remove(profile, like);
   }
 
-  @Get(':id')
+  @Get('view/:id')
   @ResponseMessage('Likes data received')
   async getProfiles(
     @currentProfile() profile: profileDto,

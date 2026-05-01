@@ -5,7 +5,14 @@ import {
   UploadApiResponse,
 } from 'cloudinary';
 import * as streamifier from 'streamifier';
-
+type CloudinaryUploadResult = {
+  public_id: string;
+  secure_url: string;
+  duration?: number;
+  width?: number;
+  height?: number;
+  format?: string;
+};
 @Injectable()
 export class CloudinaryService implements OnModuleInit {
   private cloudinary = cloud;
@@ -149,7 +156,10 @@ export class CloudinaryService implements OnModuleInit {
     });
   }
 
-  async uploadVideoStory(file: Express.Multer.File, filename: string) {
+  async uploadVideoStory(
+    file: Express.Multer.File,
+    filename: string,
+  ): Promise<CloudinaryUploadResult> {
     return new Promise<UploadApiResponse>((resolve, reject) => {
       const uploadStream = this.cloudinary.uploader.upload_stream(
         {
@@ -179,7 +189,7 @@ export class CloudinaryService implements OnModuleInit {
     audioFile: Express.Multer.File,
     imgPublicId: string,
     fileName: string,
-  ) {
+  ): Promise<CloudinaryUploadResult> {
     return new Promise<UploadApiResponse>((resolve, reject) => {
       const uploadStream = this.cloudinary.uploader.upload_stream(
         {

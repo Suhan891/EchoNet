@@ -49,6 +49,7 @@ export class LikeService {
             name: true,
           },
         },
+        createdAt: true,
       },
     });
     if (!likes) throw new BadRequestException('No like exists');

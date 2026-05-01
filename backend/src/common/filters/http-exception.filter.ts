@@ -37,7 +37,7 @@ export class GlobaExceptionFilter implements ExceptionFilter {
         const errorBody = res as ExceptionResponse;
         errorResponse = errorBody.error;
         if (Array.isArray(errorBody.message))
-          message = errorBody.message[0] || message;
+          message = errorBody.message.join(', ') || message;
         else message = errorBody.message || message;
       }
     } else {

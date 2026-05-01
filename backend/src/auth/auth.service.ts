@@ -143,7 +143,12 @@ export class AuthService {
         },
       },
     });
-    await this.cacheService.set<typeof authUser>(key, authUser, 1000 * 60 * 10);
+    const activeProfile = authUser?.profile.find(
+      (profile) => profile.isActive === true,
+    );
+    const profileKey = `profile:${activeProfile?.id}`;
+    await this.cacheService.delete(profileKey);
+    await this.cacheService.set<typeof authUser>(key, authUser, 1000 * 60 * 20);
     return authUser;
   }
 
