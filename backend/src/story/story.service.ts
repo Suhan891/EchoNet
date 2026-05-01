@@ -108,7 +108,7 @@ export class StoryService {
 
     await this.deleteStory(story.id);
     const profileKey = `profile:${profile.id}`;
-    await this.cacheService.delByPattern(profileKey);
+    await this.cacheService.delete(profileKey);
   }
 
   async getOwnStory(profile: profileDto) {
@@ -148,6 +148,7 @@ export class StoryService {
       select: {
         mediaType: true,
         mediaUrl: true,
+        duration: true,
         order: true,
         likes: {
           select: {
@@ -202,18 +203,17 @@ export class StoryService {
     return storyMediaData;
   }
 
-  async getStoryMedia(profile: profileDto, storyMedia: StoryMediaDataDto) {
-    const key = `story:${storyMedia.story.id}:meia:${storyMedia.id}:profile:${profile.id}`;
-    const cachedStory = await this.cacheService.get(key);
-    if (cachedStory) return cachedStory;
-    if (profile.id === storyMedia.story.profileId)
-      return this.OwnStory(storyMedia, key);
-    const profileId = profile.id;
-    return this.OthersStory(profileId, storyMedia, key);
-  }
+  // async getStoryMedia(profile: profileDto, storyMedia: StoryMediaDataDto) {
+  //   const key = `story:${storyMedia.story.id}:meia:${storyMedia.id}:profile:${profile.id}`;
+  //   const cachedStory = await this.cacheService.get(key);
+  //   if (cachedStory) return cachedStory;
+  //   if (profile.id === storyMedia.story.profileId)
+  //     return this.OwnStory(storyMedia, key);
+  //   const profileId = profile.id;
+  //   return this.OthersStory(profileId, storyMedia, key);
+  // }
   async createImageMedia(data: ImageMedia) {
     const fileName = `${crypto.randomUUID()}-${data.order}`;
-    console.log('Image FIle', data.imageFile);
     const uploaded = await this.cloudService.uploadImageStory(
       data.imageFile,
       fileName,
@@ -230,7 +230,6 @@ export class StoryService {
   }
   async createVideoMedia(data: VideoMedia) {
     const fileName = `${crypto.randomUUID()}-${data.order}`;
-    console.log('Video FIle', data.videoFile);
     const uploaded = await this.cloudService.uploadVideoStory(
       data.videoFile,
       fileName,
@@ -239,6 +238,7 @@ export class StoryService {
       data: {
         mediaType: Media.VIDEO,
         mediaUrl: uploaded.secure_url,
+        duration: uploaded.duration,
         cloudId: uploaded.public_id,
         order: data.order,
         storyId: data.storyId,
@@ -252,72 +252,22 @@ export class StoryService {
       imgFileName,
     );
     const fileName = `${crypto.randomUUID()}-${data.order}`;
-    return await this.cloudService.uploadAudioAndMerge(
+    const uploaded = await this.cloudService.uploadAudioAndMerge(
       data.audioFile,
       uploadedImg.public_id,
       fileName,
     );
+    await this.prisma.storyMedia.create({
+      data: {
+        mediaType: Media.COMBINED,
+        mediaUrl: uploaded.secure_url,
+        duration: uploaded.duration,
+        cloudId: uploaded.public_id,
+        order: data.order,
+        storyId: data.storyId,
+      },
+    });
   }
-
-  // async createStoryMedia(request: CreateStoryMediaEvent) {
-  //   const { sortedStoryMedia, profileName, storyId } = request;
-  //   const uploadPromise = sortedStoryMedia.map(async (item) => {
-  //     let order = 1;
-  //     if (item.type === StoryMediaType.IMAGE) {
-  //       const file = item.file as Express.Multer.File;
-  //       const fileName = `${crypto.randomUUID()}-${order}`;
-  //       return await this.cloudService.uploadImageStory(file, fileName);
-  //     }
-  //     if (item.type === StoryMediaType.VIDEO) {
-  //       const file = item.file as Express.Multer.File;
-  //       const fileName = `${crypto.randomUUID()}-${order}`;
-  //       return await this.cloudService.uploadVideoStory(file, fileName);
-  //     }
-  //     if (item.type === StoryMediaType.COMBINED) {
-  //       const image = item.image as Express.Multer.File;
-  //       const imgFileName = crypto.randomUUID();
-  //       const imgUpload = await this.cloudService.uploadImageStory(
-  //         image,
-  //         imgFileName,
-  //       );
-
-  //       const audioFile = item.audio as Express.Multer.File;
-  //       const imgPublicId = imgUpload.public_id;
-  //       const fileName = `${crypto.randomUUID()}-${order}`;
-  //       return await this.cloudService.uploadAudioAndMerge(
-  //         audioFile,
-  //         imgPublicId,
-  //         fileName,
-  //       );
-  //     }
-  //     order++;
-  //   });
-  //   const uploads = await Promise.all(uploadPromise);
-  //   if (!uploads)
-  //     throw new InternalServerErrorException('No uploaded file returned');
-  //   if (uploads.length !== sortedStoryMedia.length)
-  //     throw new InternalServerErrorException('All the files were not returned');
-
-  //   const createStoryMediaPromise = uploads.map(async (upload) => {
-  //     if (upload)
-  //       return await this.prisma.storyMedia.create({
-  //         data: {
-  //           cloudId: upload.public_id,
-  //           mediaUrl: upload.secure_url,
-  //           mediaType:
-  //             upload.resource_type === 'image' ? Media.IMG : Media.VIDEO,
-  //           storyId,
-  //         },
-  //         select: {
-  //           id: true,
-  //           mediaUrl: true,
-  //           mediaType: true,
-  //         },
-  //       });
-  //   });
-
-  //   return await Promise.all(createStoryMediaPromise);
-  // }
 
   async deleteStory(storyId: string): Promise<string> {
     const storyMedias = await this.prisma.storyMedia.findMany({
@@ -326,7 +276,6 @@ export class StoryService {
         cloudId: true,
       },
     });
-    console.log('Story media:', storyMedias);
     const deletePromises = storyMedias.map(async (media) => {
       const publicId = media.cloudId;
 
@@ -347,34 +296,35 @@ export class StoryService {
     return story.id;
   }
 
-  private async OwnStory(storyMedia: StoryMediaDataDto, key: string) {
-    const storyMediaData = await this.prisma.storyMedia.findFirst({
-      where: { id: storyMedia.id },
-      select: {
-        mediaType: true,
-        mediaUrl: true,
-        order: true,
-        likes: {
-          select: {
-            id: true,
-            profileId: true,
-          },
-        },
-        storyViews: {
-          select: {
-            id: true,
-            viewer: {
-              select: {
-                name: true,
-                avatarUrl: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    await this.cacheService.set<typeof storyMediaData>(key, storyMediaData);
-  }
+  // private async OwnStory(storyMedia: StoryMediaDataDto, key: string) {
+  //   const storyMediaData = await this.prisma.storyMedia.findUnique({
+  //     where: { id: storyMedia.id },
+  //     select: {
+  //       mediaType: true,
+  //       mediaUrl: true,
+  //       order: true,
+  //       duration: true,
+  //       likes: {
+  //         select: {
+  //           id: true,
+  //           profileId: true,
+  //         },
+  //       },
+  //       storyViews: {
+  //         select: {
+  //           id: true,
+  //           viewer: {
+  //             select: {
+  //               name: true,
+  //               avatarUrl: true,
+  //             },
+  //           },
+  //         },
+  //       },
+  //     },
+  //   });
+  //   await this.cacheService.set<typeof storyMediaData>(key, storyMediaData);
+  // }
 
   private async OthersStory(
     profileId: string,

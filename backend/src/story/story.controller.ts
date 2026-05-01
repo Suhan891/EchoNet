@@ -48,6 +48,11 @@ export class StoryController {
   // async storyStatus(@currentProfile() profile: profileDto) {
   //   return await this.storyService.getOwnStory(profile);
   // }
+  @Get('own')
+  @ResponseMessage(' Own Story details received')
+  async ownStory(@currentProfile() profile: profileDto) {
+    return await this.storyService.getOwnStory(profile);
+  }
 
   @Put('remove')
   @ResponseMessage('Story Deleted successfully')
@@ -64,13 +69,13 @@ export class StoryController {
     return await this.storyService.getStory(profile, story);
   }
 
-  @Get(':storyMediaId')
-  @ResponseMessage('Story Media Data Received')
-  async getStoryMedia(
-    @Param('storyMediaId', ParseUUIDPipe, ValidateStoryMediaPipe)
-    storyMedia: StoryMediaDataDto,
-    @currentProfile() profile: profileDto,
-  ) {
-    return await this.storyService.getStoryMedia(profile, storyMedia);
-  }
+  // @Get(':storyMediaId')
+  // @ResponseMessage('Story Media Data Received')
+  // async getStoryMedia(
+  //   @Param('storyMediaId', ParseUUIDPipe, ValidateStoryMediaPipe)
+  //   storyMedia: StoryMediaDataDto,
+  //   @currentProfile() profile: profileDto,
+  // ) {
+  //   return await this.storyService.getStoryMedia(profile, storyMedia);
+  // }
 }

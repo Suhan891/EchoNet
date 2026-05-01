@@ -14,11 +14,8 @@ import {
 import { ProfileService } from './profile.service';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 import { NoProfile } from './decorator/no-profile';
-import type {
-  CreateProfileDto,
-  profileDto,
-  UpdateProfileDto,
-} from './dto/profile.dto';
+import { CreateProfileDto, UpdateProfileDto } from './dto/profile.dto';
+import type { profileDto } from './dto/profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AvatarValidationPipe } from './pipes/files.validate';
 import { CurrentUser } from 'src/auth/gaurds/refresh.decorator';
@@ -28,6 +25,7 @@ import { NoAccount } from 'src/auth/decorators/no-account';
 import { ValidateProfileExists } from './pipes/existing.profile';
 import { Throttle } from '@nestjs/throttler';
 import { ProfileGaurd } from './gaurds/profile.gaurd';
+import { AvatarProps } from './dto/avatar';
 
 @Controller('profile')
 @UseGuards(ProfileGaurd)
@@ -47,18 +45,24 @@ export class ProfileController {
     return await this.profileService.createProfile(user, profilData, avatar);
   }
 
-  @Post('update-avatar')
-  @ResponseMessage('Profile created')
+  @Put('upavatar')
+  @ResponseMessage('Profile Avatar updated')
   @UseInterceptors(FileInterceptor('avatar'))
   async updateAvatar(
-    @UploadedFile(new AvatarValidationPipe()) avatar: Express.Multer.File,
+    @UploadedFile(new AvatarValidationPipe())
+    avatar: Express.Multer.File | null,
+    @Body() body: { avatarUrl: string },
     @currentProfile() profile: profileDto,
     @CurrentUser() user: authUserDto,
   ) {
-    return await this.profileService.updateAvatar(profile, avatar, user);
+    const data = {
+      avatar,
+      avatarUrl: body.avatarUrl,
+    } as AvatarProps;
+    return await this.profileService.updateAvatar(profile, data, user);
   }
 
-  @Post('update')
+  @Put('update')
   @ResponseMessage('Profile updated')
   async update(
     @Body() data: UpdateProfileDto,

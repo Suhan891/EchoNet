@@ -126,7 +126,7 @@ export class StoryProcessor extends WorkerHost {
       data: { isReady: true },
     });
     const profileKey = `profile:${profileId}`;
-    await this.cacheService.delByPattern(profileKey);
+    await this.cacheService.delete(profileKey);
     // Later here Notification feature to all followers or followings
     return storyId;
   }
