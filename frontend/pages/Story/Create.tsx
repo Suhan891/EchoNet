@@ -324,13 +324,21 @@ export default function Create({
                 Cancel
               </Button>
             </DialogClose>
-            <Button
-              type="submit"
-              variant={"secondary"}
-              disabled={hasMissingFiles || fields.length === 0}
-            >
-              Submit
-            </Button>
+            {story.isPending ? (
+              <Button
+              variant={'outline'}
+              disabled>
+                Submitting
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                variant={"secondary"}
+                disabled={hasMissingFiles || fields.length === 0}
+              >
+                Submit
+              </Button>
+            )}
           </DialogFooter>
         </form>
       </DialogContent>

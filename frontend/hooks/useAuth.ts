@@ -18,6 +18,7 @@ import {
   VerifyResult,
 } from "@/types/auth.user";
 import { GetUser, Logout } from "@/service/auth/authorise";
+import { queryKeys } from "@/utils/query.key";
 
 export function useRegister() {
   return useMutation<
@@ -52,7 +53,7 @@ export function RefreshUserToken() {
 
 export function useMyself() {
   return useQuery<SuccessResponse<UserResponse>, ErrorResponse>({
-    queryKey: ["user"],
+    queryKey: [queryKeys.USER],
     queryFn: () => GetUser(),
     staleTime: 1000 * 60 * 10,
     enabled: !!Cookies.get("accessToken"),

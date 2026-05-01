@@ -7,13 +7,13 @@ import { toast } from "sonner";
 export async function RefreshUser() {
   try {
     const response = await RefreshTokenRequest() as SuccessResponse<RefreshResult>;
-    console.log("Refetched user details");
+    console.log("Refreshed user details");
     return response.data.accessToken;
   } catch (error) {
     const err = error as ErrorResponse;
-    deleteCookie()
+    await deleteCookie();
     console.error(err.error);
-    toast.error(err.message)
+    toast.error(err.message || "Session expired. Please log in again.");
     window.location.href = '/login';
     return null;
   }

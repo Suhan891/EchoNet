@@ -51,10 +51,10 @@ export function useProfileDetails() {
       if (storeAvatar !== profile.data.avatarUrl)
         setAvatar(profile.data.avatarUrl);
       if (storeId !== profile.data.id) setId(profile.data.id);
-      if (storeFollowers !== profile.data._count.followers)
-        setFollowers(profile.data._count.followers);
-      if (storeFollowings !== profile.data._count.followings)
-        setFollowings(profile.data._count.followings);
+      if (storeFollowers.length !== profile.data.followers.length)
+        setFollowers(profile.data.followers.map(follow => follow.followerId));
+      if (storeFollowings.length !== profile.data.followings.length)
+        setFollowings(profile.data.followings.map(follow => follow.followingId));
       if (storeName !== profile.data.name) setName(profile.data.name);
       if (storeBio !== profile.data.bio) setBio(profile.data.bio);
       if (storeStory !== !!profile.data.story) setStory(!!profile.data.story);

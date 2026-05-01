@@ -21,12 +21,12 @@ export const VerifySchema = z.object({
     //   (file) => file.size <= MAX_FILE_SIZE,
     //   "File size shouldnot exceed 5 MB",
     // ),
-  bio: z.string().min(10, "Bio must include 10 charecters").optional(),
+  bio: z.string().max(150, "Bio must not be more than 150 charecters").optional(),
 
   name: z
     .string()
     .min(3, "Name must be at least 2 characters.")
-    .max(200, "Name must be at most 200 characters."),
+    .max(50, "Name must be at most 50 characters."),
 });
 
 export type VerifyType = z.infer<typeof VerifySchema>

@@ -4,7 +4,7 @@ import { useMyself } from "@/hooks/useAuth";
 import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { deleteCookie, setProfileId } from "@/service/common/cookies";
+import { deleteCookie, setProfileCookie } from "@/service/common/cookies";
 
 export function useUserDetails() {
   const router = useRouter();
@@ -34,8 +34,9 @@ export function useUserDetails() {
       const activeProfile = user.data.profile?.find(
         (profile) => profile.isActive === true,
       );
+      const storeActiveProfile = storeProfiles.find(p => p.isActive === true)
 
-      if (activeProfile) setProfileId(activeProfile.id);
+      if (activeProfile && activeProfile.id !== storeActiveProfile?.id) setProfileCookie(activeProfile.id);
 
       if (storeEmail !== user.data.email) setEmail(user.data.email);
       if (storeUserId !== user.data.id) setUserId(user.data.id);

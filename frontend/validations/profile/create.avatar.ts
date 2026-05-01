@@ -7,10 +7,6 @@ export const searchSchema = z.object({
 })
 export type searchType = z.infer<typeof searchSchema>
 
-// export const avatarSchema = z.object({
-//     avatarUrl: z.string().min(1,'You must select an avatar').optional(),
-//     avatar: z.file().check(z.maxSize(MAX_FILE_SIZE), z.mime([...ALLOWED_MIME])).optional(),
-// })
 export const avatarSchema = z.discriminatedUnion('mode',[
     z.object({
         mode: z.literal('create'),
@@ -21,4 +17,5 @@ export const avatarSchema = z.discriminatedUnion('mode',[
         avatar: z.file().check(z.maxSize(MAX_FILE_SIZE), z.mime([...ALLOWED_MIME]))
     })
 ])
+
 export type avatarType = z.infer<typeof avatarSchema>

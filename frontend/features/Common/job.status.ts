@@ -32,7 +32,7 @@ export function useJobStatusUpdate() {
         if (jobData.data.status === "SUCCESS") {
           removeJob(jobData.data.id);
           queryClient.invalidateQueries({
-            queryKey: [queryKeys.PROFILE, userId],
+            queryKey: [userId],
           });
         }
       }
