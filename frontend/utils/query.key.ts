@@ -4,4 +4,6 @@ export const queryKeys = {
     STORY: 'story',
     STORY_STATUS: 'story_status',
     JOBS: 'job',
+    POSTS: 'posts',
+    LIKE: 'likes'
 }
