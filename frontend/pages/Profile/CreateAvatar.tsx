@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
@@ -13,29 +13,25 @@ import {
 import { Input } from "@/components/ui/input";
 import { Item, ItemContent, ItemHeader, ItemTitle } from "@/components/ui/item";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { searchSchema, searchType } from "@/validations/profile/create.avatar";
+import { avatarType, searchSchema, searchType } from "@/validations/profile/create.avatar";
+import { profileType } from "@/validations/profile/create.profile";
 import { avataaars, bottts, lorelei, pixelArt } from "@dicebear/collection";
 import { createAvatar, Style } from "@dicebear/core";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import { Control, Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  Path,
+  SubmitHandler,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 
-interface CreateAvatarProps {
-    control: Control<{
-    mode: "create";
-    avatarUrl: string;
-} | {
-    mode: "upload";
-    avatar: File;
-}, {
-    mode: "create";
-    avatarUrl: string;
-} | {
-    mode: "upload";
-    avatar: File;
-}>
-
+interface CreateAvatarProps<T extends avatarType | profileType> {
+  control: Control<T>;
+  isUpdate: boolean;
 }
 
 function avatarOptions(name: string | undefined) {
@@ -49,7 +45,7 @@ function avatarOptions(name: string | undefined) {
     }).toDataUri();
   });
 }
-export default function CreateAvatar({control}: CreateAvatarProps) {
+export default function CreateAvatar<T extends avatarType | profileType>({ control, isUpdate }: CreateAvatarProps<T>) {
   const [submittedName, setSubmittedName] = useState<string>();
   const {
     control: searchControl,
@@ -66,12 +62,12 @@ export default function CreateAvatar({control}: CreateAvatarProps) {
     },
   });
   const canSearch = !searchWatch.name;
-    const onSearchSubmit: SubmitHandler<searchType> = (data) => {
+  const onSearchSubmit: SubmitHandler<searchType> = (data) => {
     //console.log(data);
     setSubmittedName(data.name);
     // How to make a call to avatar options functions to get data
   };
-    const avatars = useMemo(() => avatarOptions(submittedName), [submittedName]);
+  const avatars = useMemo(() => avatarOptions(submittedName), [submittedName]);
   return (
     <FieldSet>
       <FieldGroup>
@@ -99,7 +95,7 @@ export default function CreateAvatar({control}: CreateAvatarProps) {
         <FieldGroup>
           <Controller
             control={control}
-            name="avatarUrl"
+            name={(isUpdate ? "avatarUrl" : "avatar.avatarUrl") as Path<T>}
             render={({ field, fieldState }) => (
               <FieldSet>
                 <FieldLegend>Select a avatar</FieldLegend>
@@ -108,10 +104,9 @@ export default function CreateAvatar({control}: CreateAvatarProps) {
                 </FieldDescription>
                 <RadioGroup
                   name={field.name}
-                  value={field.value}
+                  value={field.value as string}
                   onValueChange={field.onChange}
                   aria-invalid={fieldState.invalid}
-                  defaultValue={field.value}
                   className="grid grid-cols-4 gap-4 w-full"
                 >
                   {avatars.map((avatar, index) => (

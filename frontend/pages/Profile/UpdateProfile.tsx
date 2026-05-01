@@ -7,6 +7,12 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import {
   Popover,
@@ -15,15 +21,19 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Textarea } from "@/components/ui/textarea";
+import { useUpdateProfile } from "@/hooks/useProfile";
 import { useProfileStore } from "@/stores/ProfileStore";
+import { useUserStore } from "@/stores/UserStore";
+import { queryKeys } from "@/utils/query.key";
 import {
   UpdateProfileSchema,
   UpdateProfileType,
 } from "@/validations/profile/update.profile";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { useForm, useWatch, SubmitHandler } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function UpdateProfile({
   open,
@@ -34,6 +44,10 @@ export default function UpdateProfile({
   setOpen: (open: boolean) => void;
   children: React.ReactNode;
 }) {
+  const profile = useUpdateProfile();
+  const querClient = useQueryClient();
+  const userId = useUserStore((state) => state.userId);
+  const setBio = useProfileStore((state) => state.setBio);
   const name = useProfileStore((state) => state.name);
   const bio = useProfileStore((state) => state.bio);
   const {
@@ -54,8 +68,25 @@ export default function UpdateProfile({
     name: "bio",
     defaultValue: bio,
   });
-  const isDisabled = !newName || newName === name && newBio === bio;
-  const onSubmit: SubmitHandler<UpdateProfileType> = (data) => {};
+  const isDisabled = !newName || (newName === name && newBio === bio);
+  const onSubmit: SubmitHandler<UpdateProfileType> = (data) => {
+    profile.mutate(data, {
+      onSuccess: (result) => {
+        console.log(result.data);
+        toast.success(result.message);
+        setOpen(false);
+        if (result.data.bio !== bio) setBio(result.data.bio);
+        if (result.data.name !== name) {
+          querClient.invalidateQueries({ queryKey: [queryKeys.USER] });
+          querClient.invalidateQueries({ queryKey: [userId] });
+        }
+      },
+      onError: (errors) => {
+        console.error(errors.error);
+        toast.error(errors.message);
+      },
+    });
+  };
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -85,12 +116,20 @@ export default function UpdateProfile({
             </Field>
             <Field>
               <Label htmlFor="bio">Bio</Label>
-              <Textarea
-                rows={2}
-                id="bio"
-                {...register("bio")}
-                autoComplete="bio"
-              />
+              <InputGroup>
+                <InputGroupTextarea
+                  id={`description`}
+                  {...register("bio")}
+                  cols={9}
+                  rows={3}
+                  maxLength={120}
+                />
+                <InputGroupAddon align="block-end">
+                  <InputGroupText>
+                    {newBio?.length ?? 0}/{120}
+                  </InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
               {errors.bio ? (
                 <FieldError errors={[errors.bio]} />
               ) : (

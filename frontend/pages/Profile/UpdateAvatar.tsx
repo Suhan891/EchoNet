@@ -9,20 +9,19 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import {
-  Field,
-  FieldGroup,
-  FieldSet,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldSet } from "@/components/ui/field";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
-import {
-  avatarSchema,
-  avatarType,
-} from "@/validations/profile/create.avatar";
+import { avatarSchema, avatarType } from "@/validations/profile/create.avatar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Switch } from "@/components/ui/switch";
 import CreateAvatar from "./CreateAvatar";
 import UploadAvatar from "./UploadAvatar";
+import { useUpdateAvatar } from "@/hooks/useProfile";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUserStore } from "@/stores/UserStore";
+import { queryKeys } from "@/utils/query.key";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function UpdateAvatar({
   open,
@@ -31,6 +30,7 @@ export default function UpdateAvatar({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
+  const upAvatar = useUpdateAvatar();
   const {
     control,
     handleSubmit,
@@ -38,20 +38,44 @@ export default function UpdateAvatar({
   } = useForm<avatarType>({
     resolver: zodResolver(avatarSchema),
     mode: "onSubmit",
+    defaultValues: {
+      mode: "create",
+      avatarUrl: "",
+    },
   });
-
-  if (avatarError) console.log(avatarError);
+  const queryClient = useQueryClient();
+  const userId = useUserStore((state) => state.userId);
+  
   const onSubmit: SubmitHandler<avatarType> = (data) => {
-    console.log("Submitted id: ", data);
+    console.log(data);
+    const formData = new FormData();
+
+    if (data.mode === "create") formData.append("avatarUrl", data.avatarUrl);
+    if (data.mode === "upload") formData.append("avatar", data.avatar);
+    upAvatar.mutate(formData, {
+      onSuccess: (result) => {
+        toast.success(result.message);
+        console.log(result.data);
+        setOpen(false);
+        queryClient.invalidateQueries({ queryKey: [queryKeys.USER] });
+        queryClient.invalidateQueries({ queryKey: [userId] });
+      },
+      onError: (err) => {
+        toast.error(err.message);
+        console.error(err.error);
+      },
+    });
   };
   const watchAvatar = useWatch({
     control,
     defaultValue: {
-      mode: 'create',
+      mode: "create",
       avatarUrl: "",
-    }
+    },
   });
-  const isReady = watchAvatar.mode === 'create' && watchAvatar.avatarUrl != null || watchAvatar.mode === 'upload' && watchAvatar.avatar != undefined
+  const isReady =
+    (watchAvatar.mode === "create" && watchAvatar.avatarUrl != null && watchAvatar.avatarUrl !== "") ||
+    (watchAvatar.mode === "upload" && watchAvatar.avatar != undefined);
   return (
     <Drawer onOpenChange={setOpen} open={open}>
       <DrawerContent>
@@ -81,13 +105,29 @@ export default function UpdateAvatar({
                   </FieldGroup>
                 </FieldSet>
               </DrawerTitle>
-              <DrawerDescription>{watchAvatar.mode === 'create' ? "Search and Select an Avatar" : "Upload an Image"}</DrawerDescription>
+              <DrawerDescription>
+                {watchAvatar.mode === "create"
+                  ? "Search and Select an Avatar"
+                  : "Upload an Image"}
+              </DrawerDescription>
             </DrawerHeader>
-            {watchAvatar.mode === 'create' ? (
-              <CreateAvatar control={control} />
-            ) : (<UploadAvatar control={control} />)}
+            {watchAvatar.mode === "create" ? (
+              <CreateAvatar control={control} isUpdate={true} />
+            ) : (
+              <UploadAvatar control={control} isUpdate={true} />
+            )}
+            <FieldError errors={[avatarError.mode]} />
             <DrawerFooter>
-              <Button type="submit" disabled={!isReady}>Submit</Button>
+              {upAvatar.isPending ? (
+                <Button variant={"outline"} disabled>
+                  <Spinner />
+                  Uploading Avatar
+                </Button>
+              ) : (
+                <Button type="submit" disabled={!isReady}>
+                  Submit
+                </Button>
+              )}
               <DrawerClose asChild>
                 <Button variant={"outline"}>Cancel</Button>
               </DrawerClose>

@@ -30,29 +30,24 @@ import { ButtonGroup } from "@/components/ui/button-group";
 import { ArrowBigDown, ArrowBigUp } from "lucide-react";
 import { useEffect, useReducer } from "react";
 
+interface Slides {
+  type: "image" | "video" | "imageAudio";
+  caption?: string;
+  imageFile?: File;
+  videoFile?: File;
+  audioFile?: File;
+}
 interface SlideProps {
   item: FieldArrayWithId<
     {
-      slides: {
-        type: "image" | "video" | "imageAudio";
-        caption?: string;
-        imageFile?: File;
-        videoFile?: File;
-        audioFile?: File;
-      }[];
+      slides: Slides[];
     },
     "slides",
     "id"
   >;
   index: number;
   control: Control<{
-    slides: {
-      type: "image" | "video" | "imageAudio";
-      caption?: string;
-      imageFile?: File;
-      videoFile?: File;
-      audioFile?: File;
-    }[];
+    slides: Slides[];
   }>;
   move: UseFieldArrayMove;
   isLast: boolean;
@@ -62,6 +57,7 @@ interface SlideProps {
   isVideoField: boolean;
   onRemove: () => void;
 }
+
 export default function Slide({
   item,
   index,
@@ -78,22 +74,50 @@ export default function Slide({
   const videoFile = useWatch({ control, name: `slides.${index}.videoFile` });
   const audioFile = useWatch({ control, name: `slides.${index}.audioFile` });
 
-  const file = imageFile || videoFile || audioFile;
-
-  const [previewUrl, dispatch] = useReducer(
+  const [imagePreviewUrl, dispatchImage] = useReducer(
     (_: string | null, action: string | null) => action,
     null,
   );
 
   useEffect(() => {
-    if (!(file instanceof File)) {
-      dispatch(null);
+    if (!imageFile) {
+      dispatchImage(null);
       return;
     }
-    const url = URL.createObjectURL(file);
-    dispatch(url);
+    const url = URL.createObjectURL(imageFile);
+    dispatchImage(url);
     return () => URL.revokeObjectURL(url);
-  }, [file]);
+  }, [imageFile]);
+
+  const [videoPreviewUrl, dispatchVideo] = useReducer(
+    (_: string | null, action: string | null) => action,
+    null,
+  );
+
+  useEffect(() => {
+    if (!videoFile) {
+      dispatchVideo(null);
+      return;
+    }
+    const url = URL.createObjectURL(videoFile);
+    dispatchVideo(url);
+    return () => URL.revokeObjectURL(url);
+  }, [videoFile]);
+
+  const [audioPreviewUrl, dispatchAudio] = useReducer(
+    (_: string | null, action: string | null) => action,
+    null,
+  );
+
+  useEffect(() => {
+    if (!audioFile) {
+      dispatchAudio(null);
+      return;
+    }
+    const url = URL.createObjectURL(audioFile);
+    dispatchAudio(url);
+    return () => URL.revokeObjectURL(url);
+  }, [audioFile]);
   return (
     <Card className="w-full mb-4 shrink-0">
       <CardHeader>
@@ -117,7 +141,7 @@ export default function Slide({
             <Controller
               control={control}
               name={`slides.${index}.imageFile`}
-              render={({ field: { onChange, value }, fieldState }) => {
+              render={({ field: { onChange }, fieldState }) => {
                 return (
                   <Field
                     data-invalid={fieldState.invalid}
@@ -128,8 +152,8 @@ export default function Slide({
                         Image(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`image-${item.id}`}>
-                        {previewUrl ? (
-                          <PreviewMedia imageUrl={previewUrl} />
+                        {imagePreviewUrl ? (
+                          <PreviewMedia imageUrl={imagePreviewUrl} />
                         ) : (
                           <UploadMedia isImage={true} />
                         )}
@@ -141,7 +165,7 @@ export default function Slide({
                         className="sr-only"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
-                          if (file) onChange(file);
+                          if (file && file instanceof File) onChange(file);
                         }}
                       />
                     </FieldContent>
@@ -154,7 +178,7 @@ export default function Slide({
             <Controller
               control={control}
               name={`slides.${index}.videoFile`}
-              render={({ field: { value, onChange }, fieldState }) => {
+              render={({ field: { onChange }, fieldState }) => {
                 return (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldContent>
@@ -162,8 +186,8 @@ export default function Slide({
                         Video(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`video-${item.id}`}>
-                        {previewUrl ? (
-                          <PreviewMedia videoUrl={previewUrl} />
+                        {videoPreviewUrl ? (
+                          <PreviewMedia videoUrl={videoPreviewUrl} />
                         ) : (
                           <UploadMedia isVideo={true} />
                         )}
@@ -175,7 +199,7 @@ export default function Slide({
                         className="sr-only"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
-                          if (file) onChange(file);
+                          if (file && file instanceof File) onChange(file);
                         }}
                       />
                     </FieldContent>
@@ -188,7 +212,7 @@ export default function Slide({
             <Controller
               control={control}
               name={`slides.${index}.audioFile`}
-              render={({ field: { value, onChange }, fieldState }) => {
+              render={({ field: { onChange }, fieldState }) => {
                 return (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldContent>
@@ -196,8 +220,8 @@ export default function Slide({
                         Audio(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`audio-${item.id}`}>
-                        {previewUrl ? (
-                          <PreviewMedia audioUrl={previewUrl} />
+                        {audioPreviewUrl ? (
+                          <PreviewMedia audioUrl={audioPreviewUrl} />
                         ) : (
                           <UploadMedia isAudio={true} />
                         )}
@@ -209,7 +233,7 @@ export default function Slide({
                         className="sr-only"
                         onChange={(e) => {
                           const file = e.target.files?.[0];
-                          if (file) onChange(file);
+                          if (file && file instanceof File) onChange(file);
                         }}
                       />
                     </FieldContent>
@@ -222,7 +246,7 @@ export default function Slide({
             control={control}
             name={`slides.${index}.caption`}
             render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid} className="">
+              <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={`description-${item.id}`}>
                   Description (optional){" "}
                 </FieldLabel>
@@ -247,7 +271,6 @@ export default function Slide({
         </Field>
       </CardContent>
 
-      {/* <CardFooter>This will be only shown if any error</CardFooter> */}
       <CardFooter>
         <ButtonGroup>
           {!isFirst && (
