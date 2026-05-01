@@ -21,7 +21,6 @@ export class CreateProfileDto {
 }
 
 export class UpdateProfileDto {
-  @IsOptional()
   @IsString({ message: 'Name must be string' })
   @MinLength(3, { message: 'Minimum 3 charecters are required' })
   @MaxLength(100, { message: 'Maximum 100 charecters are allowed' })
@@ -29,8 +28,8 @@ export class UpdateProfileDto {
 
   @IsOptional()
   @IsString({ message: 'Bio must be string' })
-  @MinLength(3, { message: 'Minimum 10 charecters are required' })
-  bio: string;
+  @MaxLength(120, { message: 'Max 120 charecters are allowed' })
+  bio?: string;
 }
 
 // After token -> Checking

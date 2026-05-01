@@ -9,6 +9,7 @@ import { UpdateProfileDto } from './dto/profile.dto';
 import { authUserDto } from 'src/auth/tokens/token.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
+import { AvatarProps } from './dto/avatar';
 
 @Injectable()
 export class ProfileService {
@@ -76,9 +77,11 @@ export class ProfileService {
 
   async updateAvatar(
     profileData: profileDto,
-    avatar: Express.Multer.File,
+    data: AvatarProps,
     user: authUserDto,
   ) {
+    if (!data.avatar && !data.avatarUrl)
+      throw new BadRequestException('Avatar is required');
     const profile = await this.prisma.profile.findUniqueOrThrow({
       where: { id: profileData.id },
       select: {
@@ -88,18 +91,39 @@ export class ProfileService {
         name: true,
       },
     });
-    const fileName = profile.cloudId!;
-
-    await this.cloudService.updateAvatar(avatar, fileName);
 
     const key = `user:${user.userId}`;
     await this.cacheService.delete(key);
+    const profileKey = `profile:${profile.id}`;
+    await this.cacheService.delete(profileKey);
 
-    return {
-      id: profile.id,
-      avatarUrl: profile.avatarUrl,
-      name: profile.name,
-    };
+    const publicId = profile.cloudId;
+    if (data.avatar) {
+      if (publicId) {
+        await this.cloudService.updateAvatar(data.avatar, publicId);
+        return;
+      }
+      const fileName = `${crypto.randomUUID()}`;
+      const upload = await this.cloudService.uploadedAvatar(
+        data.avatar,
+        fileName,
+      );
+      await this.prisma.profile.update({
+        where: { id: profile.id },
+        data: { avatarUrl: upload.secure_url, cloudId: upload.public_id },
+      });
+    }
+    if (data.avatarUrl) {
+      if (publicId) await this.cloudService.delete(publicId);
+      await this.prisma.profile.update({
+        where: { id: profile.id },
+        data: {
+          avatarUrl: data.avatarUrl,
+          cloudId: null,
+        },
+      });
+    }
+    return;
   }
 
   async updateProfile(
@@ -107,25 +131,23 @@ export class ProfileService {
     profileData: profileDto,
     user: authUserDto,
   ) {
-    if (data.name) {
+    if (data.name !== profileData.name) {
       const existingName = await this.prisma.profile.count({
         where: { name: data.name },
       });
-      if (existingName)
-        throw new BadRequestException('Profile name already exists');
+      if (existingName) throw new BadRequestException('Name already exists');
     }
     const key = `user:${user.userId}`;
     await this.cacheService.delete(key);
     return await this.prisma.profile.update({
       where: { id: profileData.id },
       data: {
-        bio: data.bio, // removed default to enable user to keep no bio logic
-        name: data.name ?? profileData.name,
+        bio: data.bio,
+        name: data.name,
       },
       select: {
         bio: true,
         name: true,
-        id: true,
       },
     });
   }
@@ -181,11 +203,19 @@ export class ProfileService {
             id: true,
           },
         },
+        followers: {
+          select: {
+            followerId: true,
+          },
+        },
+        followings: {
+          select: {
+            followingId: true,
+          },
+        },
         _count: {
           select: {
-            followers: true,
-            followings: true,
-            posts: true, // Similarly like posts
+            posts: true,
             savedPosts: true,
             reels: true,
             sentNotifications: true,
@@ -193,7 +223,11 @@ export class ProfileService {
         },
       },
     });
-    await this.cacheService.set<typeof profileData>(key, profileData);
+    await this.cacheService.set<typeof profileData>(
+      key,
+      profileData,
+      1000 * 60 * 20,
+    );
     return profileData;
   }
 

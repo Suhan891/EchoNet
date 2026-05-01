@@ -2,7 +2,7 @@ import { BadRequestException, PipeTransform } from '@nestjs/common';
 
 export class AvatarValidationPipe implements PipeTransform {
   transform(avatar: Express.Multer.File) {
-    if (!avatar) throw new BadRequestException('Avatar is required');
+    if (!avatar) return null;
     const size = 5 * 1024 * 1024; // 500 mb allowed
     if (avatar.size > size) {
       throw new BadRequestException('File too large');
