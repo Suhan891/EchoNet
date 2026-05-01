@@ -32,6 +32,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ImagePreview from "./ImagePreview";
+import { useCreatePost } from "@/hooks/usePost";
+import { toast } from "sonner";
+import { useUserStore } from "@/stores/UserStore";
 
 // ---------------------------------------------------------------------------
 // Primitives
@@ -58,12 +61,13 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
   // Stable unique id for the append tile — not in useFieldArray, so no field.id.
   // useId() is SSR-safe and unique even if CreatePost mounts multiple times.
   const appendTileId = useId();
-
+  const posts = useCreatePost();
+  const setJob = useUserStore((state) => state.setJob);
   const {
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<createPostType>({
     resolver: zodResolver(createPostSchema),
     mode: "onSubmit",
@@ -89,10 +93,26 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
     formData.append("caption", data.caption);
     if (data.description) formData.append("description", data.description);
     data.images.forEach((image) => {
-      formData.append("image", image.file);
+      formData.append("postMedia", image.file);
     });
     console.log("Data: ", data);
     console.log("Form data: ", formData);
+    posts.mutate(formData, {
+      onSuccess: (result) => {
+        console.log(result);
+        setJob({
+          id: result.data.id,
+          name: result.data.name,
+          status: result.data.status,
+        });
+        toast.success(result.message);
+        handleClose()
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.error(error.message);
+      },
+    });
   };
 
   const handleClose = useCallback(() => setOpen(false), [setOpen]);
@@ -129,53 +149,53 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
           <div className="flex-1 min-h-0 w-full overflow-y-auto custom-scrollbar">
             <div className="space-y-5 px-6 py-5">
               {/* Caption */}
-            <div className="space-y-1.5">
-              <Label htmlFor="caption">Caption</Label>
-              <Input
-                id="caption"
-                {...register("caption")}
-                type="text"
-                placeholder="Write a short, memorable caption…"
-                aria-invalid={!!errors.caption}
-                className={cn(
-                  errors.caption &&
-                    "border-destructive focus-visible:ring-destructive",
+              <div className="space-y-1.5">
+                <Label htmlFor="caption">Caption</Label>
+                <Input
+                  id="caption"
+                  {...register("caption")}
+                  type="text"
+                  placeholder="Write a short, memorable caption…"
+                  aria-invalid={!!errors.caption}
+                  className={cn(
+                    errors.caption &&
+                      "border-destructive focus-visible:ring-destructive",
+                  )}
+                />
+                {errors.caption ? (
+                  <FieldError message={errors.caption.message} />
+                ) : (
+                  <FieldHint>Required · min 3 characters</FieldHint>
                 )}
-              />
-              {errors.caption ? (
-                <FieldError message={errors.caption.message} />
-              ) : (
-                <FieldHint>Required · min 3 characters</FieldHint>
-              )}
-            </div>
+              </div>
 
-            {/* Description */}
-            <div className="space-y-1.5">
-              <Label htmlFor="description">
-                Description{" "}
-                <span className="text-xs font-normal text-muted-foreground">
-                  (optional)
-                </span>
-              </Label>
-              <Textarea
-                id="description"
-                {...register("description")}
-                placeholder="Add more context about your post…"
-                rows={3}
-                aria-invalid={!!errors.description}
-                className={cn(
-                  "resize-none",
-                  errors.description &&
-                    "border-destructive focus-visible:ring-destructive",
+              {/* Description */}
+              <div className="space-y-1.5">
+                <Label htmlFor="description">
+                  Description{" "}
+                  <span className="text-xs font-normal text-muted-foreground">
+                    (optional)
+                  </span>
+                </Label>
+                <Textarea
+                  id="description"
+                  {...register("description")}
+                  placeholder="Add more context about your post…"
+                  rows={3}
+                  aria-invalid={!!errors.description}
+                  className={cn(
+                    "resize-none",
+                    errors.description &&
+                      "border-destructive focus-visible:ring-destructive",
+                  )}
+                />
+                {errors.description ? (
+                  <FieldError message={errors.description.message} />
+                ) : (
+                  <FieldHint>Min 10 characters if provided</FieldHint>
                 )}
-              />
-              {errors.description ? (
-                <FieldError message={errors.description.message} />
-              ) : (
-                <FieldHint>Min 10 characters if provided</FieldHint>
-              )}
-            </div>
-            
+              </div>
+
               {/* Image grid */}
               <div className="space-y-2">
                 <Label>
@@ -221,7 +241,6 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
               {errors.images?.root?.message && (
                 <FieldError message={errors.images.root.message} />
               )}
-            
             </div>
           </div>
 
@@ -231,12 +250,12 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
               type="button"
               variant="outline"
               onClick={handleClose}
-              disabled={isSubmitting}
+              disabled={posts.isPending}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Posting…" : "Post"}
+            <Button type="submit" disabled={posts.isPending}>
+              {posts.isPending ? "Posting…" : "Post"}
             </Button>
           </DialogFooter>
         </form>
