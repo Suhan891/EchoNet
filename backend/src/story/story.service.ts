@@ -82,7 +82,7 @@ export class StoryService {
     )) as string[];
 
     const profileKey = `profile:${profile.id}`;
-    await this.cacheService.delByPattern(profileKey);
+    await this.cacheService.delete(profileKey);
     return await this.prisma.job.create({
       data: {
         userId: user.userId,
@@ -291,7 +291,7 @@ export class StoryService {
     });
 
     const key = `story:${storyId}`;
-    await this.cacheService.delByPattern(key);
+    await this.cacheService.delete(key);
 
     return story.id;
   }

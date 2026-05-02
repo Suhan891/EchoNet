@@ -28,34 +28,37 @@ export class FollowService {
     });
     if (existingFollow) throw new BadRequestException('Follow already exists');
 
-    return await this.prisma.follow.create({
+    await this.prisma.follow.create({
       data: {
         followerId: profile.id,
         followingId: profileId,
       },
-      select: {
-        id: true,
-        followingId: true,
-        following: {
-          select: {
-            avatarUrl: true,
-            name: true,
-          },
-        },
-      },
     });
+
+    const followKey = `follow:${profile.id}`;
+    await this.cacheService.delByPattern(followKey);
+
+    const profileKey = `profile:${profile.id}`;
+    await this.cacheService.delete(profileKey);
   }
 
   async remove(follow: followDto) {
+    // Numerous workto be done
     await this.existingSavePost(follow);
 
     const key = `saved-posts:${follow.followerId}`;
     await this.cacheService.delete(key);
 
-    return await this.prisma.follow.delete({
+    await this.prisma.follow.delete({
       where: { id: follow.followerId },
       select: { id: true },
     });
+
+    // const followKey = `follow:${profile.id}`;
+    // await this.cacheService.delByPattern(followKey);
+
+    // const profileKey = `profile:${profile.id}`;
+    // await this.cacheService.delete(profileKey);
   }
 
   private async existingSavePost(follow: followDto) {
@@ -91,6 +94,49 @@ export class FollowService {
     });
 
     await Promise.all(existingsavePostOfFollowing);
+  }
+
+  async getFollow(
+    profileId: string,
+    follow: 'FOLLOWERS' | 'FOLLOWING',
+    profile: profileDto,
+  ) {
+    const key = `follow:${profile.id}:${follow}:${profileId}`;
+    const catchedFollow = await this.cacheService.get(key);
+    if (catchedFollow) return catchedFollow;
+    const isFollowers = follow === 'FOLLOWERS';
+    const isFollowing = follow === 'FOLLOWING';
+
+    const data = await this.prisma.follow.findMany({
+      where: {
+        followingId: isFollowers ? profileId : undefined,
+        followerId: isFollowing ? profileId : undefined,
+      },
+      select: {
+        id: true,
+        ...(isFollowers && {
+          follower: {
+            select: {
+              id: true,
+              avatarUrl: true,
+              name: true,
+            },
+          },
+        }),
+        ...(isFollowing && {
+          following: {
+            select: {
+              id: true,
+              avatarUrl: true,
+              name: true,
+            },
+          },
+        }),
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    await this.cacheService.set<typeof data>(key, data, 1000 * 60 * 10);
+    return data;
   }
 
   async getFollowers(profileId: string) {
