@@ -2,17 +2,21 @@
 import { Button } from "@/components/ui/button";
 import { useProfileStore } from "@/stores/ProfileStore";
 import { useState } from "react";
-import FollowerTab from "./Followers";
-import FollowingTab from "./Following";
 import { cn } from "@/lib/utils";
 import UpdateProfile from "./UpdateProfile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserStore } from "@/stores/UserStore";
 import ImageDropdown from "./ImageDropdown";
+import { FollowDto, FollowType } from "@/types/follow.type";
+import Follow from "./Follow";
 
 export default function ProfileHero() {
-  const [followerOpen, setFollowerOpen] = useState(false);
-  const [followingOpen, setFollowingOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const profileId = useProfileStore((state) => state.id);
+  const [follow, setFollow] = useState<FollowDto>({
+    type: "FOLLOWERS",
+    id: profileId,
+  });
   const [editOpen, setEditOpen] = useState(false);
 
   const story = useProfileStore((state) => state.story);
@@ -21,9 +25,18 @@ export default function ProfileHero() {
   const bio = useProfileStore((state) => state.bio);
   const followers = useProfileStore((state) => state.followers);
   const followings = useProfileStore((state) => state.followings);
+  const isPrivate = useProfileStore((state) => state.isPrivate);
   const jobs = useUserStore((state) => state.jobs);
   const pendingStoryJobs = jobs.find((job) => job.name === "STORY");
-  
+
+  const handleFollow = (type: FollowType) => {
+    setFollow({
+      id: profileId,
+      type,
+    });
+    setOpen(!open);
+  };
+
   const isStory = !!story || !!pendingStoryJobs;
   return (
     <div className="relative max-w-3xl mx-auto p-4 md:p-8 text-foreground font-sans">
@@ -41,10 +54,7 @@ export default function ProfileHero() {
             <Avatar className="w-24 h-24 md:w-32 md:h-32">
               <AvatarImage
                 width={"auto"}
-                src={
-                  avatarUrl ??
-                  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80"
-                }
+                src={avatarUrl}
                 alt="Profile Image"
                 className="object-cover"
               />
@@ -76,37 +86,42 @@ export default function ProfileHero() {
 
             <div className="flex items-center gap-2">
               <Button
-                variant={followers ? "outline" : "ghost"}
-                disabled={!followers}
-                onClick={() => setFollowerOpen(true)}
+                variant={followers.length ? "outline" : "ghost"}
+                disabled={followers.length === 0}
+                onClick={() => handleFollow("FOLLOWERS")}
               >
-                <span className="font-semibold mr-1">{followers}</span>{" "}
+                <span className="font-semibold mr-1">{followers.length}</span>{" "}
                 Followers
               </Button>
-              {followerOpen && (
+              {/* {followerOpen && (
                 <FollowerTab
                   followerOpen={followerOpen}
                   setFollowerOpen={setFollowerOpen}
                 />
-              )}
+              )} */}
               <Button
-                variant={followings ? "outline" : "ghost"}
-                disabled={!followings}
-                onClick={() => setFollowingOpen(true)}
+                variant={followings.length ? "outline" : "ghost"}
+                disabled={followings.length === 0}
+                onClick={() => handleFollow("FOLLOWING")}
               >
-                <span className="font-semibold mr-1">{followings}</span>{" "}
+                <span className="font-semibold mr-1">{followings.length}</span>{" "}
                 Following
               </Button>
-              {followingOpen && (
+              {/* {followingOpen && (
                 <FollowingTab
                   followingOpen={followingOpen}
                   setFollowingOpen={setFollowingOpen}
                 />
-              )}
+              )} */}
             </div>
+
+            <Button type="button" variant={"default"}>
+              {isPrivate ? "Private" : "Public"}
+            </Button>
           </div>
         </div>
       </div>
+      {open && <Follow open={open} setOpen={setOpen} type={follow.type} id={follow.id} />}
     </div>
   );
 }
