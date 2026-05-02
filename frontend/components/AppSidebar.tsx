@@ -1,5 +1,5 @@
-import { ChevronUp, Plus } from "lucide-react";
-import React from "react";
+import { ChevronUp, CloudBackup, Plus } from "lucide-react";
+import Cookie from 'js-cookie'
 import {
   Sidebar,
   SidebarContent,
@@ -29,16 +29,42 @@ import { items } from "@/utils/bar.icons";
 import { useUserStore } from "@/stores/UserStore";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { usePathname } from "next/navigation";
+import { AlertDialogDestructive } from "./AlertDiialog";
+import CreateProfile from "@/pages/Profile/CreateProfile";
+import { useToggleProfile } from "@/hooks/useProfile";
+import { toast } from "sonner";
+import { deleteProfileCookie } from "@/service/common/cookies";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AppSidebar() {
   const pathname = usePathname();
   const profiles = useUserStore((state) => state.profiles);
 
-  const activeProfile = profiles.find(profile => profile.isActive === true)
-  const name = activeProfile?.name
-  const avatarUrl = activeProfile?.avatarUrl
+  const toggleProfile = useToggleProfile();
+  const queryClient = useQueryClient();
 
-  const inactiveProfiles = profiles.filter((profile) => profile.id !== activeProfile?.id);
+  const activeProfile = profiles.find((profile) => profile.isActive === true);
+  const name = activeProfile?.name;
+  const avatarUrl = activeProfile?.avatarUrl;
+
+  const handleActivate = (profileId: string) => {
+    toggleProfile.mutate(profileId, {
+      onSuccess: (result) => {
+        console.log(result.data);
+        Cookie.set("profile", profileId, { expires: 7, path: '/' });
+        toast.success(result.message);
+        queryClient.invalidateQueries();
+      },
+      onError: (errors) => {
+        console.error(errors.error);
+        toast.error(errors.message);
+      },
+    });
+  };
+
+  const inactiveProfiles = profiles.filter(
+    (profile) => profile.id !== activeProfile?.id,
+  );
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -95,14 +121,11 @@ function AppSidebar() {
                 <SidebarMenuButton>
                   <Avatar>
                     <AvatarImage
-                      src={
-                        avatarUrl ||
-                        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80"
-                      }
+                      src={avatarUrl}
                       alt="Profile Image"
                       width={10}
                     />
-                    <AvatarFallback>SP</AvatarFallback>
+                    <AvatarFallback><CloudBackup /></AvatarFallback>
                   </Avatar>{" "}
                   {name} <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
@@ -114,31 +137,44 @@ function AppSidebar() {
                       <DropdownMenuSubTrigger className="flex items-center gap-2">
                         <Avatar className="h-6 w-6">
                           <AvatarImage
-                            src={
-                              profile.avatarUrl ||
-                              "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80"
-                            }
+                            src={profile.avatarUrl}
                             alt="Profile Image"
                           />
-                          <AvatarFallback>SP</AvatarFallback>
+                          <AvatarFallback>
+                            <CloudBackup />
+                          </AvatarFallback>
                         </Avatar>
                         <span>{profile.name}</span>
                       </DropdownMenuSubTrigger>
 
                       <DropdownMenuSubContent>
                         <DropdownMenuItem
-                          variant="destructive"
-                          className="text-red-500 focus:text-red-500"
+                          onClick={() => handleActivate(profile.id)}
                         >
-                          Delete
+                          Activate
                         </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <AlertDialogDestructive
+                          title="Delete Profile"
+                          description="This shall delte all data linked with the profile"
+                        >
+                          <DropdownMenuItem
+                            onSelect={(e) => e.preventDefault()}
+                            variant="destructive"
+                            className="text-red-500 focus:text-red-500"
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </AlertDialogDestructive>
                       </DropdownMenuSubContent>
                     </DropdownMenuSub>
                   ))}
                 {inactiveProfiles.length !== 0 && <DropdownMenuSeparator />}
-                <DropdownMenuItem>
-                  <Plus className="mr-2" size={16} /> Add a Profile{" "}
-                </DropdownMenuItem>
+                <CreateProfile>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <Plus className="mr-2" size={16} /> Add a Profile{" "}
+                  </DropdownMenuItem>
+                </CreateProfile>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

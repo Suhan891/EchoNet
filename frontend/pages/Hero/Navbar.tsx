@@ -14,7 +14,6 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useLogout } from "@/hooks/useAuth";
 import { deleteCookie } from "@/service/common/cookies";
 import { useUserStore } from "@/stores/UserStore";
-import { queryKeys } from "@/utils/query.key";
 import { useQueryClient } from "@tanstack/react-query";
 import { BadgeCheckIcon, Bell, LogOut, Moon, Sun, User } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -28,9 +27,8 @@ export default function Navbar() {
 
   const username = useUserStore(state => state.username)
   const email = useUserStore(state => state.email)
-  const userId = useUserStore((state) => state.userId);
   const activeProfile = useUserStore(state => state.profiles).find(profile => profile.isActive === true)
-  const profileId = activeProfile?.id
+
   const logout = useLogout();
   function onLogout() {
     logout.mutate(undefined, {
@@ -44,12 +42,7 @@ export default function Navbar() {
       },
       onSettled() {
         deleteCookie();
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.USER, userId],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.PROFILE, profileId], // Later key checking shall be done
-        });
+        queryClient.clear()
         router.push("/login");
       },
     });

@@ -57,16 +57,18 @@ export default function UpdateProfile({
     formState: { errors },
   } = useForm<UpdateProfileType>({
     resolver: zodResolver(UpdateProfileSchema),
+    defaultValues: {
+      name: name,
+      bio: bio,
+    }
   });
   const newName = useWatch({
     control,
     name: "name",
-    defaultValue: name,
   });
   const newBio = useWatch({
     control,
     name: "bio",
-    defaultValue: bio,
   });
   const isDisabled = !newName || (newName === name && newBio === bio);
   const onSubmit: SubmitHandler<UpdateProfileType> = (data) => {

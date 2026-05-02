@@ -36,7 +36,7 @@ export default function UpdateAvatar({
     handleSubmit,
     formState: { errors: avatarError },
   } = useForm<avatarType>({
-    resolver: zodResolver(avatarSchema),
+    resolver: zodResolver(avatarSchema) as any,
     mode: "onSubmit",
     defaultValues: {
       mode: "create",
@@ -45,9 +45,8 @@ export default function UpdateAvatar({
   });
   const queryClient = useQueryClient();
   const userId = useUserStore((state) => state.userId);
-  
+
   const onSubmit: SubmitHandler<avatarType> = (data) => {
-    console.log(data);
     const formData = new FormData();
 
     if (data.mode === "create") formData.append("avatarUrl", data.avatarUrl);
@@ -74,7 +73,9 @@ export default function UpdateAvatar({
     },
   });
   const isReady =
-    (watchAvatar.mode === "create" && watchAvatar.avatarUrl != null && watchAvatar.avatarUrl !== "") ||
+    (watchAvatar.mode === "create" &&
+      watchAvatar.avatarUrl != null &&
+      watchAvatar.avatarUrl !== "") ||
     (watchAvatar.mode === "upload" && watchAvatar.avatar != undefined);
   return (
     <Drawer onOpenChange={setOpen} open={open}>
@@ -94,6 +95,7 @@ export default function UpdateAvatar({
                           {field.value === "create" && <span>Create</span>}
                           <Switch
                             checked={field.value === "upload"}
+                            {...field}
                             onCheckedChange={(checked) => {
                               field.onChange(checked ? "upload" : "create");
                             }}

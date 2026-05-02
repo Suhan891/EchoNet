@@ -40,7 +40,7 @@ export default function ImageDropdown({
       onSuccess: (result) => {
         toast.success(result.message);
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.PROFILE, userId],
+          queryKey: [userId],
         });
       },
       onError: (error) => {

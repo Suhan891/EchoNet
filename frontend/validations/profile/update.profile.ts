@@ -3,7 +3,7 @@ import * as z from "zod";
 export const UpdateProfileSchema = z.object({
   bio: z
     .string()
-    .min(10, "Bio must include 10 charecters")
+    .max(100, "Bio must not be at more than 100 characters.")
     .optional(),
 
   name: z
