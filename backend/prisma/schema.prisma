@@ -55,6 +55,8 @@ model Profile {
   avatarUrl String?  // Later changed to required
   cloudId   String?
 
+  isPrivate Boolean @default(false)
+
   posts         Post[]
   story         Story?
   reels         Reel[]

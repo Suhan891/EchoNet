@@ -109,6 +109,7 @@ export const ProfileScalarFieldEnum = {
   bio: 'bio',
   avatarUrl: 'avatarUrl',
   cloudId: 'cloudId',
+  isPrivate: 'isPrivate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
