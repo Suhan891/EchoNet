@@ -3,12 +3,17 @@ export interface OwnProfileResponse {
   name: string;
   bio?: string;
   avatarUrl: string;
+  isPrivate: boolean;
   story?: {
     id: true;
   };
+  followers: {
+    followerId: string;
+  }[];
+  followings: {
+    followingId: string;
+  }[];
   _count: {
-    followers: number;
-    followings: number;
     posts: number;
     savedPosts: number;
     reels: number;
@@ -34,9 +39,10 @@ export interface ProfileState {
   posts: number;
   savedPosts: number;
   reels: number;
-  followers: number;
-  followings: number;
+  followers: string[] ;
+  followings: string[];
   story: boolean;
+  isPrivate: boolean;
   sentNotifications: Notifications[] | undefined;
 
   setId: (id: string) => void;
@@ -46,14 +52,14 @@ export interface ProfileState {
   setName: (name: string) => void;
   setBio: (bio: string | undefined) => void;
   setAvatar: (avatarUrl: string) => void;
-  setFollowers: (followers: number) => void;
-  setFollowinngs: (followings: number) => void;
+  setFollowers: (followers: string[] | []) => void;
+  setFollowinngs: (followings: string[] | []) => void;
   setStory: (story: boolean) => void;
+  setIsPrivate: (isPrivate: boolean) => void;
   setNotification: (sentNotifications: Notifications[] | undefined) => void;
 }
 
 export interface UpProfileResult {
   bio: string;
   name: string;
-  id: string;
 }
