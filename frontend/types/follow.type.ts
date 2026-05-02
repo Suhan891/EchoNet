@@ -24,3 +24,22 @@ export interface Followings {
     name: string;
   };
 }
+
+export type FollowType = "FOLLOWERS" | "FOLLOWING";
+export interface FollowDto {
+  type: FollowType;
+  id: string;
+}
+export interface FollowData {
+  id: string,
+  follower?: {
+    id: string;
+    name: string;
+    avatarUrl: string;
+  };
+  following?: {
+    id: string;
+    name: string;
+    avatarUrl: string;
+  };
+}
