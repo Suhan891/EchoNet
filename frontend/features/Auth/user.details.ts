@@ -5,11 +5,14 @@ import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { deleteCookie, setProfileCookie } from "@/service/common/cookies";
+import Cookie from "js-cookie";
+import { useProfileDetails } from "../Profile/profile.details";
 
 export function useUserDetails() {
   const router = useRouter();
   const { data: user, isSuccess, isError, error } = useMyself();
 
+  useProfileDetails();
   const setUserId = useUserStore((s) => s.setUserId);
   const setEmail = useUserStore((s) => s.setEmail);
   const setRole = useUserStore((s) => s.setRole);
@@ -34,9 +37,11 @@ export function useUserDetails() {
       const activeProfile = user.data.profile?.find(
         (profile) => profile.isActive === true,
       );
-      const storeActiveProfile = storeProfiles.find(p => p.isActive === true)
+      const storeActiveProfile = storeProfiles.find((p) => p.isActive === true);
 
-      if (activeProfile && activeProfile.id !== storeActiveProfile?.id) setProfileCookie(activeProfile.id);
+      if (activeProfile)
+        Cookie.set("profile", activeProfile.id, { expires: 7, path: "/" });
+      console.log("Active profile", activeProfile);
 
       if (storeEmail !== user.data.email) setEmail(user.data.email);
       if (storeUserId !== user.data.id) setUserId(user.data.id);

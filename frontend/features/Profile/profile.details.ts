@@ -19,9 +19,10 @@ export function useProfileDetails() {
   const setName = useProfileStore((s) => s.setName);
   const setBio = useProfileStore((s) => s.setBio);
   const setStory = useProfileStore((s) => s.setStory);
-  const setPosts = useProfileStore(s => s.setPosts);
-  const setReels = useProfileStore(s => s.setReels)
-  const setSavedPosts = useProfileStore(s => s.setSavedPosts)
+  const setPosts = useProfileStore((s) => s.setPosts);
+  const setReels = useProfileStore((s) => s.setReels);
+  const setSavedPosts = useProfileStore((s) => s.setSavedPosts);
+  const setIsPrivate = useProfileStore((state) => state.setIsPrivate);
 
   const storeAvatar = useProfileStore((s) => s.avatarUrl);
   const storeId = useProfileStore((s) => s.id);
@@ -30,9 +31,10 @@ export function useProfileDetails() {
   const storeName = useProfileStore((s) => s.name);
   const storeBio = useProfileStore((s) => s.bio);
   const storeStory = useProfileStore((s) => s.story);
-  const storePosts = useProfileStore(state => state.posts);
-  const storeReels = useProfileStore(state => state.reels)
-  const storeSavedPosts = useProfileStore(state => state.savedPosts)
+  const storePosts = useProfileStore((state) => state.posts);
+  const storeReels = useProfileStore((state) => state.reels);
+  const storeSavedPosts = useProfileStore((state) => state.savedPosts);
+  const storeIsPrivate = useProfileStore((state) => state.isPrivate);
 
   const { data: profile, isSuccess, isError, error } = useMyProfile(userId);
 
@@ -52,15 +54,22 @@ export function useProfileDetails() {
         setAvatar(profile.data.avatarUrl);
       if (storeId !== profile.data.id) setId(profile.data.id);
       if (storeFollowers.length !== profile.data.followers.length)
-        setFollowers(profile.data.followers.map(follow => follow.followerId));
+        setFollowers(profile.data.followers.map((follow) => follow.followerId));
       if (storeFollowings.length !== profile.data.followings.length)
-        setFollowings(profile.data.followings.map(follow => follow.followingId));
+        setFollowings(
+          profile.data.followings.map((follow) => follow.followingId),
+        );
       if (storeName !== profile.data.name) setName(profile.data.name);
       if (storeBio !== profile.data.bio) setBio(profile.data.bio);
       if (storeStory !== !!profile.data.story) setStory(!!profile.data.story);
-      if(storePosts !== profile.data._count.posts) setPosts(profile.data._count.posts)
-        if(storeReels !== profile.data._count.reels) setReels(profile.data._count.reels)
-        if(storeSavedPosts !== profile.data._count.savedPosts) setSavedPosts(profile.data._count.savedPosts)
+      if (storePosts !== profile.data._count.posts)
+        setPosts(profile.data._count.posts);
+      if (storeReels !== profile.data._count.reels)
+        setReels(profile.data._count.reels);
+      if (storeSavedPosts !== profile.data._count.savedPosts)
+        setSavedPosts(profile.data._count.savedPosts);
+      if (storeIsPrivate !== profile.data.isPrivate)
+        setIsPrivate(profile.data.isPrivate);
     }
   }, [
     userId,
@@ -79,6 +88,7 @@ export function useProfileDetails() {
     storePosts,
     storeReels,
     storeSavedPosts,
+    storeIsPrivate,
     setAvatar,
     setId,
     setFollowers,
@@ -88,7 +98,8 @@ export function useProfileDetails() {
     setStory,
     setPosts,
     setReels,
-    setSavedPosts
+    setSavedPosts,
+    setIsPrivate,
   ]);
   return isSuccess;
 }

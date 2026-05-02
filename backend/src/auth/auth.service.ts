@@ -81,12 +81,7 @@ export class AuthService {
       role: user.role,
       name: user.username,
     };
-    const addedProfile = await this.profileService.createProfile(
-      reqUser,
-      profileData,
-      avatar,
-    );
-    console.log('Added Profile: ', addedProfile);
+    await this.profileService.createProfile(reqUser, profileData, avatar);
 
     return await this.prisma.user.update({
       where: { id: reqUser.userId },
@@ -154,7 +149,7 @@ export class AuthService {
 
   async refreshHandler(user: RefreshAccessDto) {
     const key = `user:${user.id}`;
-    await this.cacheService.delByPattern(key);
+    await this.cacheService.delete(key);
     return await this.prisma.user.findUnique({
       where: { id: user.id },
       select: {
@@ -168,7 +163,7 @@ export class AuthService {
   async logout(user: authUserDto) {
     console.log('User: ', user);
     const key = `user:${user.userId}`;
-    await this.cacheService.delByPattern(key);
+    await this.cacheService.delete(key);
     await this.prisma.user.update({
       where: { id: user.userId },
       data: { isActive: false },
