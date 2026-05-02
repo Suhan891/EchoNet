@@ -1,10 +1,11 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateProfileDto, profileDto } from './dto/profile.dto';
+import {
+  CreateProfileDto,
+  othersProfile,
+  profileDto,
+  toggleProf,
+} from './dto/profile.dto';
 import { UpdateProfileDto } from './dto/profile.dto';
 import { authUserDto } from 'src/auth/tokens/token.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
@@ -22,57 +23,63 @@ export class ProfileService {
   async createProfile(
     user: authUserDto,
     profileData: CreateProfileDto,
-    avatar: Express.Multer.File,
+    avatar: Express.Multer.File | null,
   ) {
-    const name = profileData.name.toLowerCase();
+    if (!avatar && !profileData.avatarUrl)
+      throw new BadRequestException(' Avtar is required');
     const existingProfile = await this.prisma.profile.findUnique({
-      where: { name },
+      where: { name: profileData.name },
     });
     if (existingProfile)
-      throw new ForbiddenException(
+      throw new BadRequestException(
         'Name already exists. Please provide a new name',
       );
 
-    if (user.profile && user.profile?.length >= 10)
+    if (user.profile && user.profile?.length >= 15)
       throw new BadRequestException('You have exceeded Creation of Profile');
 
-    const profile = await this.prisma.profile.create({
-      data: {
-        userId: user.userId,
-        name,
-        bio: profileData.bio,
-      },
-      select: {
-        name: true,
-        id: true,
-      },
+    await this.prisma.profile.updateMany({
+      data: { isActive: false },
+      where: { userId: user.userId },
     });
-
-    const fileName = `${profile.name}-avatar`; // Extension name is removed because cloudinary considers and stores-> sample.jpg.jpg (So removed)
-
-    const upload = await this.cloudService.uploadedAvatar(avatar, fileName);
+    const isPrivate = Number(profileData.private);
 
     const key = `user:${user.userId}`;
-    await this.cacheService.delByPattern(key);
+    await this.cacheService.delete(key);
 
-    await this.prisma.profile.updateMany({
-      where: { userId: user.userId },
-      data: { isActive: false },
-    });
+    if (avatar) {
+      const fileName = `${profileData.name}-avatar`;
+      const uploaded = await this.cloudService.uploadedAvatar(avatar, fileName);
+      return await this.prisma.profile.create({
+        data: {
+          name: profileData.name,
+          bio: profileData.bio,
+          isActive: true,
+          isPrivate: isPrivate ? true : false,
+          avatarUrl: uploaded.secure_url,
+          cloudId: uploaded.public_id,
+          userId: user.userId,
+        },
+        select: {
+          id: true,
+        },
+      });
+    }
 
-    return await this.prisma.profile.update({
-      where: { id: profile.id },
-      data: {
-        avatarUrl: upload.secure_url,
-        cloudId: upload.public_id,
-        isActive: true,
-      },
-      select: {
-        name: true,
-        avatarUrl: true,
-        isActive: true,
-      },
-    });
+    if (profileData.avatarUrl)
+      return await this.prisma.profile.create({
+        data: {
+          name: profileData.name,
+          bio: profileData.bio,
+          isActive: true,
+          isPrivate: isPrivate ? true : false,
+          avatarUrl: profileData.avatarUrl,
+          userId: user.userId,
+        },
+        select: {
+          id: true,
+        },
+      });
   }
 
   async updateAvatar(
@@ -155,22 +162,27 @@ export class ProfileService {
   async activateProfile(
     user: authUserDto,
     oldProfileData: profileDto,
-    newProfileId: string,
+    newProfile: toggleProf,
   ) {
-    if (oldProfileData.id === newProfileId)
+    if (oldProfileData.id === newProfile.id)
       throw new BadRequestException('You cannot reactivate your own profile');
-    if (!user.profile?.includes({ id: newProfileId }))
-      throw new BadRequestException('No such profile exists for this user');
+    if (oldProfileData.user.id !== newProfile.userId)
+      throw new BadRequestException(
+        'This is not your available profile that you can toggle',
+      );
     const key = `user:${user.userId}`;
-    await this.cacheService.delByPattern(key);
-    // Such that after this /auth/me should be called -> /auth/me will return all profile id within which active profile frontend will take -> Call to get the profile with his active id
+    await this.cacheService.delete(key);
+
     await this.prisma.profile.updateMany({
       where: { userId: user.userId },
       data: { isActive: false },
     });
 
-    return await this.prisma.profile.update({
-      where: { id: newProfileId },
+    const profileKey = `profile:${oldProfileData.id}`;
+    await this.cacheService.delete(profileKey);
+
+    await this.prisma.profile.update({
+      where: { id: newProfile.id },
       data: { isActive: true },
       select: {
         name: true,
@@ -191,6 +203,7 @@ export class ProfileService {
         id: true,
         name: true,
         bio: true,
+        isPrivate: true,
         avatarUrl: true,
         story: {
           where: {
@@ -246,8 +259,8 @@ export class ProfileService {
 
     const userKey = `user:${user.userId}`;
     const key = `profile:${profileId}`;
-    await this.cacheService.delByPattern(userKey);
-    await this.cacheService.delByPattern(key);
+    await this.cacheService.delete(userKey);
+    await this.cacheService.delete(key);
 
     return this.prisma.profile.delete({
       where: { id: profileId },
@@ -255,26 +268,54 @@ export class ProfileService {
     });
   }
 
-  async getProfile(profileId: string) {
-    const key = `profile:${profileId}`;
+  async getProfile(prof: othersProfile, ownProfile: profileDto) {
+    const key = `profile:${prof.id}:global:${ownProfile.id}`;
     const cachedProfile = await this.cacheService.get(key);
     if (cachedProfile) return cachedProfile;
+    const isFollow = await this.prisma.profile.count({
+      // To make all data avail only for a follower or a following user  => Later only following profiles be allowed
+      where: {
+        id: prof.id,
+        followers: {
+          some: {
+            followerId: ownProfile.id,
+          },
+        },
+        followings: {
+          some: {
+            followingId: ownProfile.id,
+          },
+        },
+      },
+    });
     const profile = this.prisma.profile.findUnique({
-      where: { id: profileId },
+      where: { id: prof.id },
       select: {
         avatarUrl: true,
         name: true,
         id: true,
         bio: true,
+        isPrivate: true,
         // Only story id would be passed if following then only will be allowed
         story: {
           select: {
-            id: true,
+            id: isFollow ? true : false,
+          },
+          where: {
+            expiresAt: {
+              gt: new Date(Date.now()),
+            },
+            isReady: {
+              equals: true,
+            },
           },
         },
-        posts: {
+        _count: {
           select: {
-            id: true,
+            followers: true,
+            followings: true,
+            posts: !prof.isPrivate ? true : isFollow ? true : false,
+            reels: !prof.isPrivate ? true : isFollow ? true : false,
           },
         },
       },
@@ -291,16 +332,19 @@ export class ProfileService {
         NOT: {
           id: profile.id,
         },
+        avatarUrl: {
+          // Later be removed
+          // Kept because of some of my data stored are not proper=> during testing
+          not: null,
+        },
       },
       select: {
         id: true,
         avatarUrl: true,
         name: true,
-        followers: {
-          select: {
-            followerId: true,
-          },
-        },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
     await this.cacheService.set<typeof profiles>(key, profiles);
