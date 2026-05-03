@@ -12,8 +12,8 @@ export function useCreateFolllow() {
 
 export function useFollow(profileId: string, payload: FollowDto) {
     return useQuery<SuccessResponse<FollowData[]>,ErrorResponse>({
-        queryKey: [profileId, queryKeys.FOLLOW],
+        queryKey: [queryKeys.FOLLOW, payload.id, payload.type],
         queryFn: () => GetFollow(payload),
-        enabled: !!profileId && !!payload
+        enabled: !!payload.id && !!payload.type
     })
 }

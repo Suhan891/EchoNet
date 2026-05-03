@@ -11,7 +11,6 @@ import { FollowType } from "@/types/follow.type";
 import { useProfileStore } from "@/stores/ProfileStore";
 import { useFollow } from "@/hooks/useFollow";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "sonner";
 import {
   Item,
   ItemActions,
@@ -21,7 +20,6 @@ import {
 } from "@/components/ui/item";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { UserIcon } from "lucide-react";
 interface FollowProps {
   open: boolean;
   setOpen: (followerOpen: boolean) => void;
