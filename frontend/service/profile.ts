@@ -15,6 +15,10 @@ export async function GetOwnprofile() {
   return getJson("own-details");
 }
 
+export async function UpdatePrivacy() {
+  return putJson("privacy", undefined)
+}
+
 export async function UpdateProfile(data: UpdateProfileType) {
   return putJson("update", data);
 }
@@ -32,4 +36,8 @@ export async function ToggleProfile(profileId: string) {
 
 export async function GetAllProfiles() {
   return getJson("all");
+} 
+
+export async function GetOthersProfile(payload: string) {
+  return getJson(`other/${payload}`);
 }
