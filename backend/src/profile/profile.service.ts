@@ -82,6 +82,16 @@ export class ProfileService {
       });
   }
 
+  async privacyUpdate(profile: profileDto) {
+    const key = `profile:${profile.id}`;
+    await this.cacheService.delete(key);
+    return await this.prisma.profile.update({
+      where: { id: profile.id },
+      data: { isPrivate: !profile.isPrivate },
+      select: { isPrivate: true },
+    });
+  }
+
   async updateAvatar(
     profileData: profileDto,
     data: AvatarProps,
@@ -288,6 +298,8 @@ export class ProfileService {
         },
       },
     });
+    const canSeeContent = !prof.isPrivate || !!isFollow;
+
     const profile = this.prisma.profile.findUnique({
       where: { id: prof.id },
       select: {
@@ -296,31 +308,29 @@ export class ProfileService {
         id: true,
         bio: true,
         isPrivate: true,
-        // Only story id would be passed if following then only will be allowed
         story: {
           select: {
-            id: isFollow ? true : false,
+            ...(isFollow ? { id: true } : { expiresAt: true }),
           },
           where: {
-            expiresAt: {
-              gt: new Date(Date.now()),
-            },
-            isReady: {
-              equals: true,
-            },
+            expiresAt: { gt: new Date() },
+            isReady: { equals: true },
           },
         },
         _count: {
           select: {
             followers: true,
             followings: true,
-            posts: !prof.isPrivate ? true : isFollow ? true : false,
-            reels: !prof.isPrivate ? true : isFollow ? true : false,
+            ...(canSeeContent && {
+              posts: true,
+              reels: true,
+            }),
           },
         },
       },
     });
     await this.cacheService.set<typeof profile>(key, profile);
+    return profile;
   }
 
   async getAllProfile(profile: profileDto) {

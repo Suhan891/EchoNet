@@ -21,7 +21,7 @@ import { AvatarValidationPipe } from './pipes/files.validate';
 import { CurrentUser } from 'src/auth/gaurds/refresh.decorator';
 import type { authUserDto } from 'src/auth/tokens/token.dto';
 import { currentProfile } from './decorator/get-profile';
-import { NoAccount } from 'src/auth/decorators/no-account';
+//import { NoAccount } from 'src/auth/decorators/no-account';
 import { ValidateProfileExists } from './pipes/existing.profile';
 import { Throttle } from '@nestjs/throttler';
 import { ProfileGaurd } from './gaurds/profile.gaurd';
@@ -79,6 +79,12 @@ export class ProfileController {
   @ResponseMessage('Own Profile Details Received Successfull')
   async getOwnProfile(@currentProfile() profile: profileDto) {
     return await this.profileService.getOwnProfile(profile);
+  }
+
+  @Put('privacy')
+  @ResponseMessage('Privacy updated')
+  async updatePrivacy(@currentProfile() profile: profileDto) {
+    return await this.profileService.privacyUpdate(profile);
   }
 
   @Post('activate/:profileId')
