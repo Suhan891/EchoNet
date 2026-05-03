@@ -47,6 +47,7 @@ export interface profileDto {
   id: string;
   name: string;
   bio?: string;
+  isPrivate: boolean;
   user: {
     id: string;
   };
