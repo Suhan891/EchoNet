@@ -52,14 +52,14 @@ axiosInstance.interceptors.response.use(
       const newToken = await RefreshUser(); 
       
       if (!newToken) {
-        return Promise.reject(error);
+        return Promise.reject(error.response?.data || error);
       }
 
       originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
       return axiosInstance(originalRequest);
     }
     
-    return Promise.reject(error);
+    return Promise.reject(error.response?.data || error);
   }
 );
 

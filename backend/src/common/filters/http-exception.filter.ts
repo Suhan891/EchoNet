@@ -41,7 +41,6 @@ export class GlobaExceptionFilter implements ExceptionFilter {
         else message = errorBody.message || message;
       }
     } else {
-      // To handle unexpected code crash or Db errors
       console.error(exception);
       message = (exception as Error).message;
       errorResponse = exception as Error;

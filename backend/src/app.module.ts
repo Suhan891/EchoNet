@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ProfileModule } from './profile/profile.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ProfileGaurd } from './profile/gaurds/profile.gaurd';
 import { ConfigModule } from '@nestjs/config';
 import { FollowModule } from './follow/follow.module';
@@ -25,6 +25,7 @@ import * as redisStore from 'cache-manager-redis-store';
 import { RoleGaurd } from './common/gaurds/roles.gaurd';
 import { JwtAuthGaurd } from './common/gaurds/jwt-auth';
 import { JobsModule } from './jobs/jobs.module';
+import { GlobaExceptionFilter } from './common/filters/http-exception.filter';
 
 @Module({
   imports: [
@@ -79,6 +80,10 @@ import { JobsModule } from './jobs/jobs.module';
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_FILTER,
+      useClass: GlobaExceptionFilter,
+    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGaurd,
