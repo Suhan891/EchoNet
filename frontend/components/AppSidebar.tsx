@@ -1,5 +1,6 @@
+"use client";
 import { ChevronUp, CloudBackup, Plus } from "lucide-react";
-import Cookie from 'js-cookie'
+import Cookie from "js-cookie";
 import {
   Sidebar,
   SidebarContent,
@@ -28,7 +29,7 @@ import {
 import { items } from "@/utils/bar.icons";
 import { useUserStore } from "@/stores/UserStore";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AlertDialogDestructive } from "./AlertDiialog";
 import CreateProfile from "@/pages/Profile/CreateProfile";
 import { useToggleProfile } from "@/hooks/useProfile";
@@ -46,12 +47,13 @@ function AppSidebar() {
   const activeProfile = profiles.find((profile) => profile.isActive === true);
   const name = activeProfile?.name;
   const avatarUrl = activeProfile?.avatarUrl;
+  const router = useRouter();
 
   const handleActivate = (profileId: string) => {
     toggleProfile.mutate(profileId, {
       onSuccess: (result) => {
         console.log(result.data);
-        Cookie.set("profile", profileId, { expires: 7, path: '/' });
+        Cookie.set("profile", profileId, { expires: 7, path: "/" });
         toast.success(result.message);
         queryClient.invalidateQueries();
       },
@@ -70,10 +72,11 @@ function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
+
             <SidebarMenuButton asChild>
-              <Link href={"/"}>
+              <Link href={"/"} className="flex items-center gap-2">
                 <Image src={"/vercel.svg"} alt="logo" width={20} height={20} />
-                <span>EchoNet</span>
+                <span className="font-semibold">EchoNet</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -88,23 +91,15 @@ function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title} value={item.title}>
+                <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    asChild
                     size="lg"
                     isActive={pathname === item.url}
-                    tooltip={item.title}
                     className="transition-all duration-200"
+                    onClick={() => router.push(item.url)}
                   >
-                    <Link
-                      href={item.url}
-                      className="flex items-center gap-3 w-full group-data-[collapsible=icon]:justify-center"
-                    >
-                      <item.icon size={20} className="shrink-0" />
-                      <span className="font-medium truncate group-data-[collapsible=icon]:hidden">
-                        {item.title}
-                      </span>
-                    </Link>
+                    <item.icon size={20} className="shrink-0" />
+                    <span className="font-medium truncate">{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -125,7 +120,9 @@ function AppSidebar() {
                       alt="Profile Image"
                       width={10}
                     />
-                    <AvatarFallback><CloudBackup /></AvatarFallback>
+                    <AvatarFallback>
+                      <CloudBackup />
+                    </AvatarFallback>
                   </Avatar>{" "}
                   {name} <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
@@ -156,7 +153,7 @@ function AppSidebar() {
                         <DropdownMenuSeparator />
                         <AlertDialogDestructive
                           title="Delete Profile"
-                          description="This shall delte all data linked with the profile"
+                          description="This shall delete all data linked with the profile"
                         >
                           <DropdownMenuItem
                             onSelect={(e) => e.preventDefault()}
