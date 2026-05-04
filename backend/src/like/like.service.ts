@@ -1,11 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  LikeDTo,
-  RequestDto,
-  RequestType,
-  ResLikeDto,
-} from './dto/request.dto';
+import { RequestDto, RequestType, ResLikeDto } from './dto/request.dto';
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 
@@ -19,20 +14,6 @@ export class LikeService {
   async toggleLike(data: ResLikeDto, profile: profileDto) {
     if (!data.likeId) return this.create(data);
     return this.remove(profile, data.likeId);
-  }
-
-  async create(data: RequestDto) {
-    if (data.name === 'POST') return await this.createPostLike(data);
-    if (data.name === 'REEL') return await this.createReelLike(data);
-    if (data.name === 'STORY') return await this.createStoryLike(data);
-  }
-
-  async remove(profile: profileDto, likeId: string) {
-
-    await this.prisma.likes.delete({
-      where: { id: likeId },
-      select: { id: true },
-    });
   }
 
   async viewProfiles(profile: profileDto, id: string, type: RequestType) {
@@ -63,6 +44,19 @@ export class LikeService {
     if (!likes) throw new BadRequestException('No like exists');
     await this.cacheService.set<typeof likes>(key, likes);
     return likes;
+  }
+
+  private async create(data: RequestDto) {
+    if (data.name === 'POST') return await this.createPostLike(data);
+    if (data.name === 'REEL') return await this.createReelLike(data);
+    if (data.name === 'STORY') return await this.createStoryLike(data);
+  }
+
+  private async remove(profile: profileDto, likeId: string) {
+    await this.prisma.likes.delete({
+      where: { id: likeId },
+      select: { id: true },
+    });
   }
 
   private async validateId(
