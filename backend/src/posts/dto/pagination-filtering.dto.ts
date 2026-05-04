@@ -1,6 +1,8 @@
 import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { Injectable } from '@nestjs/common';
 import { PaginationQueryDto } from 'src/common/pagination/pagination.dto';
 
+@Injectable()
 export class FindPostQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsString({ message: 'Name must be a string' })

@@ -1,7 +1,8 @@
-import { BadGatewayException, PipeTransform } from '@nestjs/common';
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PostDto } from '../dto/posts.dto';
 
+@Injectable()
 export class PostExistsPipe implements PipeTransform {
   constructor(private prisma: PrismaService) {}
 
@@ -10,7 +11,7 @@ export class PostExistsPipe implements PipeTransform {
       where: { id: postId },
       select: { id: true, profileId: true },
     });
-    if (!post) throw new BadGatewayException('No such Post exists');
+    if (!post) throw new BadRequestException('No such Post exists');
     return post;
   }
 }
