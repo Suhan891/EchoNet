@@ -14,8 +14,12 @@ import type { profileDto } from 'src/profile/dto/profile.dto';
 import { ValidateProfileExists } from 'src/profile/pipes/existing.profile';
 import { FollowService } from './follow.service';
 import { ValidateFollowPipe } from './pipes/follow.exists';
-import type { followDto } from './dto/validate-follow.dto';
+import type {
+  followDto,
+  FollowFromProfileDto,
+} from './dto/validate-follow.dto';
 import { ProfileHasFollowPipe } from './pipes/profile.has.follow';
+import { ValidateFollowProfilePipe } from './pipes/follow.from.profile';
 
 @Controller('follow')
 export class FollowController {
@@ -39,6 +43,16 @@ export class FollowController {
     return await this.followService.remove(follow);
   }
 
+  @Post('toggle/:profileId')
+  @ResponseMessage('Follow updated')
+  async toggle(
+    @Param('profileId', ParseUUIDPipe, ValidateFollowProfilePipe)
+    othersProf: FollowFromProfileDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    return await this.followService.toggleFollow(othersProf, profile);
+  }
+
   @Get(':id')
   @ResponseMessage('Own details received')
   async getFollow(
@@ -50,21 +64,5 @@ export class FollowController {
       throw new BadRequestException('Follow type mismatch');
     }
     return await this.followService.getFollow(profileId, follow, profile);
-  }
-
-  @Get('followers')
-  @ResponseMessage('Followers data received')
-  async getFollowers(
-    @Param('id', ParseUUIDPipe, ValidateProfileExists) profileId: string,
-  ) {
-    return await this.followService.getFollowers(profileId);
-  }
-
-  @Get('followings')
-  @ResponseMessage('Followings data received')
-  async getFollowings(
-    @Param('id', ParseUUIDPipe, ValidateProfileExists) profileId: string,
-  ) {
-    return await this.followService.getFollowings(profileId);
   }
 }

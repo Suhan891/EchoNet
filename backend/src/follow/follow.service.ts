@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { profileDto } from 'src/profile/dto/profile.dto';
-import { followDto } from './dto/validate-follow.dto';
+import { followDto, FollowFromProfileDto } from './dto/validate-follow.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 
 @Injectable()
@@ -10,6 +10,18 @@ export class FollowService {
     private prisma: PrismaService,
     private cacheService: AppCacheService,
   ) {}
+
+  async toggleFollow(othersProf: FollowFromProfileDto, profile: profileDto) {
+    const existingFollow = othersProf.followers.some(
+      (otherP) => otherP.followerId === profile.id,
+    );
+    if (existingFollow)
+      return this.remove({
+        followerId: profile.id,
+        followingId: othersProf.id,
+      });
+    return this.create(profile, othersProf.id);
+  }
 
   async create(profile: profileDto, profileId: string) {
     if (profile.id === profileId)
@@ -43,7 +55,7 @@ export class FollowService {
   }
 
   async remove(follow: followDto) {
-    // Numerous workto be done
+    // Numerous work to be done
     await this.existingSavePost(follow);
 
     const key = `saved-posts:${follow.followerId}`;
@@ -70,6 +82,11 @@ export class FollowService {
     const savedPosts = await this.prisma.savePost.findMany({
       where: {
         profileId: follow.followerId,
+        post: {
+          post: {
+            profileId: follow.followingId,
+          },
+        },
       },
       select: {
         id: true,
