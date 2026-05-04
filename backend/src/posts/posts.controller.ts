@@ -21,9 +21,15 @@ import type { profileDto } from 'src/profile/dto/profile.dto';
 import { PostsService } from './posts.service';
 import { PostsPhotoExistsPipe } from './pipes/photo-post.exists';
 import { PostExistsPipe } from './pipes/post.exists.pipe';
-import type { PostDto, SavedPostDto } from './dto/posts.dto';
+import type {
+  OthersPostDto,
+  PostDto,
+  RemoveSavedPost,
+  SavedPostDto,
+} from './dto/posts.dto';
 import { SavedPostExistsPipe } from './pipes/savedPost.exists.pipe';
 import { FindPostQueryDto } from './dto/pagination-filtering.dto';
+import { PostsFromProfilePipe } from './pipes/post.profile';
 
 @Controller('posts')
 export class PostsController {
@@ -43,58 +49,69 @@ export class PostsController {
     )
     postMedia: Array<Express.Multer.File>,
   ) {
-    console.log('Body: ', data);
-    console.log('Files received: ', postMedia);
     return await this.postService.createPost(profile, data, postMedia);
   }
 
-  // @Get('post')
-  // @ResponseMessage('Post data retrived')
-  // async getPost(@Param('postId', ParseUUIDPipe, PostExistsPipe) post: PostDto) {
-  //   return await this.postService.getPost(post);
-  // }
+  // Update Post later
 
-  // @Put('remove-post')
-  // @ResponseMessage('Post data removed')
-  // async removePost(
-  //   @Param('postId', ParseUUIDPipe, PostExistsPipe) post: PostDto,
-  //   @currentProfile() profile: profileDto,
-  // ) {
-  //   return await this.postService.deletePost(post, profile);
-  // }
+  @Get('own')
+  @ResponseMessage('Own posts data retrived')
+  async getOwnPosts(@currentProfile() profile: profileDto) {
+    return await this.postService.getOwnPosts(profile);
+  }
 
-  // @Put('remove-saved-post')
-  // @ResponseMessage('Saved Post data removed')
-  // async removeSavedPost(
-  //   @Param('savedpostId', ParseUUIDPipe, SavedPostExistsPipe)
-  //   savePost: SavedPostDto,
-  //   @currentProfile() profile: profileDto,
-  // ) {
-  //   return await this.postService.deleteSavedPost(savePost, profile);
-  // }
+  @Get('others/:profileId')
+  @ResponseMessage('Other Profiles Post data retrevied')
+  async getOthersPost(
+    @Param('profileId', ParseUUIDPipe, PostsFromProfilePipe)
+    othersProf: OthersPostDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    return this.postService.getOthersPost(othersProf, profile);
+  }
 
-  // @Post('save-post')
-  // @ResponseMessage('Post Saved successfull')
-  // async savePost(
-  //   @Param('post-photo', ParseUUIDPipe, PostsPhotoExistsPipe)
-  //   postPhotoId: string,
-  //   @currentProfile() profile: profileDto,
-  // ) {
-  //   return await this.postService.savePost(profile, postPhotoId);
-  // }
+  @Get('all')
+  @ResponseMessage('Paginated post data sent')
+  async getAllPost(
+    @Query() paginatedData: FindPostQueryDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    console.log(paginatedData);
+    return await this.postService.getAllPost(profile, paginatedData);
+  }
 
-  // @Get('post-all')
-  // @ResponseMessage('Paginated post data sent')
-  // async getAllPost(
-  //   @Query() paginatedData: FindPostQueryDto,
-  //   @currentProfile() profile: profileDto,
-  // ) {
-  //   return this.postService.getAllPost(profile, paginatedData);
-  // }
+  @Put('remove-post')
+  @ResponseMessage('Post data removed')
+  async removePost(
+    @Param('postId', ParseUUIDPipe, PostExistsPipe) post: PostDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    return await this.postService.removePosts(profile, post);
+  }
 
-  // @Get('posts-saved')
-  // @ResponseMessage('Retrieved Save Posts')
-  // async getSavedPost(@currentProfile() profile: profileDto) {
-  //   return this.postService.getSavedPosts(profile);
-  // }
+  @Put('remove-saved-post/:savedpostId')
+  @ResponseMessage('Saved Post data removed')
+  async removeSavedPost(
+    @Param('savedpostId', ParseUUIDPipe, SavedPostExistsPipe)
+    savePost: RemoveSavedPost,
+    @currentProfile() profile: profileDto,
+  ) {
+    return await this.postService.deleteSavedPost(savePost, profile);
+  }
+
+  @Post('save/:id')
+  @ResponseMessage('Post Saved successfull')
+  async savePost(
+    @Param('id', ParseUUIDPipe, PostsPhotoExistsPipe)
+    postMedia: SavedPostDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    return await this.postService.savePost(profile, postMedia);
+  }
+
+  @Get('posts-saved')
+  @ResponseMessage('Retrieved Save Posts')
+  async getSavedPost(@currentProfile() profile: profileDto) {
+    return await this.postService.getSavedPost(profile);
+  }
 }

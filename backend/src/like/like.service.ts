@@ -53,6 +53,7 @@ export class LikeService {
   }
 
   private async remove(profile: profileDto, likeId: string) {
+    // All of them later shall face cache invalidation => later
     await this.prisma.likes.delete({
       where: { id: likeId },
       select: { id: true },
