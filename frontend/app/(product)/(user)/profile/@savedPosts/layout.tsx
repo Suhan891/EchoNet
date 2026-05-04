@@ -9,7 +9,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { useProfileStore } from "@/stores/ProfileStore";
-import { Amphora } from "lucide-react";
+import { Amphora, Link } from "lucide-react";
 
 export default function SavedPostsLayout({
   children,
@@ -17,7 +17,7 @@ export default function SavedPostsLayout({
   children: React.ReactNode;
 }) {
   const savedPosts = useProfileStore((s) => s.savedPosts);
-  if (!savedPosts)
+  if (!savedPosts.length)
     return (
       <Empty className="border border-dashed">
         <EmptyHeader>
@@ -28,7 +28,7 @@ export default function SavedPostsLayout({
           <EmptyDescription>Save a post to view</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button variant={"link"}>Browse Posts</Button>
+          <Link href="/posts"><Button variant={"link"}>Browse Posts</Button></Link>
         </EmptyContent>
       </Empty>
     );
