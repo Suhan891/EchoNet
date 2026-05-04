@@ -39,7 +39,6 @@ export class ValidateRequestPipe implements PipeTransform {
 
     return {
       ...data,
-      type: existingLike ? 'DELETE' : 'ADD',
       likeId: existingLike?.id,
     };
   }
@@ -64,7 +63,6 @@ export class ValidateRequestPipe implements PipeTransform {
 
     return {
       ...data,
-      type: existingLike ? 'DELETE' : 'ADD',
       likeId: existingLike?.id,
     };
   }
@@ -90,7 +88,6 @@ export class ValidateRequestPipe implements PipeTransform {
 
     return {
       ...data,
-      type: existingLike ? 'DELETE' : 'ADD',
       likeId: existingLike?.id,
     };
   }
