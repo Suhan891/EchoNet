@@ -1,78 +1,97 @@
 import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { RequestDto } from '../dto/request.dto';
+import { RequestDto, ResLikeDto } from '../dto/request.dto';
 
 @Injectable()
 export class ValidateRequestPipe implements PipeTransform {
   constructor(private prisma: PrismaService) {}
-  async transform(value: RequestDto) {
-    const isValid = await this.validateName(value);
+  async transform(value: RequestDto): Promise<ResLikeDto> {
+    const response = await this.validateName(value);
 
-    if (!isValid) throw new BadRequestException('Your request is not correct');
-
-    return value;
+    return response;
   }
 
-  private async validateName(data: RequestDto): Promise<boolean> {
+  private async validateName(data: RequestDto): Promise<ResLikeDto> {
     const { name } = data;
     if (name === 'POST') return await this.validatePost(data);
     if (name === 'REEL') return await this.validateReel(data);
     if (name === 'STORY') return await this.validateStoryMedia(data);
-    return false;
+    throw new BadRequestException('Invalid name');
   }
 
-  private async validatePost(data: RequestDto): Promise<boolean> {
+  private async validatePost(data: RequestDto): Promise<ResLikeDto> {
     const existingPost = await this.prisma.post.count({
       where: { id: data.id },
     });
-    if (!existingPost) return false;
+    if (!existingPost) throw new BadRequestException('Invalid post id');
 
-    const existingLike = await this.prisma.likes.count({
+    const existingLike = await this.prisma.likes.findUnique({
       where: {
-        profileId: data.profileId,
-        postId: data.id,
+        profileId_postId: {
+          postId: data.id,
+          profileId: data.profileId,
+        },
+      },
+      select: {
+        id: true,
       },
     });
-    if (existingLike) return false;
 
-    return true;
+    return {
+      ...data,
+      type: existingLike ? 'DELETE' : 'ADD',
+      likeId: existingLike?.id,
+    };
   }
 
-  private async validateReel(data: RequestDto): Promise<boolean> {
+  private async validateReel(data: RequestDto): Promise<ResLikeDto> {
     const existingReel = await this.prisma.reel.count({
       where: { id: data.id },
     });
-    if (!existingReel) return false;
+    if (!existingReel) throw new BadRequestException('Invalid reel');
 
-    const existingLike = await this.prisma.likes.count({
+    const existingLike = await this.prisma.likes.findUnique({
       where: {
-        profileId: data.profileId,
-        reelId: data.id,
+        profileId_reelId: {
+          profileId: data.profileId,
+          reelId: data.id,
+        },
+      },
+      select: {
+        id: true,
       },
     });
-    if (existingLike) return false;
 
-    return true;
+    return {
+      ...data,
+      type: existingLike ? 'DELETE' : 'ADD',
+      likeId: existingLike?.id,
+    };
   }
 
-  private async validateStoryMedia(data: {
-    id: string;
-    name: string;
-    profileId: string;
-  }): Promise<boolean> {
+  private async validateStoryMedia(data: RequestDto): Promise<ResLikeDto> {
     const existingStoryMedia = await this.prisma.storyMedia.count({
       where: { id: data.id },
     });
-    if (!existingStoryMedia) return false;
+    if (!existingStoryMedia)
+      throw new BadRequestException('Invalid story media');
 
-    const existingLike = await this.prisma.likes.count({
+    const existingLike = await this.prisma.likes.findUnique({
       where: {
-        profileId: data.profileId,
-        storyMediaId: data.id,
+        profileId_storyMediaId: {
+          profileId: data.profileId,
+          storyMediaId: data.id,
+        },
+      },
+      select: {
+        id: true,
       },
     });
-    if (existingLike) return false;
 
-    return true;
+    return {
+      ...data,
+      type: existingLike ? 'DELETE' : 'ADD',
+      likeId: existingLike?.id,
+    };
   }
 }

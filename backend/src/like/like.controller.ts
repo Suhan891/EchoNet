@@ -16,7 +16,7 @@ import { currentProfile } from 'src/profile/decorator/get-profile';
 import type { profileDto } from 'src/profile/dto/profile.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ValidateLikePipe } from './pipes/validate.like_id';
-import type { LikeDTo, RequestType } from './dto/request.dto';
+import type { LikeDTo, RequestType, ResLikeDto } from './dto/request.dto';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 
 @Controller('like')
@@ -42,13 +42,29 @@ export class LikeController {
     return await this.likeService.create(data);
   }
 
+  @Put('toggle/:id')
+  @ResponseMessage('Like Updated successfully')
+  async toggle(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query('name') name: RequestType,
+    @currentProfile() profile: profileDto,
+  ) {
+    if (!name || !id)
+      throw new BadGatewayException('Both id and type is required');
+    const request = { id, name, profileId: profile.id };
+    const data: ResLikeDto = await new ValidateRequestPipe(
+      this.prisma,
+    ).transform(request);
+    return await this.likeService.toggleLike(data, profile);
+  }
+
   @Put('remove/:likeId')
   @ResponseMessage('Like removed successfully')
   async remove(
     @Param('likeId', ParseUUIDPipe, ValidateLikePipe) like: LikeDTo,
     @currentProfile() profile: profileDto,
   ) {
-    return await this.likeService.remove(profile, like);
+    return await this.likeService.remove(profile, like.id);
   }
 
   @Get('view/:id')
