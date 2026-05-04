@@ -1,6 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { LikeDTo, RequestDto, RequestType } from './dto/request.dto';
+import {
+  LikeDTo,
+  RequestDto,
+  RequestType,
+  ResLikeDto,
+} from './dto/request.dto';
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 
@@ -11,18 +16,21 @@ export class LikeService {
     private cacheService: AppCacheService,
   ) {}
 
+  async toggleLike(data: ResLikeDto, profile: profileDto) {
+    if (!data.likeId) return this.create(data);
+    return this.remove(profile, data.likeId);
+  }
+
   async create(data: RequestDto) {
     if (data.name === 'POST') return await this.createPostLike(data);
     if (data.name === 'REEL') return await this.createReelLike(data);
     if (data.name === 'STORY') return await this.createStoryLike(data);
   }
 
-  async remove(profile: profileDto, like: LikeDTo) {
-    if (like.profileId !== profile.id)
-      throw new BadRequestException('You did not Like to delete');
+  async remove(profile: profileDto, likeId: string) {
 
-    return await this.prisma.likes.delete({
-      where: { id: like.id },
+    await this.prisma.likes.delete({
+      where: { id: likeId },
       select: { id: true },
     });
   }
@@ -95,6 +103,7 @@ export class LikeService {
   }
 
   private async createPostLike(data: RequestDto) {
+    // Redis invalidation logic => later
     return await this.prisma.likes.create({
       data: {
         profileId: data.profileId,
