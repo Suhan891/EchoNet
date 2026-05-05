@@ -4,6 +4,15 @@ export interface PostDto {
 }
 export interface SavedPostDto {
   id: string;
+  savedPosts: {
+    profileId: string;
+  }[];
+  post: {
+    profileId: string;
+  };
+}
+export interface RemoveSavedPost {
+  id: string;
   profileId: string;
 }
 export interface OthersPostDto {
