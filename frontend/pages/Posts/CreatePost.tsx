@@ -36,10 +36,6 @@ import { useCreatePost } from "@/hooks/usePost";
 import { toast } from "sonner";
 import { useUserStore } from "@/stores/UserStore";
 
-// ---------------------------------------------------------------------------
-// Primitives
-// ---------------------------------------------------------------------------
-
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
   return <p className="mt-1 text-xs text-destructive">{message}</p>;
@@ -48,9 +44,6 @@ function FieldError({ message }: { message?: string }) {
 function FieldHint({ children }: { children: React.ReactNode }) {
   return <p className="mt-1 text-xs text-muted-foreground">{children}</p>;
 }
-// ---------------------------------------------------------------------------
-// CreatePost — owns all form state, renders the grid
-// ---------------------------------------------------------------------------
 
 interface CreatePostProps {
   open: boolean;
@@ -58,8 +51,6 @@ interface CreatePostProps {
 }
 
 export default function CreatePost({ open, setOpen }: CreatePostProps) {
-  // Stable unique id for the append tile — not in useFieldArray, so no field.id.
-  // useId() is SSR-safe and unique even if CreatePost mounts multiple times.
   const appendTileId = useId();
   const posts = useCreatePost();
   const setJob = useUserStore((state) => state.setJob);
@@ -74,7 +65,7 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
     defaultValues: {
       caption: "",
       description: "",
-      images: [], // empty array — no phantom entries, Zod .min(1) works correctly
+      images: [],
     },
   });
 
@@ -83,7 +74,6 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
     name: "images",
   });
 
-  // Scoped watch — only re-renders badge, not the whole dialog
   const watchedImages = useWatch({ control, name: "images" });
   const imageCount = watchedImages?.length ?? 0;
   const canAddMore = imageCount < MAX_ALLOWED_POSTS;
@@ -125,7 +115,6 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
           "sm:max-w-xl",
         )}
       >
-        {/* ── Header ───────────────────────────────────────────────────── */}
         <DialogHeader className="shrink-0 border-b px-6 py-4">
           <DialogTitle className="text-base font-semibold">
             Create Post
@@ -140,7 +129,6 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
           </DialogDescription>
         </DialogHeader>
 
-        {/* ── Scrollable body ───────────────────────────────────────────── */}
         <form
           onSubmit={handleSubmit(onSubmit)}
           noValidate
@@ -169,7 +157,6 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
                 )}
               </div>
 
-              {/* Description */}
               <div className="space-y-1.5">
                 <Label htmlFor="description">
                   Description{" "}
@@ -196,7 +183,6 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
                 )}
               </div>
 
-              {/* Image grid */}
               <div className="space-y-2">
                 <Label>
                   Images{" "}
@@ -206,7 +192,6 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
                 </Label>
 
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {/* Existing entries — each has a stable field.id from RHF */}
                   {fields.map((field, index) => (
                     <Controller
                       key={field.id}
@@ -214,7 +199,7 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
                       name={`images.${index}.file`}
                       render={({ field: { value, onChange }, fieldState }) => (
                         <ImagePreview
-                          inputId={field.id} // ← RHF-generated UUID, always unique
+                          inputId={field.id}
                           value={value as File | undefined}
                           onChange={onChange}
                           onRemove={() => remove(index)}

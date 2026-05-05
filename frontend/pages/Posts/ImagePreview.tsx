@@ -1,7 +1,6 @@
 "use client";
-
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useReducer } from "react";
 import { cn } from "@/lib/utils";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
@@ -31,18 +30,20 @@ export default function ImagePreview({
   errorMessage,
   accent = "default",
 }: ImageSlotPreviewProps) {
-  const urlRef = useRef<string | null>(null);
-  const imageUrl = useMemo(() => (value instanceof File ? URL.createObjectURL(value) : null), [value]);
+  const [imageUrl, dispatch] = useReducer(
+    (_: string | null, action: string | null) => action,
+    null,
+  );
 
   useEffect(() => {
-    urlRef.current = imageUrl;
-    return () => {
-      if (urlRef.current) {
-        URL.revokeObjectURL(urlRef.current);
-        urlRef.current = null;
-      }
-    };
-  }, [value, imageUrl]);
+    if (!(value instanceof File)) {
+      dispatch(null);
+      return;
+    }
+    const url = URL.createObjectURL(value);
+    dispatch(url);
+    return () => URL.revokeObjectURL(url);
+  }, [value]);
 
   const handleReplaceChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +69,6 @@ export default function ImagePreview({
     );
   }
 
-  // ── Filled state → preview with hover overlay ───────────────────────────
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-muted shadow-sm">
       <AspectRatio ratio={1}>
@@ -80,14 +80,12 @@ export default function ImagePreview({
         />
       </AspectRatio>
 
-      {/* Hover overlay */}
       <div
         className={cn(
           "absolute inset-0 flex items-center justify-center gap-2",
           "opacity-0 transition-opacity duration-200 group-hover:opacity-100"
         )}
       >
-        {/* Replace — Label points at hidden input below */}
         <Label
           htmlFor={inputId}
           className={cn(
