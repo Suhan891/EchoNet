@@ -52,6 +52,7 @@ export class PostProcessor extends WorkerHost {
     });
     const profileKey = `profile:${data.profileId}`;
     await this.cacheService.delete(profileKey);
+    await this.cacheService.delByPattern(profileKey);
   }
 
   @OnWorkerEvent('active')

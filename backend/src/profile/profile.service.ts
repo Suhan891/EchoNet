@@ -226,6 +226,11 @@ export class ProfileService {
             id: true,
           },
         },
+        savedPosts: {
+          select: {
+            postMediaId: true,
+          },
+        },
         followers: {
           select: {
             followerId: true,
@@ -239,7 +244,7 @@ export class ProfileService {
         _count: {
           select: {
             posts: true,
-            savedPosts: true,
+            //savedPosts: true,
             reels: true,
             sentNotifications: true,
           },
@@ -289,11 +294,6 @@ export class ProfileService {
         followers: {
           some: {
             followerId: ownProfile.id,
-          },
-        },
-        followings: {
-          some: {
-            followingId: ownProfile.id,
           },
         },
       },

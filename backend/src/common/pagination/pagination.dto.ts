@@ -1,6 +1,8 @@
 import { IsInt, IsOptional, Max, Min } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class PaginationQueryDto {
   @IsOptional()
   @Type(() => Number)
