@@ -1,15 +1,18 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { profileDto } from 'src/profile/dto/profile.dto';
-import { CreatePostDto } from './dto/create.post';
+import { CreatePostDto, PostEvent } from './dto/create.post';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AppCacheService } from 'src/common/caching/redis.cache';
-import { PostDto, SavedPostDto } from './dto/posts.dto';
+import {
+  OthersPostDto,
+  PostDto,
+  RemoveSavedPost,
+  SavedPostDto,
+} from './dto/posts.dto';
 import { FindPostQueryDto } from './dto/pagination-filtering.dto';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { JobName, JobStatus } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class PostsService {
@@ -17,6 +20,7 @@ export class PostsService {
     private prisma: PrismaService,
     private cloudService: CloudinaryService,
     private cacheService: AppCacheService,
+    private eventEmitter: EventEmitter2,
   ) {}
   async createPost(
     profile: profileDto,
@@ -29,150 +33,297 @@ export class PostsService {
     });
 
     if (posts && posts.length >= 10)
-      throw new BadRequestException('Delete some posts to add a new');
+      throw new BadRequestException('Post limit has exceeded');
 
     const post = await this.prisma.post.create({
       data: {
         profileId: profile.id,
         caption: data.caption,
+        isReady: false,
       },
       select: {
         id: true,
         caption: true,
         profile: {
           select: {
-            name: true,
+            id: true,
           },
         },
       },
     });
 
-    const result = {
-      id: post.id,
-      caption: post.caption,
-      photos: [] as { imageUrl: string; id: string; order: number }[],
-    };
+    const eventData = {
+      postId: post.id,
+      profileId: post.profile.id,
+      medias: postMedia,
+    } as PostEvent;
 
-    const profileName = post.profile.name;
-    let filename = '';
-    for (let i = 0; i < postMedia.length; i++) {
-      filename = `${crypto.randomUUID()}-${i + 1}`;
-      const upload = await this.cloudService.uploadPost(
-        postMedia[i],
-        filename,
-        profileName,
-      );
+    const jobId = (await this.eventEmitter.emitAsync(
+      'posts.create',
+      eventData,
+    )) as string[];
 
-      const postPhoto = await this.prisma.postPhoto.create({
-        data: {
-          imageUrl: upload.secure_url,
-          cloudId: upload.public_id,
-          order: i + 1,
-          postId: post.id,
-        },
-        select: {
-          imageUrl: true,
-          id: true,
-          order: true,
-        },
-      });
-
-      result.photos.push(postPhoto);
-    }
-
-    const key = `post`;
-    await this.cacheService.delByPattern(key);
-    return result;
-  }
-
-  async savePost(profile: profileDto, postPhotoId: string) {
-    const postCreatorId = await this.prisma.postPhoto.findUnique({
-      where: { id: postPhotoId },
-      select: {
-        post: {
-          select: {
-            profile: {
-              select: {
-                id: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    if (!postCreatorId)
-      throw new InternalServerErrorException('Could not get Profile Creator');
-
-    const isFollowing = await this.prisma.follow.count({
-      where: {
-        followerId: profile.id,
-        followingId: postCreatorId.post.profile.id,
-      },
-    });
-    if (!isFollowing)
-      throw new BadRequestException('You must be following to save the post');
-
-    const key = `saved-posts:${profile.id}`;
+    const key = `profile:${profile.id}`;
     await this.cacheService.delete(key);
 
-    return await this.prisma.postPhoto.findFirst({
-      where: { id: postPhotoId },
+    return await this.prisma.job.create({
+      data: {
+        userId: profile.user.id,
+        jobId: jobId[0],
+        name: JobName.POST,
+        status: JobStatus.PROGRESS,
+      },
       select: {
-        imageUrl: true,
         id: true,
+        name: true,
+        status: true,
       },
     });
   }
 
-  async deletePost(post: PostDto, profile: profileDto) {
-    if (post.profileId !== profile.id)
-      throw new BadRequestException(
-        'You are not allowed to delete others profile post',
-      );
-
-    const postMedias = await this.prisma.postPhoto.findMany({
-      where: { postId: post.id },
-      select: { id: true, cloudId: true },
-    });
-
-    const cloudDel = postMedias.map(async (media) => {
-      await this.cloudService.delete(media.cloudId);
-    });
-    await Promise.all(cloudDel);
-    const key = `post`;
-    await this.cacheService.delByPattern(key);
-
-    return await this.prisma.post.delete({
-      where: { id: post.id },
-      select: { id: true },
+  async createMedia(postId: string, media: Express.Multer.File) {
+    const filename = `${crypto.randomUUID()}`;
+    const uploaded = await this.cloudService.uploadPost(media, filename);
+    await this.prisma.postMedia.create({
+      data: {
+        postId,
+        cloudId: uploaded.public_id,
+        mediaUrl: uploaded.secure_url,
+      },
     });
   }
 
-  async deleteSavedPost(savedPost: SavedPostDto, profile: profileDto) {
-    if (savedPost.profileId !== profile.id)
-      throw new BadRequestException(
-        'You are not allowed to delete others profile post',
-      );
-
-    const key = `saved-posts:${profile.id}`;
-    await this.cacheService.delete(key);
-    return await this.prisma.savePost.delete({
-      where: { id: savedPost.id },
-      select: { id: true },
-    });
-  }
-
-  async getSavedPosts(profile: profileDto) {
-    const key = `saved-posts:${profile.id}`;
-    const cachedData = await this.cacheService.get(key);
-    if (cachedData) return cachedData;
-    const savedPosts = await this.prisma.savePost.findMany({
+  async getOwnPosts(profile: profileDto) {
+    const key = `profile:${profile.id}:own:posts`;
+    const catchedPosts = await this.cacheService.get(key);
+    if (catchedPosts) return catchedPosts;
+    const posts = await this.prisma.post.findMany({
       where: { profileId: profile.id },
       select: {
         id: true,
+        caption: true,
+        description: true,
+        postPhoto: {
+          select: {
+            id: true,
+            mediaUrl: true,
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    await this.cacheService.set<typeof posts>(key, posts, 1000 * 60 * 10);
+    console.log('Without cached: ,Own post data:', posts);
+    return posts;
+  }
+
+  async removePosts(profile: profileDto, post: PostDto) {
+    if (post.profileId !== profile.id)
+      throw new BadRequestException('You are not allowed to remove');
+    const postMedias = await this.prisma.postMedia.findMany({
+      where: { id: post.id },
+      select: { cloudId: true },
+    });
+    const postPrmomise = postMedias.map(async (media) => {
+      const publicId = media.cloudId;
+      await this.cloudService.delete(publicId);
+    });
+    await Promise.all(postPrmomise);
+    await this.prisma.post.delete({
+      where: { id: post.id },
+    });
+  }
+
+  async getOthersPost(othersProf: OthersPostDto, profile: profileDto) {
+    const key = `profile:${profile.id}:${othersProf.id}:post`;
+    const cachedPosts = await this.cacheService.get(key);
+    if (cachedPosts) return cachedPosts;
+    if (othersProf.id === profile.id)
+      throw new BadRequestException(' Invalid profile id for this route ');
+
+    if (othersProf.isPrivate) {
+      const following = await this.prisma.follow.count({
+        where: {
+          followerId: profile.id,
+          followingId: othersProf.id,
+        },
+      });
+      if (!following)
+        throw new BadRequestException('Follow to view the profile');
+    }
+    const posts = await this.prisma.post.findMany({
+      where: { profileId: othersProf.id },
+      select: {
+        id: true,
+        caption: true,
+        description: true,
+        likes: {
+          select: {
+            profileId: true,
+          },
+        },
+        postPhoto: {
+          select: {
+            id: true,
+            mediaUrl: true,
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    await this.cacheService.set<typeof posts>(key, posts);
+    return posts;
+  }
+
+  async getAllPost(profile: profileDto, paginatedData: FindPostQueryDto) {
+    const page = paginatedData.page ?? 1;
+    const limit = paginatedData.limit ?? 10;
+    const key = `post:profile:${profile.id}:page:${page}:limit:${limit}`;
+    const cachedPosts = await this.cacheService.get(key);
+    const isFiltering = !!paginatedData.name;
+    if (cachedPosts && !isFiltering) return cachedPosts;
+
+    const skip = (page - 1) * limit;
+    let totalPosts = 0;
+    if (!isFiltering) {
+      totalPosts = await this.prisma.post.count({
+        where: {
+          NOT: {
+            profileId: profile.id,
+          },
+        },
+      });
+    }
+
+    const posts = await this.prisma.post.findMany({
+      skip: isFiltering ? undefined : skip,
+      take: isFiltering ? undefined : limit,
+      where: {
+        NOT: {
+          profileId: isFiltering ? '' : profile.id,
+        },
+        profile: {
+          name: isFiltering
+            ? { contains: paginatedData.name, mode: 'insensitive' }
+            : undefined,
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        id: true,
+        caption: true,
+        description: true,
+        postPhoto: {
+          select: {
+            id: true,
+            mediaUrl: true,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        profile: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+        likes: {
+          select: {
+            profileId: true,
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
+      },
+    });
+    const totalPages = Math.ceil(totalPosts / limit);
+    const result = {
+      posts: posts,
+      meta: {
+        currentPage: page,
+        currentPost: limit,
+        totalPages,
+        totalItems: totalPosts ?? posts.length,
+        hasPreviousPage: page > 1,
+        hasNextPage: page < totalPages,
+      },
+    };
+    if (!isFiltering)
+      await this.cacheService.set<typeof result>(key, result, 1000 * 60 * 10);
+    return result;
+  }
+
+  async savePost(profile: profileDto, postMedia: SavedPostDto) {
+    const isDone = postMedia.savedPosts.some(
+      (post) => post.profileId === profile.id,
+    );
+    if (isDone) throw new BadRequestException('Saved Post already created');
+
+    const isFollowing = await this.prisma.follow.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: profile.id,
+          followingId: postMedia.post.profileId,
+        },
+      },
+    });
+    if (!isFollowing) throw new BadRequestException('Follow to save the post');
+
+    await this.prisma.savePost.create({
+      data: {
+        postMediaId: postMedia.id,
+        profileId: profile.id,
+      },
+    });
+
+    const profileKey = `profile:${profile.id}`;
+    await this.cacheService.delete(profileKey);
+
+    const savedPostKey = `profile:${profile.id}:savedPosts`;
+    await this.cacheService.delete(savedPostKey);
+  }
+
+  async getSavedPost(profile: profileDto) {
+    const key = `profile:${profile.id}:savedPosts`;
+    const cacheSavedPost = await this.cacheService.get(key);
+    if (cacheSavedPost) return cacheSavedPost;
+
+    const savedPosts = await this.prisma.savePost.findMany({
+      where: { profileId: profile.id },
+      select: {
         post: {
           select: {
-            imageUrl: true,
+            id: true,
+            mediaUrl: true,
             post: {
               select: {
                 profile: {
@@ -187,140 +338,25 @@ export class PostsService {
         },
       },
     });
-    if (savedPosts)
-      await this.cacheService.set<typeof savedPosts>(key, savedPosts);
+
+    if (!savedPosts) throw new BadRequestException('No saved post available');
+    await this.cacheService.set<typeof savedPosts>(key, savedPosts);
     return savedPosts;
   }
 
-  async getAllPost(profile: profileDto, paginatedData: FindPostQueryDto) {
-    const page = paginatedData.page ?? 1;
-    const limit = paginatedData.limit ?? 10;
-    const key = `post:profile:${profile.id}:page:${page}:limit:${limit}`;
-    const cachedPosts = await this.cacheService.get(key);
-    const isFiltering = !!paginatedData.name;
-    if (!isFiltering) return cachedPosts;
+  async deleteSavedPost(savedPost: RemoveSavedPost, profile: profileDto) {
+    if (savedPost.profileId !== profile.id)
+      throw new BadRequestException('Saved Post delete not allowed');
 
-    const skip = (page - 1) * limit;
-    let totalPosts = 0;
-    if (isFiltering)
-      totalPosts = await this.prisma.post.count({
-        where: {
-          NOT: {
-            profileId: profile.id,
-          },
-        },
-      });
-
-    const posts = await this.prisma.post.findMany({
-      skip: isFiltering ? undefined : skip,
-      take: isFiltering ? undefined : limit,
-      where: {
-        NOT: {
-          profileId: profile.id,
-        },
-        profile: {
-          name: isFiltering
-            ? { contains: paginatedData.name, mode: 'insensitive' }
-            : undefined,
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      select: {
-        id: true,
-        caption: true,
-        postPhoto: {
-          select: {
-            id: true,
-            imageUrl: true,
-            order: true,
-          },
-        },
-        profile: {
-          select: {
-            name: true,
-            avatarUrl: true,
-            followers: {
-              select: {
-                followerId: true,
-              },
-            },
-          },
-        },
-        comments: {
-          select: {
-            id: true,
-            content: true,
-          },
-        },
-        likes: {
-          select: {
-            id: true,
-          },
-        },
-      },
+    await this.prisma.savePost.delete({
+      where: { id: savedPost.id },
+      select: { id: true },
     });
-    const totalPages = Math.ceil(totalPosts / limit);
-    const result = {
-      posts,
-      meta: isFiltering
-        ? null
-        : {
-            currentPage: page,
-            currentReels: limit,
-            totalPages,
-            totalItems: totalPosts,
-            hasPreviousPage: page > 1,
-            hasNextPage: page < totalPages,
-          },
-    };
-    if (!isFiltering) await this.cacheService.set<typeof posts>(key, posts);
-    return result;
-  }
 
-  async getPost(post: PostDto) {
-    const key = `post:${post.id}`;
-    const cachedData = await this.cacheService.get(key);
-    if (cachedData) return cachedData;
-    const postData = await this.prisma.post.findFirst({
-      where: { id: post.id },
-      select: {
-        id: true,
-        caption: true,
-        postPhoto: {
-          select: {
-            id: true,
-            imageUrl: true,
-            order: true,
-          },
-        },
-        profile: {
-          select: {
-            name: true,
-            avatarUrl: true,
-            followers: {
-              select: {
-                followerId: true,
-              },
-            },
-          },
-        },
-        comments: {
-          select: {
-            id: true,
-            content: true,
-            parentId: true,
-          },
-        },
-        likes: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    });
-    await this.cacheService.set<typeof postData>(key, postData, 600);
-    return postData;
+    const key = `profile:${profile.id}:savedPosts`;
+    await this.cacheService.delete(key);
+
+    const profileKey = `profile:${profile.id}`;
+    await this.cacheService.delete(profileKey);
   }
 }

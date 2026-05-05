@@ -76,7 +76,6 @@ export class PostsController {
     @Query() paginatedData: FindPostQueryDto,
     @currentProfile() profile: profileDto,
   ) {
-    console.log(paginatedData);
     return await this.postService.getAllPost(profile, paginatedData);
   }
 
