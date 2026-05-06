@@ -1,25 +1,36 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
-import type { Cache } from 'cache-manager';
+import type { RedisClientType } from 'redis';
 
 @Injectable()
 export class AppCacheService {
-  constructor(@Inject(CACHE_MANAGER) private cache: Cache) {}
+  constructor(
+    // @Inject(CACHE_MANAGER) private cache: Cache,
+    @Inject('REDIS_CLIENT') private redis: RedisClientType,
+  ) {}
 
-  async get<T>(key: string): Promise<T | undefined> {
-    return await this.cache.get<T>(key);
+  async get<T>(key: string): Promise<T | null> {
+    const data = await this.redis.get(key);
+    return data ? (JSON.parse(data) as T) : null;
   }
 
   async set<T>(key: string, value: T, ttl?: number) {
-    await this.cache.set(key, value, ttl);
+    await this.redis.set(key, JSON.stringify(value), { EX: ttl ?? 60 });
   }
 
   async delete(key: string) {
-    await this.cache.del(key);
+    await this.redis.del(key);
   }
 
   async delByPattern(pattern: string) {
-    const allKey = `${pattern}:*`;
-    await this.cache.del(allKey);
+    const matchKey = `${pattern}:*`;
+    let cursor = 0;
+    do {
+      const result = await this.redis.scan(cursor.toString(), {
+        MATCH: matchKey,
+        COUNT: 100,
+      });
+      cursor = Number(result.cursor);
+      if (result.keys.length > 0) await this.redis.del(result.keys);
+    } while (cursor !== 0);
   }
 }
