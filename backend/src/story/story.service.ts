@@ -83,6 +83,7 @@ export class StoryService {
 
     const profileKey = `profile:${profile.id}`;
     await this.cacheService.delete(profileKey);
+    await this.cacheService.delByPattern(`story:${profile.id}:*`); // Invalidate all story caches for profile
     return await this.prisma.job.create({
       data: {
         userId: user.userId,

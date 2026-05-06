@@ -121,6 +121,7 @@ export class AuthService {
     const key = `user:${user.userId}`;
     const cachedData = await this.cacheService.get(key);
     if (cachedData) return cachedData;
+
     const authUser = await this.prisma.user.findUnique({
       where: { id: user.userId },
       select: {
@@ -142,7 +143,7 @@ export class AuthService {
       (profile) => profile.isActive === true,
     );
     const profileKey = `profile:${activeProfile?.id}`;
-    await this.cacheService.delete(profileKey);
+    await this.cacheService.delete(profileKey); // Delete specific profile cache if needed, but user cache is primary
     await this.cacheService.set<typeof authUser>(key, authUser, 1000 * 60 * 20);
     return authUser;
   }

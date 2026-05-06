@@ -8,6 +8,7 @@ import { FindPostQueryDto } from './dto/pagination-filtering.dto';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JobName, JobStatus } from 'src/generated/prisma/enums';
+import { OthersPost } from './dto/result';
 
 @Injectable()
 export class PostsService {
@@ -60,6 +61,7 @@ export class PostsService {
 
     const key = `profile:${profile.id}`;
     await this.cacheService.delete(key);
+    await this.cacheService.delByPattern(`posts:global`); // Invalidate global feeds
 
     return await this.prisma.job.create({
       data: {
@@ -89,7 +91,7 @@ export class PostsService {
   }
 
   async getOwnPosts(profile: profileDto) {
-    const key = `profile:${profile.id}:own:posts`;
+    const key = `profile:${profile.id}:${profile.id}:posts`;
     const catchedPosts = await this.cacheService.get(key);
     if (catchedPosts) return catchedPosts;
     const posts = await this.prisma.post.findMany({
@@ -138,11 +140,13 @@ export class PostsService {
     await this.prisma.post.delete({
       where: { id: post.id },
     });
+    await this.cacheService.delByPattern(`posts:global`);
+    await this.cacheService.delete(`profile:${profile.id}`);
   }
 
   async getOthersPost(othersProf: OthersPostDto, profile: profileDto) {
-    const key = `profile:${profile.id}:${othersProf.id}:post`;
-    const cachedPosts = await this.cacheService.get(key);
+    const key = `profile:${profile.id}:${othersProf.id}:posts`;
+    const cachedPosts = await this.cacheService.get<OthersPost[]>(key);
     if (cachedPosts) return cachedPosts;
     if (othersProf.id === profile.id)
       throw new BadRequestException(' Invalid profile id for this route ');
@@ -188,14 +192,14 @@ export class PostsService {
         createdAt: 'desc',
       },
     });
-    await this.cacheService.set<typeof posts>(key, posts);
+    await this.cacheService.set<typeof posts>(key, posts, 1000 * 60);
     return posts;
   }
 
   async getAllPost(profile: profileDto, paginatedData: FindPostQueryDto) {
     const page = paginatedData.page ?? 1;
     const limit = paginatedData.limit ?? 10;
-    const key = `post:profile:${profile.id}:page:${page}:limit:${limit}`;
+    const key = `posts:global:${profile.id}:page:${page}:limit:${limit}`;
     const cachedPosts = await this.cacheService.get(key);
     const isFiltering = !!paginatedData.name;
     if (cachedPosts && !isFiltering) return cachedPosts;
@@ -295,7 +299,7 @@ export class PostsService {
     const profileKey = `profile:${profile.id}`;
     await this.cacheService.delete(profileKey);
 
-    const savedPostKey = `profile:${profile.id}:savedPosts`;
+    const savedPostKey = `profile:${profile.id}:saved-posts`;
     await this.cacheService.delete(savedPostKey);
   }
 
@@ -322,7 +326,7 @@ export class PostsService {
   }
 
   async getSavedPost(profile: profileDto) {
-    const key = `profile:${profile.id}:savedPosts`;
+    const key = `profile:${profile.id}:saved-posts`;
     const cacheSavedPost = await this.cacheService.get(key);
     if (cacheSavedPost) return cacheSavedPost;
 
@@ -348,7 +352,6 @@ export class PostsService {
       },
     });
 
-    if (!savedPosts) throw new BadRequestException('No saved post available');
     await this.cacheService.set<typeof savedPosts>(key, savedPosts);
     return savedPosts;
   }

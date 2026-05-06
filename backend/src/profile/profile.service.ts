@@ -11,6 +11,7 @@ import { authUserDto } from 'src/auth/tokens/token.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 import { AvatarProps } from './dto/avatar';
+import { OtherProfilesResult } from './dto/results';
 
 @Injectable()
 export class ProfileService {
@@ -46,6 +47,8 @@ export class ProfileService {
 
     const key = `user:${user.userId}`;
     await this.cacheService.delete(key);
+    await this.cacheService.delByPattern(`profile:${user.userId}`); // Invalidate all profile-related caches
+    await this.cacheService.delByPattern(`posts:global:*`); // Invalidate global posts feed as new profile might affect visibility
 
     if (avatar) {
       const fileName = `${profileData.name}-avatar`;
@@ -85,6 +88,8 @@ export class ProfileService {
   async privacyUpdate(profile: profileDto) {
     const key = `profile:${profile.id}`;
     await this.cacheService.delete(key);
+    await this.cacheService.delByPattern(`profile:*`); // Invalidate all profile views due to privacy change
+    await this.cacheService.delByPattern(`posts:global:*`); // Invalidate global posts as privacy affects visibility
     return await this.prisma.profile.update({
       where: { id: profile.id },
       data: { isPrivate: !profile.isPrivate },
@@ -113,6 +118,7 @@ export class ProfileService {
     await this.cacheService.delete(key);
     const profileKey = `profile:${profile.id}`;
     await this.cacheService.delete(profileKey);
+    await this.cacheService.delByPattern(`profile:*`); // Broad invalidation for profile changes
 
     const publicId = profile.cloudId;
     if (data.avatar) {
@@ -156,6 +162,7 @@ export class ProfileService {
     }
     const key = `user:${user.userId}`;
     await this.cacheService.delete(key);
+    await this.cacheService.delByPattern(`profile:${profileData.id}`); // Invalidate profile caches
     return await this.prisma.profile.update({
       where: { id: profileData.id },
       data: {
@@ -190,6 +197,8 @@ export class ProfileService {
 
     const profileKey = `profile:${oldProfileData.id}`;
     await this.cacheService.delete(profileKey);
+    await this.cacheService.delByPattern(`profile:${oldProfileData.id}`); // Invalidate old profile caches
+    await this.cacheService.delByPattern(`posts:global:*`); // Invalidate global posts as active profile changes
 
     await this.prisma.profile.update({
       where: { id: newProfile.id },
@@ -276,6 +285,8 @@ export class ProfileService {
     const key = `profile:${profileId}`;
     await this.cacheService.delete(userKey);
     await this.cacheService.delete(key);
+    await this.cacheService.delByPattern(`profile:*`); // Broad invalidation
+    await this.cacheService.delByPattern(`posts:global:*`); // Invalidate global posts as profile removal affects feed
 
     return this.prisma.profile.delete({
       where: { id: profileId },
@@ -284,8 +295,8 @@ export class ProfileService {
   }
 
   async getProfile(prof: othersProfile, ownProfile: profileDto) {
-    const key = `profile:${prof.id}:global:${ownProfile.id}`;
-    const cachedProfile = await this.cacheService.get(key);
+    const key = `profile:${ownProfile.id}:${prof.id}:posts`; // Standardized key
+    const cachedProfile = await this.cacheService.get<OtherProfilesResult>(key);
     if (cachedProfile) return cachedProfile;
     const isFollow = await this.prisma.profile.count({
       // To make all data avail only for a follower or a following user  => Later only following profiles be allowed
@@ -300,7 +311,7 @@ export class ProfileService {
     });
     const canSeeContent = !prof.isPrivate || !!isFollow;
 
-    const profile = this.prisma.profile.findUnique({
+    const profile = await this.prisma.profile.findUnique({
       where: { id: prof.id },
       select: {
         avatarUrl: true,
@@ -329,12 +340,13 @@ export class ProfileService {
         },
       },
     });
-    await this.cacheService.set<typeof profile>(key, profile);
+    await this.cacheService.set<typeof profile>(key, profile, 1000 * 60 * 10);
+    console.log(profile);
     return profile;
   }
 
   async getAllProfile(profile: profileDto) {
-    const key = `profile:global:${profile.id}`;
+    const key = `profile:${profile.id}:global`;
     const cachedProfile = await this.cacheService.get(key);
     if (cachedProfile) return cachedProfile;
     const profiles = await this.prisma.profile.findMany({

@@ -16,14 +16,14 @@ export class FollowService {
       (otherP) => otherP.followerId === profile.id,
     );
     if (existingFollow)
-      return this.remove({
+      return await this.remove({
         followerId: profile.id,
         followingId: othersProf.id,
       });
-    return this.create(profile, othersProf.id);
+    return await this.create(profile, othersProf.id);
   }
 
-  async create(profile: profileDto, profileId: string) {
+  private async create(profile: profileDto, profileId: string) {
     if (profile.id === profileId)
       throw new BadRequestException('You cannot follow yourself');
 
@@ -47,21 +47,21 @@ export class FollowService {
       },
     });
 
-    await this.cacheService.delete(`follow:${profile.id}:FOLLOWING`);
-    await this.cacheService.delete(`follow:${profileId}:FOLLOWERS`);
+    await this.cacheService.delete(`follow:${profile.id}:following`);
+    await this.cacheService.delete(`follow:${profileId}:followers`);
 
     await this.cacheService.delete(`profile:${profile.id}`);
-    await this.cacheService.delete(`profile:${profileId}`);
+    await this.cacheService.delByPattern(`posts:global`);
   }
 
-  async remove(follow: followDto) {
-    // Numerous work to be done
+  private async remove(follow: followDto) {
+    await this.cacheService.delete(`follow:${follow.followerId}:following`);
+    await this.cacheService.delete(`follow:${follow.followingId}:followers`);
+
+    // Then handle saved posts cleanup
     await this.existingSavePost(follow);
 
-    const key = `saved-posts:${follow.followerId}`;
-    await this.cacheService.delete(key);
-
-    await this.prisma.follow.delete({
+    const result = await this.prisma.follow.delete({
       where: {
         followerId_followingId: {
           followerId: follow.followerId,
@@ -71,11 +71,10 @@ export class FollowService {
       select: { id: true },
     });
 
-    await this.cacheService.delete(`follow:${follow.followerId}:FOLLOWING`);
-    await this.cacheService.delete(`follow:${follow.followingId}:FOLLOWERS`);
-
     await this.cacheService.delete(`profile:${follow.followerId}`);
-    await this.cacheService.delete(`profile:${follow.followingId}`);
+    await this.cacheService.delByPattern(`posts:global`);
+
+    return result;
   }
 
   private async existingSavePost(follow: followDto) {
@@ -103,6 +102,9 @@ export class FollowService {
     });
     if (!savedPosts) return;
 
+    const key = `profile:${follow.followerId}:saved-posts`;
+    await this.cacheService.delete(key);
+
     const existingsavePostOfFollowing = savedPosts.map(async (posts) => {
       const profileId = posts.post.post.profileId;
 
@@ -118,12 +120,8 @@ export class FollowService {
     await Promise.all(existingsavePostOfFollowing);
   }
 
-  async getFollow(
-    profileId: string,
-    follow: 'FOLLOWERS' | 'FOLLOWING',
-    profile: profileDto,
-  ) {
-    const key = `follow:${profileId}:${follow}`;
+  async getFollow(profileId: string, follow: 'FOLLOWERS' | 'FOLLOWING') {
+    const key = `follow:${profileId}:${follow.toLowerCase()}`;
     const catchedFollow = await this.cacheService.get(key);
     if (catchedFollow) return catchedFollow;
     const isFollowers = follow === 'FOLLOWERS';

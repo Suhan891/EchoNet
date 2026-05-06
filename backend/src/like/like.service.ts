@@ -12,19 +12,17 @@ export class LikeService {
   ) {}
 
   async toggleLike(data: ResLikeDto, profile: profileDto) {
-    await this.cacheService.delete(`profile:${profile.id}:like`);
+    await this.cacheService.delete(`likes:${profile.id}`);
     if (data.name === 'POST') {
-      await this.cacheService.delByPattern(`post:profile:${profile.id}`); // Later taling care of the post be global
-      await this.cacheService.delete(
-        `profile:${profile.id}:${data.profileId}:post`,
-      ); // Later cache handling correctly
+      await this.cacheService.delByPattern(`posts:global:*`); // Invalidate global feeds
+      await this.cacheService.delByPattern(`profile:*`); // Invalidate post views
     }
     if (!data.likeId) return this.create(data);
     return this.remove(profile, data.likeId);
   }
 
   async viewProfiles(profile: profileDto, id: string, type: RequestType) {
-    const key = `profile:${profile.id}:like`;
+    const key = `likes:${profile.id}`;
     const cachedProfiles = await this.cacheService.get(key);
     if (cachedProfiles) return cachedProfiles;
 
