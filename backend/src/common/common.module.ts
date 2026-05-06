@@ -10,12 +10,14 @@ import { AppCacheService } from './caching/redis.cache';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { RoleGaurd } from './gaurds/roles.gaurd';
+import { RedisProvider } from './caching/redis.provider';
 
 @Global()
 @Module({
   imports: [PassportModule, JwtModule.register({})],
   providers: [
     CloudinaryService,
+    RedisProvider,
     EmailService,
     JwtAuthGaurd,
     RoleGaurd,
@@ -27,6 +29,7 @@ import { RoleGaurd } from './gaurds/roles.gaurd';
   ],
   exports: [
     CloudinaryService,
+    RedisProvider,
     EmailService,
     JwtAuthGaurd,
     RoleGaurd,

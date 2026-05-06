@@ -21,22 +21,34 @@ import { LikeModule } from './like/like.module';
 import { CommentModule } from './comment/comment.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { CommonModule } from './common/common.module';
-import * as redisStore from 'cache-manager-redis-store';
 import { RoleGaurd } from './common/gaurds/roles.gaurd';
 import { JwtAuthGaurd } from './common/gaurds/jwt-auth';
 import { JobsModule } from './jobs/jobs.module';
+import { redisStore } from 'cache-manager-redis-yet';
 import { GlobaExceptionFilter } from './common/filters/http-exception.filter';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    CacheModule.register({
-      isGlobal: true,
-      store: redisStore as any,
-      host: 'localhost',
-      port: 6379,
-      ttl: 60, // default
-    }),
+    // CacheModule.register({
+    //   isGlobal: true,
+    //   store: redisStore as any,
+    //   host: 'localhost',
+    //   port: 6379,
+    //   ttl: 60,
+    // }),
+    // CacheModule.registerAsync({
+    //   isGlobal: true,
+    //   useFactory: async () => ({
+    //     store: await redisStore({
+    //       socket: {
+    //         host: 'localhost',
+    //         port: 6379,
+    //       },
+    //       ttl: 60 * 1000,
+    //     }),
+    //   }),
+    // }),
     BullModule.forRoot({
       connection: {
         host: 'localhost',
