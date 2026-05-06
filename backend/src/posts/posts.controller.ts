@@ -19,15 +19,9 @@ import { PostMediaValidatorPipe } from './dto/files.validate';
 import { currentProfile } from 'src/profile/decorator/get-profile';
 import type { profileDto } from 'src/profile/dto/profile.dto';
 import { PostsService } from './posts.service';
-import { PostsPhotoExistsPipe } from './pipes/photo-post.exists';
 import { PostExistsPipe } from './pipes/post.exists.pipe';
-import type {
-  OthersPostDto,
-  PostDto,
-  RemoveSavedPost,
-  SavedPostDto,
-} from './dto/posts.dto';
-import { SavedPostExistsPipe } from './pipes/savedPost.exists.pipe';
+import type { OthersPostDto, PostDto, SavePostDto } from './dto/posts.dto';
+import { SavedPostTogglePipe } from './pipes/savedPost.exists.pipe';
 import { FindPostQueryDto } from './dto/pagination-filtering.dto';
 import { PostsFromProfilePipe } from './pipes/post.profile';
 
@@ -88,24 +82,13 @@ export class PostsController {
     return await this.postService.removePosts(profile, post);
   }
 
-  @Put('remove-saved-post/:savedpostId')
-  @ResponseMessage('Saved Post data removed')
-  async removeSavedPost(
-    @Param('savedpostId', ParseUUIDPipe, SavedPostExistsPipe)
-    savePost: RemoveSavedPost,
+  @Post('toggle/:id')
+  @ResponseMessage('Saved POst updated')
+  async toggleSavePost(
+    @Param('id', ParseUUIDPipe, SavedPostTogglePipe) data: SavePostDto,
     @currentProfile() profile: profileDto,
   ) {
-    return await this.postService.deleteSavedPost(savePost, profile);
-  }
-
-  @Post('save/:id')
-  @ResponseMessage('Post Saved successfull')
-  async savePost(
-    @Param('id', ParseUUIDPipe, PostsPhotoExistsPipe)
-    postMedia: SavedPostDto,
-    @currentProfile() profile: profileDto,
-  ) {
-    return await this.postService.savePost(profile, postMedia);
+    return await this.postService.toggleSavedPost(data, profile);
   }
 
   @Get('posts-saved')
