@@ -3,12 +3,7 @@ import { profileDto } from 'src/profile/dto/profile.dto';
 import { CreatePostDto, PostEvent } from './dto/create.post';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AppCacheService } from 'src/common/caching/redis.cache';
-import {
-  OthersPostDto,
-  PostDto,
-  RemoveSavedPost,
-  SavedPostDto,
-} from './dto/posts.dto';
+import { OthersPostDto, PostDto, SavePostDto } from './dto/posts.dto';
 import { FindPostQueryDto } from './dto/pagination-filtering.dto';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -282,17 +277,37 @@ export class PostsService {
     return result;
   }
 
-  async savePost(profile: profileDto, postMedia: SavedPostDto) {
-    const isDone = postMedia.savedPosts.some(
-      (post) => post.profileId === profile.id,
-    );
-    if (isDone) throw new BadRequestException('Saved Post already created');
+  async toggleSavedPost(postMedia: SavePostDto, profile: profileDto) {
+    const saved = postMedia.savedPosts.find((s) => s.profileId === profile.id);
 
+    if (!saved)
+      await this.createSavePost(profile.id, {
+        postMediaId: postMedia.id,
+        profileId: postMedia.post.profileId,
+      });
+
+    if (saved)
+      await this.deleteSavedPost({
+        profileId: profile.id,
+        id: saved.id,
+      });
+
+    const profileKey = `profile:${profile.id}`;
+    await this.cacheService.delete(profileKey);
+
+    const savedPostKey = `profile:${profile.id}:savedPosts`;
+    await this.cacheService.delete(savedPostKey);
+  }
+
+  private async createSavePost(
+    profileId: string,
+    postMedia: { postMediaId: string; profileId: string },
+  ) {
     const isFollowing = await this.prisma.follow.findUnique({
       where: {
         followerId_followingId: {
-          followerId: profile.id,
-          followingId: postMedia.post.profileId,
+          followerId: profileId,
+          followingId: postMedia.profileId,
         },
       },
     });
@@ -300,16 +315,10 @@ export class PostsService {
 
     await this.prisma.savePost.create({
       data: {
-        postMediaId: postMedia.id,
-        profileId: profile.id,
+        postMediaId: postMedia.postMediaId,
+        profileId: profileId,
       },
     });
-
-    const profileKey = `profile:${profile.id}`;
-    await this.cacheService.delete(profileKey);
-
-    const savedPostKey = `profile:${profile.id}:savedPosts`;
-    await this.cacheService.delete(savedPostKey);
   }
 
   async getSavedPost(profile: profileDto) {
@@ -344,19 +353,10 @@ export class PostsService {
     return savedPosts;
   }
 
-  async deleteSavedPost(savedPost: RemoveSavedPost, profile: profileDto) {
-    if (savedPost.profileId !== profile.id)
-      throw new BadRequestException('Saved Post delete not allowed');
-
+  private async deleteSavedPost(savedPost: { profileId: string; id: string }) {
     await this.prisma.savePost.delete({
       where: { id: savedPost.id },
       select: { id: true },
     });
-
-    const key = `profile:${profile.id}:savedPosts`;
-    await this.cacheService.delete(key);
-
-    const profileKey = `profile:${profile.id}`;
-    await this.cacheService.delete(profileKey);
   }
 }
