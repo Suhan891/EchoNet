@@ -1,7 +1,8 @@
-import { BadRequestException, PipeTransform } from '@nestjs/common';
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SavePostDto } from '../dto/posts.dto';
 
+@Injectable()
 export class SavedPostTogglePipe implements PipeTransform {
   constructor(private prisma: PrismaService) {}
 

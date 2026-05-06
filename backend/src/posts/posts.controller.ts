@@ -83,7 +83,7 @@ export class PostsController {
   }
 
   @Post('toggle/:id')
-  @ResponseMessage('Saved POst updated')
+  @ResponseMessage('Saved Post updated')
   async toggleSavePost(
     @Param('id', ParseUUIDPipe, SavedPostTogglePipe) data: SavePostDto,
     @currentProfile() profile: profileDto,
