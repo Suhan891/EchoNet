@@ -1,7 +1,7 @@
-import { CreatePost, GetAllPosts, GetOthersPost, GetOwnPosts } from "@/service/posts";
+import { CreatePost, GetAllPosts, GetOthersPost, GetOwnPosts, GetSavedPosts, UpdateSavePost } from "@/service/posts";
 import { ErrorResponse, JobCreate, PaginatedReqDto, SuccessResponse } from "@/types/common";
 import { PostReelDto } from "@/types/profiles";
-import { AllPosts, PostRequestData } from "@/types/post";
+import { AllPosts, PostRequestData, SavedPosts } from "@/types/post";
 import { queryKeys } from "@/utils/query.key";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
@@ -35,5 +35,17 @@ export function useAllPosts(payload:PaginatedReqDto) {
             if(!lastPage.data?.meta?.hasNextPage) return undefined
             return lastPage.data?.meta.currentPage + 1
             },
+    })
+}
+
+export function useSavePost() {
+    return useMutation<SuccessResponse<null>,ErrorResponse,string>({
+        mutationFn: (payload) => UpdateSavePost(payload)
+    })
+}
+export function useMySavedPosts() {
+    return useQuery<SuccessResponse<SavedPosts[]>,ErrorResponse>({
+        queryKey: [queryKeys.SAVE_POST],
+        queryFn: () => GetSavedPosts()
     })
 }

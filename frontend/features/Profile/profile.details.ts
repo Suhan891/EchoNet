@@ -66,8 +66,10 @@ export function useProfileDetails() {
         setPosts(profile.data._count.posts);
       if (storeReels !== profile.data._count.reels)
         setReels(profile.data._count.reels);
-      if (storeSavedPosts !== profile.data._count.savedPosts)
-        setSavedPosts(profile.data._count.savedPosts);
+      if (storeSavedPosts.length !== profile.data.savedPosts.length)
+        setSavedPosts(
+          profile.data.savedPosts.map((postMedia) => postMedia.postMediaId),
+        );
       if (storeIsPrivate !== profile.data.isPrivate)
         setIsPrivate(profile.data.isPrivate);
     }

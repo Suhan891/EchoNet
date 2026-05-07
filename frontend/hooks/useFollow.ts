@@ -4,7 +4,7 @@ import { FollowData, FollowDto } from "@/types/follow.type";
 import { queryKeys } from "@/utils/query.key";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-export function useCreateFolllow() {
+export function useUpdateFolllow() {
   return useMutation<SuccessResponse<null>, ErrorResponse, string>({
     mutationFn: (payload) => FollowRequest(payload),
   });
