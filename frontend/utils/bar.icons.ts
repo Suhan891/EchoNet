@@ -25,7 +25,7 @@ export const items = [
   },
   {
     title: "Posts",
-    url: "#",
+    url: "/posts",
     icon: Images,
   },
   {

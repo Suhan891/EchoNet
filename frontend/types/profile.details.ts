@@ -7,6 +7,9 @@ export interface OwnProfileResponse {
   story?: {
     id: true;
   };
+  savedPosts: {
+    postMediaId: string;
+  }[];
   followers: {
     followerId: string;
   }[];
@@ -15,7 +18,6 @@ export interface OwnProfileResponse {
   }[];
   _count: {
     posts: number;
-    savedPosts: number;
     reels: number;
     sentNotifications: number;
   };
@@ -37,9 +39,9 @@ export interface ProfileState {
   bio?: string;
   avatarUrl: string;
   posts: number;
-  savedPosts: number;
+  savedPosts: string[];
   reels: number;
-  followers: string[] ;
+  followers: string[];
   followings: string[];
   story: boolean;
   isPrivate: boolean;
@@ -47,7 +49,7 @@ export interface ProfileState {
 
   setId: (id: string) => void;
   setPosts: (posts: number) => void;
-  setSavedPosts: (savedPosts: number) => void;
+  setSavedPosts: (savedPosts: string[]) => void;
   setReels: (reels: number) => void;
   setName: (name: string) => void;
   setBio: (bio: string | undefined) => void;

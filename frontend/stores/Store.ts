@@ -1,21 +1,15 @@
-import { StoreType } from "@/types/stores";
+import { StoreState } from "@/types/stores";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-export const useStore = create<StoreType>()(
+export const useStore = create<StoreState>()(
   devtools((set) => ({
-    posts: [],
-    reels: [],
-    savedPosts: [],
-    story: [],
+    follow: undefined,
+    like: undefined,
+    savePost: undefined,
 
-    setStore: (data) =>
-      set(() => {
-        if (data.type === "POST") return { posts: [...data.data] };
-        if (data.type === "STORY") return { story: [...data.data] };
-        if (data.type === "REEL") return { reels: [...data.data] };
-        if (data.type === "SAVED_MEDIA") return { savedPosts: [...data.data] };
-        return {};
-      }),
+    setLikeReq: (like) => set({ like }),
+    setFollowReq: (follow) => set({ follow }),
+    setSavePost: (savePost) => set({ savePost }),
   })),
 );
