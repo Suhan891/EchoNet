@@ -1,9 +1,16 @@
-import React from 'react'
+"use client"
+import { Spinner } from "@/components/ui/spinner"
+import { useMySavedPosts } from "@/hooks/usePost"
+import SavedPost from "@/pages/Posts/SavedPost"
 
-const SavedPOstsPortion = () => {
+export default function SavedPostPage() {
+
+  const {data, isSuccess, isLoading, error, isError} = useMySavedPosts()
+
+  if(isLoading) return <Spinner className="size-6" />
+  if(isError) return <div>Error: {error.message}</div>
+
   return (
-    <div>SavedPOstsPortion</div>
+    <>{isSuccess && <SavedPost savePosts={data.data} />}</>
   )
 }
-
-export default SavedPOstsPortion

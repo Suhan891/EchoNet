@@ -32,5 +32,5 @@ export default function SavedPostsLayout({
         </EmptyContent>
       </Empty>
     );
-  return { children };
+  return <>{ children }</>;
 }
