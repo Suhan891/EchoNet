@@ -32,12 +32,12 @@ export interface FollowDto {
 }
 export interface FollowData {
   id: string,
-  follower?: {
+  follower: {
     id: string;
     name: string;
     avatarUrl: string;
   };
-  following?: {
+  following: {
     id: string;
     name: string;
     avatarUrl: string;

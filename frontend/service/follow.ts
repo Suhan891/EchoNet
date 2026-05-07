@@ -9,7 +9,7 @@ async function getJson(path: string) {
 }
 
 export async function FollowRequest(profileId: string) {
-    return postJson(`create/${profileId}`, undefined)
+    return postJson(`toggle/${profileId}`, undefined)
 }
 export async function GetFollow( payload: FollowDto) {
   return getJson(`${payload.id}?type=${payload.type}`)

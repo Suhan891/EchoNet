@@ -20,6 +20,8 @@ import {
 import { Lock, Plus } from "lucide-react";
 import PostAndReel from "./PostReel";
 import { Field } from "@/components/ui/field";
+import { useStore } from "@/stores/Store";
+import { useFollowReq } from "@/features/Common/follow.request";
 export default function IndivisualProfile({
   profile,
 }: {
@@ -29,6 +31,8 @@ export default function IndivisualProfile({
   const profileId = useProfileStore((state) => state.id);
   const followings = useProfileStore((state) => state.followings);
   const followers = useProfileStore((state) => state.followers);
+  const isOngoingFollow = useFollowReq();
+  const setFollowReq = useStore((state) => state.setFollowReq);
   const [follow, setFollow] = useState<FollowDto>({
     type: "FOLLOWERS",
     id: profile.id,
@@ -39,8 +43,9 @@ export default function IndivisualProfile({
       type,
     });
     setOpen(!open);
+    console.log("Profiles", profile);
   };
-  const isFollowing = !!followings.includes(profile.id)
+  const isFollowing = !!followings.includes(profile.id);
   const isAllowed = !profile.isPrivate || isFollowing;
   return (
     <main>
@@ -60,7 +65,7 @@ export default function IndivisualProfile({
                 alt="Profile Image"
                 className="object-cover"
               />
-              <AvatarFallback>{profile.name.charAt(0) || "U"}</AvatarFallback>
+              <AvatarFallback>{profile.name || "U"}</AvatarFallback>
             </Avatar>
           </Button>
 
@@ -109,12 +114,17 @@ export default function IndivisualProfile({
             id={follow.id}
           />
         )}
-      <div className="flex gap-2 -ml-2.5">
-        <Button variant={'secondary'}>Message</Button>
-        <Button variant={'secondary'}>{isFollowing ? "UnFollow" :"Follow"}</Button>
+        <div className="flex gap-2 -ml-2.5">
+          <Button variant={"secondary"}>Message</Button>
+          <Button
+            variant={"secondary"}
+            disabled={isOngoingFollow}
+            onClick={() => setFollowReq({ profileId: profile.id })}
+          >
+            {isFollowing ? "UnFollow" : "Follow"}
+          </Button>
+        </div>
       </div>
-      </div>
-
 
       <Tabs defaultValue="posts" className="">
         <TabsList className="w-full max-w-4xl mx-auto flex justify-center gap-8 border-t border-border bg-transparent rounded-none h-14 p-0">

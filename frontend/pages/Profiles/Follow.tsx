@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/item";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useFollowReq } from "@/features/Common/follow.request";
+import { useStore } from "@/stores/Store";
 interface FollowProps {
   open: boolean;
   setOpen: (followerOpen: boolean) => void;
@@ -36,6 +38,8 @@ export default function Follow({ open, setOpen, type, id }: FollowProps) {
     isSuccess,
     error,
   } = useFollow(profileId, { type, id });
+  const isOngoingFollow = useFollowReq()
+  const setFollowReq = useStore(state => state.setFollowReq);
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <Command>
@@ -70,7 +74,7 @@ export default function Follow({ open, setOpen, type, id }: FollowProps) {
                         </ItemContent>
                         {!isFollowing && (
                           <ItemActions>
-                            <Button>Follow</Button>
+                            <Button disabled={isOngoingFollow} onClick={() => setFollowReq({profileId: f.follower.id})}>Follow</Button>
                           </ItemActions>
                         )}
                       </Item>
@@ -90,7 +94,7 @@ export default function Follow({ open, setOpen, type, id }: FollowProps) {
                         </ItemContent>
                         {!isFollowing && (
                           <ItemActions>
-                            <Button>Follow</Button>
+                            <Button disabled={isOngoingFollow} onClick={() => setFollowReq({profileId: f.following.id})}>Follow</Button>
                           </ItemActions>
                         )}
                       </Item>

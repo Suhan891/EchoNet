@@ -10,8 +10,9 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-import { useCreateFolllow } from "@/hooks/useFollow";
+import { useFollowReq } from "@/features/Common/follow.request";
 import { useProfileStore } from "@/stores/ProfileStore";
+import { useStore } from "@/stores/Store";
 import { useUserStore } from "@/stores/UserStore";
 import type { AllProfiles } from "@/types/profiles";
 import { queryKeys } from "@/utils/query.key";
@@ -23,34 +24,36 @@ export default function AllProfiles({ profiles }: { profiles: AllProfiles[] }) {
   const followings = useProfileStore((state) => state.followings);
   const activeProfileId = useProfileStore((state) => state.id);
 
-  const follow = useCreateFolllow();
+  //const follow = useCreateFolllow();
+  const isOngoingFollow = useFollowReq();
+  const setFollow = useStore((state) => state.setFollowReq);
   const userId = useUserStore((state) => state.userId);
   const queryClient = useQueryClient();
-  const router = useRouter()
+  const router = useRouter();
   const handleProfile = (profileId: string) => {
     console.log("Profile Id CLicked", profileId);
-    router.push(`/profiles/${profileId}`)
+    router.push(`/profiles/${profileId}`);
   };
-  const handleFollow = (profileId: string) => {
-    follow.mutate(profileId, {
-      onSuccess: (result) => {
-        console.log(result.data);
-        toast.success(result.message);
-        
-        // Invalidate active user's profile and the general profiles list
-        queryClient.invalidateQueries({ queryKey: [userId] });
-        queryClient.invalidateQueries({ queryKey: [activeProfileId, queryKeys.PROFILE] });
-        
-        // Invalidate BOTH target user's and active user's follow data
-        queryClient.invalidateQueries({ queryKey: [queryKeys.FOLLOW, profileId] });
-        queryClient.invalidateQueries({ queryKey: [queryKeys.FOLLOW, activeProfileId] });
-      },
-      onError: (errors) => {
-        console.error(errors.error);
-        toast.error(errors.message);
-      },
-    });
-  };
+  // const handleFollow = (profileId: string) => {
+  //   follow.mutate(profileId, {
+  //     onSuccess: (result) => {
+  //       console.log(result.data);
+  //       toast.success(result.message);
+
+  //       // Invalidate active user's profile and the general profiles list
+  //       queryClient.invalidateQueries({ queryKey: [userId] });
+  //       queryClient.invalidateQueries({ queryKey: [activeProfileId, queryKeys.PROFILE] });
+
+  //       // Invalidate BOTH target user's and active user's follow data
+  //       queryClient.invalidateQueries({ queryKey: [queryKeys.FOLLOW, profileId] });
+  //       queryClient.invalidateQueries({ queryKey: [queryKeys.FOLLOW, activeProfileId] });
+  //     },
+  //     onError: (errors) => {
+  //       console.error(errors.error);
+  //       toast.error(errors.message);
+  //     },
+  //   });
+  // };
   return (
     <div className="flex flex-col w-full max-w-2xl mx-auto gap-6 p-4">
       <FieldGroup className="w-full flex justify-center mb-8">
@@ -74,7 +77,6 @@ export default function AllProfiles({ profiles }: { profiles: AllProfiles[] }) {
               key={profile.id}
               className="flex items-center justify-between p-4 rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md hover:border-primary/50 transition-all cursor-pointer"
             >
-
               <div className="flex items-center gap-4">
                 <ItemMedia onClick={() => handleProfile(profile.id)}>
                   <Avatar className="h-12 w-12">
@@ -98,8 +100,8 @@ export default function AllProfiles({ profiles }: { profiles: AllProfiles[] }) {
                     type="button"
                     variant="secondary"
                     size="sm"
-                    onClick={() => handleFollow(profile.id)}
-                    disabled={follow.isPending}
+                    onClick={() => setFollow({ profileId: profile.id })}
+                    disabled={isOngoingFollow}
                     className="rounded-full cursor-pointer"
                   >
                     Follow

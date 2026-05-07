@@ -8,7 +8,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserStore } from "@/stores/UserStore";
 import ImageDropdown from "./ImageDropdown";
 import { FollowDto, FollowType } from "@/types/follow.type";
-import Follow from "./Follow";
+import Follow from "../Profiles/Follow";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { usePrivacy } from "@/hooks/useProfile";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ProfileHero() {
   const [open, setOpen] = useState(false);
@@ -29,6 +41,9 @@ export default function ProfileHero() {
   const jobs = useUserStore((state) => state.jobs);
   const pendingStoryJobs = jobs.find((job) => job.name === "STORY");
 
+  const userId = useUserStore(state => state.userId)
+  const queryClient = useQueryClient()
+
   const handleFollow = (type: FollowType) => {
     setFollow({
       id: profileId,
@@ -36,6 +51,22 @@ export default function ProfileHero() {
     });
     setOpen(!open);
   };
+  const privacy = usePrivacy()
+  const handlePrivacy = (type: "PUBLIC" | "PRIVATE") => {
+    console.log(type);
+    if(isPrivate && type === 'PRIVATE' || !isPrivate && type === 'PUBLIC') return
+    privacy.mutate(undefined,{
+      onSuccess: (result) => {
+        toast.success(result.message)
+        console.log(result.data)
+        queryClient.invalidateQueries({queryKey: [userId]})
+      },
+      onError:(errors) => {
+        toast.error(errors.message)
+        console.error(errors.error)
+      }
+    })
+  }
 
   const isStory = !!story || !!pendingStoryJobs;
   return (
@@ -58,18 +89,34 @@ export default function ProfileHero() {
                 alt="Profile Image"
                 className="object-cover"
               />
-              <AvatarFallback>{name?.charAt(0) || "U"}</AvatarFallback>
+              <AvatarFallback>{name.charAt(0) || "U"}</AvatarFallback>
             </Avatar>
           </Button>
         </ImageDropdown>
 
         <div className="flex flex-col items-center md:items-start gap-4 flex-1">
           <div className="flex flex-col items-center md:items-start space-y-2">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-              {name || "name"}
-            </h1>
+            <div className="flex items-center gap-12">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                {name}
+              </h1>
+              <Select
+               defaultValue={isPrivate ? "PRIVATE" : "PUBLIC"} disabled={privacy.isPending}
+               onValueChange={(value: "PRIVATE" | "PUBLIC") => handlePrivacy(value)} >
+                <SelectTrigger className="w-28 h-8">
+                  <SelectValue placeholder="Select a fruit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Privacy</SelectLabel>
+                    <SelectItem value="PRIVATE">Private</SelectItem>
+                    <SelectItem value="PUBLIC">Public</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
             <p className="text-muted-foreground text-center md:text-left max-w-md whitespace-pre-line">
-              {bio || "Bio shall be here"}
+              {bio}
             </p>
           </div>
 
@@ -93,12 +140,6 @@ export default function ProfileHero() {
                 <span className="font-semibold mr-1">{followers.length}</span>{" "}
                 Followers
               </Button>
-              {/* {followerOpen && (
-                <FollowerTab
-                  followerOpen={followerOpen}
-                  setFollowerOpen={setFollowerOpen}
-                />
-              )} */}
               <Button
                 variant={followings.length ? "outline" : "ghost"}
                 disabled={followings.length === 0}
@@ -107,21 +148,18 @@ export default function ProfileHero() {
                 <span className="font-semibold mr-1">{followings.length}</span>{" "}
                 Following
               </Button>
-              {/* {followingOpen && (
-                <FollowingTab
-                  followingOpen={followingOpen}
-                  setFollowingOpen={setFollowingOpen}
-                />
-              )} */}
             </div>
-
-            <Button type="button" variant={"default"}>
-              {isPrivate ? "Private" : "Public"}
-            </Button>
           </div>
         </div>
       </div>
-      {open && <Follow open={open} setOpen={setOpen} type={follow.type} id={follow.id} />}
+      {open && (
+        <Follow
+          open={open}
+          setOpen={setOpen}
+          type={follow.type}
+          id={follow.id}
+        />
+      )}
     </div>
   );
 }
