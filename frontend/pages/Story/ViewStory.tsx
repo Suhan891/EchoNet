@@ -1,82 +1,154 @@
-"use client"
-import { Card, CardContent } from "@/components/ui/card";
-import { EmblaCarouselType } from 'embla-carousel'
+"use client";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Carousel,
-  type CarouselApi,
+  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import * as React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useStoryMedia } from "@/hooks/useStory";
 import Autoplay from "embla-carousel-autoplay";
-import { useStoryStore } from "@/stores/StoryStore";
+import { Eye, Heart } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
-export default function ViewStory() {
-    
-  const [api, setApi] = React.useState<CarouselApi>()
-  const stories = useStoryStore((state) => state.stories);
+interface ViewStoryProps {
+  stories: string[];
+  isOwn: boolean;
+}
+export default function ViewStory({ stories, isOwn }: ViewStoryProps) {
+  const [duration, setDuration] = useState(3000);
+  const storyRef = useRef(stories);
+  const [api, setApi] = useState<CarouselApi>();
+  const [story, setStory] = useState(storyRef.current[0]);
 
-  const plugin = React.useRef(
-    Autoplay({ 
-      delay: 2000, 
-      stopOnInteraction: false, 
-      stopOnLastSnap: true
+  const plugin = useRef(
+    Autoplay({
+      delay: duration,
+      stopOnInteraction: false,
+      stopOnLastSnap: true,
     }),
   );
 
-  const onSelect = React.useCallback((embelaApi: EmblaCarouselType) => {
-    const index = embelaApi.selectedScrollSnap()
-    const activeStory = stories?.[index];
-    if(activeStory) {
-      console.log('Active story: ', activeStory.id)
-      // Also  implementation of Lazy loading => docs of embela present
-      // Db call on useQuery
-    }
-  },[stories])
+  const { isLoading, isError, isSuccess, error, data } = useStoryMedia(story);
 
-React.useEffect(() => {
-  if (!api) return;
+  useEffect(() => {
+    if (!isSuccess || !api) return;
 
-  onSelect(api);
+    const newDuration = data.data.duration ?? 3000;
+    setDuration(newDuration); // will be used for progress bar only
 
-  api.on('select', onSelect);
+    const autoplay = api.plugins()?.autoplay;
+    if (!autoplay) return;
 
-  return () => {
-    api.off('select', onSelect);
-  };
-}, [api, onSelect]);
-  
-  if(!stories)
-    return null;
+    autoplay.stop();
+    autoplay.play();
+  }, [isSuccess, data, api]);
 
-  return (
-    <div className="h-full flex justify-center items-center">
+  useEffect(() => {
+    if (!api) return;
+
+    api.on("select", () => {
+      const index = api.selectedScrollSnap();
+      console.log("Available index", index);
+      setStory(storyRef.current[index]);
+    });
+  }, [api]);
+
+return (
     <Carousel
-    setApi={setApi}
+      setApi={setApi}
       plugins={[plugin.current]}
-      orientation="vertical"
       className="w-full max-w-120 sm:max-w-xs"
-      onMouseEnter={() => plugin.current.stop()}
-      onMouseLeave={() => plugin.current.play()}
+      onMouseEnter={() => api?.plugins()?.autoplay?.stop()}
+      onMouseLeave={() => api?.plugins()?.autoplay?.play()}
     >
-      <CarouselContent className="-mt-1 h-67.5">
+      <CarouselContent>
         {stories.map((story) => (
-          <CarouselItem key={story.id}>
+          <CarouselItem key={story}>
             <div className="p-1">
-              <Card>
-                <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-4xl font-semibold">{story.order}</span>
-                </CardContent>
-              </Card>
+              {isSuccess && (
+                <Card className="overflow-hidden border-none bg-black shadow-md rounded-xl">
+                  <CardContent className="relative flex aspect-9/16 items-center justify-center p-0">
+                    {data.data.mediaType === "IMG" ? (
+                      <Image
+                        src={data.data.mediaUrl}
+                        alt={data.data.id || "story"}
+                        fill
+                        className="object-cover"
+                        priority
+                      />
+                    ) : (
+                      <video
+                        src={data.data.mediaUrl}
+                        className="h-full w-full object-cover"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                      />
+                    )}
+
+                    <CardFooter className="absolute bottom-0 left-0 z-10 flex w-full justify-between bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 pb-6">
+                      {isOwn ? (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-white hover:bg-black/20 hover:text-white/80"
+                        >
+                          <Heart className="h-6 w-6" />
+                        </Button>
+                      ) : (
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-white hover:bg-black/20 hover:text-white/80"
+                          >
+                            <Heart className="mr-2 h-5 w-5" />{" "}
+                            {data.data._count.likes}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-white hover:bg-black/20 hover:text-white/80"
+                          >
+                            <Eye className="mr-2 h-5 w-5" />{" "}
+                            {data.data._count.storyViews}
+                          </Button>
+                        </div>
+                      )}
+                    </CardFooter>
+                  </CardContent>
+                </Card>
+              )}
+
+              {isLoading && (
+                <Card className="w-full max-w-xs border-none bg-transparent shadow-none">
+                  <CardContent className="p-0">
+                    <Skeleton className="aspect-[9/16] w-full rounded-xl" />
+                  </CardContent>
+                </Card>
+              )}
+
+              {isError && (
+                <div className="flex aspect-[9/16] w-full flex-col items-center justify-center rounded-xl bg-destructive/10 p-6 text-center text-destructive">
+                  <span className="font-semibold">Failed to load</span>
+                  <span className="text-sm">{error.message}</span>
+                </div>
+              )}
             </div>
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
+      <CarouselPrevious className="hidden sm:flex" />
+      <CarouselNext className="hidden sm:flex" />
     </Carousel>
-    </div>
   );
 }

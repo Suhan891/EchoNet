@@ -1,36 +1,24 @@
-export interface PostRequestData {
+interface FollowReq {
+  profileId: string;
+}
+interface LikeReq {
+  type: "POST" | "REEL" | "STORY";
   id: string;
-  caption: string;
-  description: string;
-  postPhoto: {
-    id: string;
-    mediaUrl: string;
-  }[];
-  _count: {
-    comments: number;
-    likes: number;
-  };
 }
-export interface PostData {
-  id: string;
-  caption: string;
-  description: string;
-  postPhoto: {
-    id: string;
-    mediaUrl: string;
-  }[];
-  comments: number;
-  likes: number;
+interface SavePost {
+  mediaId: string;
 }
-interface Posts {
-  type: "POST";
-  data: PostData[];
+export type Req = FollowReq | LikeReq;
+export interface StoreState {
+  follow?: FollowReq;
+  like?: LikeReq;
+  savePost?: SavePost;
+
+  setLikeReq: (like: LikeReq | undefined) => void;
+  setFollowReq: (follow: FollowReq | undefined) => void;
+  setSavePost: (savePost: SavePost | undefined) => void;
 }
-export interface ReelData {}
-interface Reels {
-  type: "REEL";
-  data: ReelData[];
-}
+
 export interface StoryData {
   id: string;
   captcha?: string | null;
@@ -53,6 +41,27 @@ export interface StoryData {
         };
       }[]
     | [];
+}
+
+export interface PostData {
+  id: string;
+  caption: string;
+  description: string;
+  postPhoto: {
+    id: string;
+    mediaUrl: string;
+  }[];
+  comments: number;
+  likes: number;
+}
+interface Posts {
+  type: "POST";
+  data: PostData[];
+}
+export interface ReelData {}
+interface Reels {
+  type: "REEL";
+  data: ReelData[];
 }
 interface Story {
   type: "STORY";
