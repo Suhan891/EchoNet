@@ -61,7 +61,7 @@ export function useProfileDetails() {
         );
       if (storeName !== profile.data.name) setName(profile.data.name);
       if (storeBio !== profile.data.bio) setBio(profile.data.bio);
-      if (storeStory !== !!profile.data.story) setStory(!!profile.data.story);
+      if (storeStory !== profile.data.story?.id) setStory(profile.data.story?.id ?? null);
       if (storePosts !== profile.data._count.posts)
         setPosts(profile.data._count.posts);
       if (storeReels !== profile.data._count.reels)
