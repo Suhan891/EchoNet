@@ -2,12 +2,13 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { JobName, JobStatus, Media } from 'src/generated/prisma/enums';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { StoryDto, StoryMediaDataDto } from './dto/story.usage.dto';
+import { StoryDto } from './dto/story.usage.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 import {
@@ -35,13 +36,14 @@ export class StoryService {
     profile: profileDto,
     user: authUserDto,
   ) {
-    const existingStory = await this.prisma.story.findFirst({
+    const existingStory = await this.prisma.story.findUnique({
       where: { profileId: profile.id },
       select: {
         expiresAt: true,
         id: true,
       },
     });
+    if (existingStory) await this.deleteStory(existingStory.id);
 
     if (existingStory && existingStory.expiresAt >= new Date(Date.now()))
       throw new BadRequestException(
@@ -147,27 +149,37 @@ export class StoryService {
     const stories = await this.prisma.storyMedia.findMany({
       where: { storyId: story.id },
       select: {
+        id: true,
         mediaType: true,
         mediaUrl: true,
         duration: true,
-        order: true,
-        likes: {
+        order: true, // later be removed => Instead order by created at
+        // likes: {
+        //   select: {
+        //     id: true,
+        //     profileId: true,
+        //   },
+        // },
+        // storyViews: {
+        //   select: {
+        //     id: true,
+        //     viewer: {
+        //       select: {
+        //         name: true,
+        //         avatarUrl: true,
+        //       },
+        //     },
+        //   },
+        // },
+        _count: {
           select: {
-            id: true,
-            profileId: true,
+            likes: true,
+            storyViews: true,
           },
         },
-        storyViews: {
-          select: {
-            id: true,
-            viewer: {
-              select: {
-                name: true,
-                avatarUrl: true,
-              },
-            },
-          },
-        },
+      },
+      orderBy: {
+        order: 'asc',
       },
     });
     await this.cacheService.set<typeof stories>(key, stories);
@@ -176,20 +188,11 @@ export class StoryService {
 
   async getStory(profile: profileDto, story: StoryDto) {
     const key = `profile:${profile.id}:story:${story.id}`;
-    const cachedStories = await this.cacheService.get(key);
-    if (cachedStories) return cachedStories;
-    if (profile.id !== story.profile.id) {
-      const existingFollow = await this.prisma.follow.count({
-        where: {
-          followerId: profile.id,
-          followingId: story.profile.id,
-        },
-      });
-      if (!existingFollow)
-        throw new BadRequestException(
-          'You need to follow before viewing the profile',
-        );
-    }
+    //const cachedStories = await this.cacheService.get(key);
+    //if (cachedStories) return cachedStories;
+    if (profile.id !== story.profileId)
+      await this.ValidateProfile(profile.id, story.profileId);
+
     const storyMediaData = await this.prisma.storyMedia.findMany({
       where: { storyId: story.id },
       orderBy: {
@@ -197,22 +200,50 @@ export class StoryService {
       },
       select: {
         id: true,
-        order: true,
       },
     });
-    await this.cacheService.set<typeof storyMediaData>(key, storyMediaData);
-    return storyMediaData;
+    const storiesIds = [...storyMediaData.map((media) => media.id)];
+    await this.cacheService.set<typeof storiesIds>(key, storiesIds);
+    return storiesIds;
   }
 
-  // async getStoryMedia(profile: profileDto, storyMedia: StoryMediaDataDto) {
-  //   const key = `story:${storyMedia.story.id}:meia:${storyMedia.id}:profile:${profile.id}`;
-  //   const cachedStory = await this.cacheService.get(key);
-  //   if (cachedStory) return cachedStory;
-  //   if (profile.id === storyMedia.story.profileId)
-  //     return this.OwnStory(storyMedia, key);
-  //   const profileId = profile.id;
-  //   return this.OthersStory(profileId, storyMedia, key);
-  // }
+  async getStoryMedia(profile: profileDto, storyMedia: StoryDto) {
+    // const key = `story:${storyMedia.story.id}:meia:${storyMedia.id}:profile:${profile.id}`;
+    // const cachedStory = await this.cacheService.get(key);
+    // if (cachedStory) return cachedStory;
+    const isOwn = profile.id === storyMedia.profileId;
+    if (!isOwn) await this.ValidateProfile(profile.id, storyMedia.profileId);
+
+    const story = await this.prisma.storyMedia.findUnique({
+      where: { id: storyMedia.id },
+      select: {
+        id: true,
+        mediaType: true,
+        mediaUrl: true,
+        duration: true,
+        ...(isOwn && {
+          _count: {
+            select: {
+              storyViews: true,
+              likes: true,
+            },
+          },
+        }),
+      },
+    });
+    return story;
+  }
+
+  private async ValidateProfile(profileId: string, storyOwnerId: string) {
+    const existingFollow = await this.prisma.follow.count({
+      where: {
+        followerId: profileId,
+        followingId: storyOwnerId,
+      },
+    });
+    if (!existingFollow)
+      throw new UnauthorizedException('Not a following user');
+  }
   async createImageMedia(data: ImageMedia) {
     const fileName = `${crypto.randomUUID()}-${data.order}`;
     const uploaded = await this.cloudService.uploadImageStory(
@@ -327,31 +358,31 @@ export class StoryService {
   //   await this.cacheService.set<typeof storyMediaData>(key, storyMediaData);
   // }
 
-  private async OthersStory(
-    profileId: string,
-    storyMedia: StoryMediaDataDto,
-    key: string,
-  ) {
-    const existingStoryView = await this.prisma.storyViews.count({
-      where: { storyMediaId: storyMedia.id, viewerId: profileId },
-    });
+  // private async OthersStory(
+  //   profileId: string,
+  //   storyMedia: StoryMediaDataDto,
+  //   key: string,
+  // ) {
+  //   const existingStoryView = await this.prisma.storyViews.count({
+  //     where: { storyMediaId: storyMedia.id, viewerId: profileId },
+  //   });
 
-    if (!existingStoryView) {
-      const payload = {
-        storyMediaId: storyMedia.id,
-        viewerId: profileId,
-      };
-      this.eventEmitter.emit('story.view', payload);
-    }
+  //   if (!existingStoryView) {
+  //     const payload = {
+  //       storyMediaId: storyMedia.id,
+  //       viewerId: profileId,
+  //     };
+  //     this.eventEmitter.emit('story.view', payload);
+  //   }
 
-    const storyMediaData = await this.prisma.storyMedia.findFirst({
-      where: { id: storyMedia.id },
-      select: {
-        mediaType: true,
-        mediaUrl: true,
-        order: true,
-      },
-    });
-    await this.cacheService.set<typeof storyMediaData>(key, storyMediaData);
-  }
+  //   const storyMediaData = await this.prisma.storyMedia.findFirst({
+  //     where: { id: storyMedia.id },
+  //     select: {
+  //       mediaType: true,
+  //       mediaUrl: true,
+  //       order: true,
+  //     },
+  //   });
+  //   await this.cacheService.set<typeof storyMediaData>(key, storyMediaData);
+  // }
 }

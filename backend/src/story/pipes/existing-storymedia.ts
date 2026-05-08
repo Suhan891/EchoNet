@@ -1,27 +1,28 @@
-import { BadGatewayException, PipeTransform } from '@nestjs/common';
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { StoryMediaDataDto } from '../dto/story.usage.dto';
+import { StoryDto } from '../dto/story.usage.dto';
 
+@Injectable()
 export class ValidateStoryMediaPipe implements PipeTransform {
   constructor(private prisma: PrismaService) {}
 
-  async transform(storyMediaId: string): Promise<StoryMediaDataDto> {
-    const storyMedia = await this.prisma.storyMedia.findFirst({
+  async transform(storyMediaId: string): Promise<StoryDto> {
+    const storyMedia = await this.prisma.storyMedia.findUnique({
       where: { id: storyMediaId },
       select: {
         id: true,
-        mediaType: true,
-        mediaUrl: true,
         story: {
           select: {
-            id: true,
             profileId: true,
           },
         },
       },
     });
     if (!storyMedia)
-      throw new BadGatewayException('No such story Media exists');
-    return storyMedia;
+      throw new BadRequestException('No such story Media exists');
+    return {
+      id: storyMedia.id,
+      profileId: storyMedia.story.profileId,
+    };
   }
 }

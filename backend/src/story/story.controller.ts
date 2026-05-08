@@ -16,7 +16,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { currentProfile } from 'src/profile/decorator/get-profile';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 import { ValidateStoryExists } from './pipes/existing-story';
-import type { StoryDto, StoryMediaDataDto } from './dto/story.usage.dto';
+import type { StoryDto } from './dto/story.usage.dto';
 import { ValidateStoryMediaPipe } from './pipes/existing-storymedia';
 import { ParsedStoryPipe } from './pipes/story.create.validate';
 import type { RawMultipartBody } from './dto/story.create.dto';
@@ -42,12 +42,6 @@ export class StoryController {
     return await this.storyService.createStory(data, profile, user);
   }
 
-  // Created jobs module to handle such
-  // @Get('status')
-  // @ResponseMessage('Story Upload data received')
-  // async storyStatus(@currentProfile() profile: profileDto) {
-  //   return await this.storyService.getOwnStory(profile);
-  // }
   @Get('own')
   @ResponseMessage(' Own Story details received')
   async ownStory(@currentProfile() profile: profileDto) {
@@ -60,7 +54,7 @@ export class StoryController {
     return await this.storyService.removeStory(profile);
   }
 
-  @Get(':storyId')
+  @Get('story/:storyId')
   @ResponseMessage('Story Media Id"s Received')
   async getStoryMediaId(
     @currentProfile() profile: profileDto,
@@ -69,13 +63,13 @@ export class StoryController {
     return await this.storyService.getStory(profile, story);
   }
 
-  // @Get(':storyMediaId')
-  // @ResponseMessage('Story Media Data Received')
-  // async getStoryMedia(
-  //   @Param('storyMediaId', ParseUUIDPipe, ValidateStoryMediaPipe)
-  //   storyMedia: StoryMediaDataDto,
-  //   @currentProfile() profile: profileDto,
-  // ) {
-  //   return await this.storyService.getStoryMedia(profile, storyMedia);
-  // }
+  @Get('media/:storyMediaId')
+  @ResponseMessage('Story Media Data Received')
+  async getStoryMedia(
+    @Param('storyMediaId', ParseUUIDPipe, ValidateStoryMediaPipe)
+    storyMedia: StoryDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    return await this.storyService.getStoryMedia(profile, storyMedia);
+  }
 }

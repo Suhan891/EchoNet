@@ -1,7 +1,8 @@
-import { BadGatewayException, PipeTransform } from '@nestjs/common';
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { StoryDto } from '../dto/story.usage.dto';
 
+@Injectable()
 export class ValidateStoryExists implements PipeTransform {
   constructor(private prisma: PrismaService) {}
 
@@ -17,7 +18,10 @@ export class ValidateStoryExists implements PipeTransform {
         },
       },
     });
-    if (!story) throw new BadGatewayException('No such story exists');
-    return story;
+    if (!story) throw new BadRequestException('No such story exists');
+    return {
+      id: story.id,
+      profileId: story.profile.id,
+    };
   }
 }
