@@ -2,6 +2,7 @@ export const queryKeys = {
     USER: 'user',
     PROFILE: 'profile',
     STORY: 'story',
+    STORIES: 'stories',
     STORY_STATUS: 'story_status',
     JOBS: 'job',
     POSTS: 'posts',

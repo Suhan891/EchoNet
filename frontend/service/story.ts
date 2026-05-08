@@ -21,18 +21,15 @@ export async function CreateStoryRequest(payload: FormData) {
 export async function RemoveStroy() {
   return putJson('remove', null)
 }
-// To check if story is uploaded in background of backend => response from redis
-export async function GetStory() {
-  return getJson('status')
-}
+
 export async function StoriesOwnRequest() {
-  return getJson('stories')
+  return getJson('own')
 }
 
-export async function GetStories(storyId: string) {
-  return getJson(`:${storyId}`)
+export async function GetStory(storyId: string) {
+  return getJson(`story/${storyId}`)
 }
 
 export async function GetStoryMedia(storyMediaId:string) {
-    return getJson(`:${storyMediaId}`)
+    return getJson(`media/${storyMediaId}`)
 }
