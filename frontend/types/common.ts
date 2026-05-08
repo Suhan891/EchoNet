@@ -25,3 +25,9 @@ export interface JobStatus {
   name: "STORY" | "POST";
   status: "PROGRESS" | "SUCCESS" | "FAILED";
 }
+
+export interface PaginatedReqDto {
+  page? : number;
+  limit?: number;
+  name?: string
+}
