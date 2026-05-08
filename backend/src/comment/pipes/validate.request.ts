@@ -15,8 +15,8 @@ export class ValidateRequestPipe implements PipeTransform {
 
   private async validateName(data: RequestDto): Promise<boolean> {
     const { name } = data;
-    if (name === 'post') return await this.validatePost(data);
-    if (name === 'reel') return await this.validateReel(data);
+    if (name === 'POST') return await this.validatePost(data);
+    if (name === 'REEL') return await this.validateReel(data);
     return false;
   }
 
@@ -41,7 +41,8 @@ export class ValidateRequestPipe implements PipeTransform {
       },
     });
 
-    if (existingComment) return this.isExistingComment(existingComment);
+    if (existingComment.length > 0)
+      return this.isExistingComment(existingComment);
     return true;
   }
 
@@ -66,7 +67,8 @@ export class ValidateRequestPipe implements PipeTransform {
       },
     });
 
-    if (existingComment) return this.isExistingComment(existingComment);
+    if (existingComment.length > 0)
+      return this.isExistingComment(existingComment);
     return true;
   }
 

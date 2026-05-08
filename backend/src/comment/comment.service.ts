@@ -8,8 +8,16 @@ export class CommentService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: CommentDataDto) {
-    if (data.name === 'post') return await this.createPostComment(data);
-    if (data.name === 'reel') return await this.createReelComment(data);
+    // if (data.name === 'POST') return await this.createPostComment(data);
+    // if (data.name === 'REEL') return await this.createReelComment(data);
+    await this.prisma.comments.create({
+      data: {
+        profileId: data.profileId,
+        postId: data.name === 'POST' ? data.id : null,
+        reelId: data.name === 'REEL' ? data.id : null,
+        content: data.content,
+      },
+    });
   }
 
   async update(profile: profileDto, comment: CommentDTo, content: string) {

@@ -6,3 +6,8 @@ export class CreateCommmentDto {
   @MinLength(5, { message: 'Minimum 5 charecters are required' })
   content: string;
 }
+
+export interface CommentCreateDto {
+  id: string;
+  name: 'POST' | 'REEL';
+}

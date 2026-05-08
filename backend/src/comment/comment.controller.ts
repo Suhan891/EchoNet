@@ -30,7 +30,7 @@ export class CommentController {
   @ResponseMessage('Comment created')
   async createComment(
     @Param('id', ParseUUIDPipe) id: string,
-    @Query('name') name: string,
+    @Query('name') name: 'POST' | 'REEL',
     @Body() comentBody: CreateCommmentDto,
     @currentProfile() profile: profileDto,
   ) {
@@ -59,7 +59,7 @@ export class CommentController {
     const content = commentBody.content;
     return await this.commentService.update(profile, comment, content);
   }
-
+ 
   @Put('reply')
   @ResponseMessage('Replied Successfully')
   async reply(

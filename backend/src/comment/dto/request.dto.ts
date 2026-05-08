@@ -1,7 +1,7 @@
 export interface RequestDto {
   id: string;
   profileId: string;
-  name: string;
+  name: 'POST' | 'REEL';
 }
 export interface existingCommentDto {
   id: string;
@@ -13,7 +13,7 @@ export interface existingCommentDto {
 export interface CommentDataDto {
   id: string;
   profileId: string;
-  name: string;
+  name: 'POST' | 'REEL';
   content: string;
 }
 export interface CommentDTo {
