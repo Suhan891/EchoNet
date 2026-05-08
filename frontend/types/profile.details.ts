@@ -5,7 +5,7 @@ export interface OwnProfileResponse {
   avatarUrl: string;
   isPrivate: boolean;
   story?: {
-    id: true;
+    id: string;
   };
   savedPosts: {
     postMediaId: string;
@@ -43,7 +43,7 @@ export interface ProfileState {
   reels: number;
   followers: string[];
   followings: string[];
-  story: boolean;
+  story: string;
   isPrivate: boolean;
   sentNotifications: Notifications[] | undefined;
 
@@ -56,7 +56,7 @@ export interface ProfileState {
   setAvatar: (avatarUrl: string) => void;
   setFollowers: (followers: string[] | []) => void;
   setFollowinngs: (followings: string[] | []) => void;
-  setStory: (story: boolean) => void;
+  setStory: (story: string | null) => void;
   setIsPrivate: (isPrivate: boolean) => void;
   setNotification: (sentNotifications: Notifications[] | undefined) => void;
 }

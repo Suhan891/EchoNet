@@ -21,17 +21,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import {
-  Control,
   Controller,
-  Path,
+  FieldPath,
   SubmitHandler,
   useForm,
+  useFormContext,
   useWatch,
 } from "react-hook-form";
 
 interface CreateAvatarProps<T extends avatarType | profileType> {
-  control: Control<T>;
-  isUpdate: boolean;
+  name: FieldPath<T>;
 }
 
 function avatarOptions(name: string | undefined) {
@@ -45,7 +44,7 @@ function avatarOptions(name: string | undefined) {
     }).toDataUri();
   });
 }
-export default function CreateAvatar<T extends avatarType | profileType>({ control, isUpdate }: CreateAvatarProps<T>) {
+export default function CreateAvatar<T extends avatarType | profileType>({ name }: CreateAvatarProps<T>) {
   const [submittedName, setSubmittedName] = useState<string>();
   const {
     control: searchControl,
@@ -55,6 +54,7 @@ export default function CreateAvatar<T extends avatarType | profileType>({ contr
   } = useForm<searchType>({
     resolver: zodResolver(searchSchema),
   });
+  const {control} = useFormContext<T>()
   const searchWatch = useWatch({
     control: searchControl,
     defaultValue: {
@@ -95,7 +95,7 @@ export default function CreateAvatar<T extends avatarType | profileType>({ contr
         <FieldGroup>
           <Controller
             control={control}
-            name={(isUpdate ? "avatarUrl" : "avatar.avatarUrl") as Path<T>}
+            name={name}
             render={({ field, fieldState }) => (
               <FieldSet>
                 <FieldLegend>Select a avatar</FieldLegend>

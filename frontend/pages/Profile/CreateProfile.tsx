@@ -8,12 +8,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  profileSchema,
-  profileType,
-} from "@/validations/profile/create.profile";
+import { profileSchema } from "@/validations/profile/create.profile";
+import type { profileType } from "@/validations/profile/create.profile";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import {
+  Controller,
+  FormProvider,
+  SubmitHandler,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import { useUserStore } from "@/stores/UserStore";
 import {
   Field,
@@ -61,12 +65,8 @@ export default function CreeateProfile({
 }) {
   const [open, setOpen] = useState(false);
   const newProfile = useCreateProfile();
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<profileType>({
-    resolver: zodResolver(profileSchema),
+  const methods = useForm<profileType>({
+    resolver: zodResolver(profileSchema) as any,
     mode: "onSubmit",
     defaultValues: {
       avatar: { mode: "create", avatarUrl: "" },
@@ -76,7 +76,7 @@ export default function CreeateProfile({
     },
   });
   const watchProfile = useWatch({
-    control,
+    control: methods.control,
   });
   const email = useUserStore((state) => state.email);
   const queryCLient = useQueryClient();
@@ -118,170 +118,177 @@ export default function CreeateProfile({
           <DialogDescription>{email}</DialogDescription>
         </DialogHeader>
         <Card className="w-full">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <CardHeader className="w-full">
-              <CardTitle className="mx-auto">
-                New Profile (Avail: {availProfilesCount})
-              </CardTitle>
-              <CardDescription className="mx-auto">
-                All the fields has to be completed
-              </CardDescription>
-            </CardHeader>
-            <Separator className="my-3" />
-            <CardContent className="flex flex-col sm:flex-row gap-6">
-              <FieldSet className="flex-1 w-full flex flex-col">
-                <FieldLegend>Avatar</FieldLegend>
-                <FieldDescription>Add your Avatar</FieldDescription>
-                <FieldGroup className="flex-end right-0">
-                  <Controller
-                    control={control}
-                    name={"avatar.mode"}
-                    render={({ field, fieldState }) => (
-                      <Field
-                        orientation="horizontal"
-                        className="w-fit"
-                        data-invalid={fieldState.invalid}
-                      >
-                        <FieldLabel htmlFor="switch">
-                          Avatar {field.value}
-                        </FieldLabel>
-                        <Switch
-                          checked={field.value === "upload"}
-                          id="switch"
-                          {...field}
-                          aria-invalid={fieldState.invalid}
-                          onCheckedChange={(checked) => {
-                            field.onChange(checked ? "upload" : "create");
-                          }}
-                        />
-                      </Field>
-                    )}
-                  />
-                </FieldGroup>
-                <FieldGroup>
-                  <FieldSeparator />
-                </FieldGroup>
-                <FieldGroup>
-                  {watchProfile.avatar?.mode === "create" ? (
-                    <CreateAvatar control={control} isUpdate={false} />
-                  ) : (
-                    <UploadAvatar control={control} isUpdate={false} />
-                  )}
-                </FieldGroup>
-                {errors.avatar && <FieldError errors={[errors.avatar]} />}
-              </FieldSet>
-              <FieldSet className="flex-1">
-                <FieldLegend>Personal Info</FieldLegend>
-                <FieldDescription>
+          <FormProvider {...methods}>
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
+              <CardHeader className="w-full">
+                <CardTitle className="mx-auto">
+                  New Profile (Avail: {availProfilesCount})
+                </CardTitle>
+                <CardDescription className="mx-auto">
                   All the fields has to be completed
-                </FieldDescription>
-                <FieldGroup>
-                  <Controller
-                    name={"name"}
-                    control={control}
-                    render={({ field, fieldState }) => (
-                      <Field>
-                        <FieldLabel htmlFor="username" className="ps-1.5">
-                          Name
-                        </FieldLabel>
-                        <FieldDescription className="ps-1.5">
-                          Please provide a unique name
-                        </FieldDescription>
-                        <InputGroup>
-                          <InputGroupInput
-                            id="username"
+                </CardDescription>
+              </CardHeader>
+              <Separator className="my-3" />
+              <CardContent className="flex flex-col sm:flex-row gap-6">
+                <FieldSet className="flex-1 w-full flex flex-col">
+                  <FieldLegend>Avatar</FieldLegend>
+                  <FieldDescription>Add your Avatar</FieldDescription>
+                  <FieldGroup className="flex-end right-0">
+                    <Controller
+                      control={methods.control}
+                      name={"avatar.mode"}
+                      render={({ field, fieldState }) => (
+                        <Field
+                          orientation="horizontal"
+                          className="w-fit"
+                          data-invalid={fieldState.invalid}
+                        >
+                          <FieldLabel htmlFor="switch">
+                            Avatar {field.value}
+                          </FieldLabel>
+                          <Switch
+                            checked={field.value === "upload"}
+                            id="switch"
                             {...field}
                             aria-invalid={fieldState.invalid}
-                            placeholder={name}
+                            onCheckedChange={(checked) => {
+                              field.onChange(checked ? "upload" : "create");
+                            }}
                           />
-                          <InputGroupAddon>
-                            <InputGroupButton
-                              variant={"outline"}
-                              disabled={true}
+                        </Field>
+                      )}
+                    />
+                  </FieldGroup>
+                  <FieldGroup>
+                    <FieldSeparator />
+                  </FieldGroup>
+                  <FieldGroup>
+                    {watchProfile.avatar?.mode === "create" ? (
+                      <CreateAvatar<profileType> name={"avatar.avatarUrl"} />
+                    ) : (
+                      <UploadAvatar<profileType>
+                        name={"avatar.avatar"}
+                        isUpdate={false}
+                      />
+                    )}
+                  </FieldGroup>
+                  {methods.formState.errors.avatar && (
+                    <FieldError errors={[methods.formState.errors.avatar]} />
+                  )}
+                </FieldSet>
+                <FieldSet className="flex-1">
+                  <FieldLegend>Personal Info</FieldLegend>
+                  <FieldDescription>
+                    All the fields has to be completed
+                  </FieldDescription>
+                  <FieldGroup>
+                    <Controller
+                      name={"name"}
+                      control={methods.control}
+                      render={({ field, fieldState }) => (
+                        <Field>
+                          <FieldLabel htmlFor="username" className="ps-1.5">
+                            Name
+                          </FieldLabel>
+                          <FieldDescription className="ps-1.5">
+                            Please provide a unique name
+                          </FieldDescription>
+                          <InputGroup>
+                            <InputGroupInput
+                              id="username"
                               {...field}
-                              className="bg-gray-700"
-                            >
-                              <User />
-                            </InputGroupButton>
-                          </InputGroupAddon>
-                        </InputGroup>
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
-                      </Field>
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="bio"
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor={`bio`}>
-                          Description (optional){" "}
-                        </FieldLabel>
-                        <FieldDescription>
-                          Shortly about yourself
-                        </FieldDescription>
-                        <InputGroup>
-                          <InputGroupTextarea
-                            id={`description`}
-                            {...field}
-                            cols={9}
-                            rows={3}
-                            maxLength={120}
-                            placeholder={bio}
+                              aria-invalid={fieldState.invalid}
+                              placeholder={name}
+                            />
+                            <InputGroupAddon>
+                              <InputGroupButton
+                                variant={"outline"}
+                                disabled={true}
+                                {...field}
+                                className="bg-gray-700"
+                              >
+                                <User />
+                              </InputGroupButton>
+                            </InputGroupAddon>
+                          </InputGroup>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
+                    <Controller
+                      control={methods.control}
+                      name="bio"
+                      render={({ field, fieldState }) => (
+                        <Field data-invalid={fieldState.invalid}>
+                          <FieldLabel htmlFor={`bio`}>
+                            Description (optional){" "}
+                          </FieldLabel>
+                          <FieldDescription>
+                            Shortly about yourself
+                          </FieldDescription>
+                          <InputGroup>
+                            <InputGroupTextarea
+                              id={`description`}
+                              {...field}
+                              cols={9}
+                              rows={3}
+                              maxLength={120}
+                              placeholder={bio}
+                            />
+                            <InputGroupAddon align="block-end">
+                              <InputGroupText>
+                                {field.value?.length ?? 0}/{120}
+                              </InputGroupText>
+                            </InputGroupAddon>
+                          </InputGroup>
+                        </Field>
+                      )}
+                    />
+                  </FieldGroup>
+                </FieldSet>
+              </CardContent>
+              <CardContent>
+                <FieldGroup>
+                  <FieldSeparator />
+                  <div className="w-full mb-2">
+                    <Controller
+                      control={methods.control}
+                      name={"isPrivate"}
+                      render={({ field }) => (
+                        <Field orientation={"horizontal"}>
+                          <Checkbox
+                            id={"private-checkbox"}
+                            name={field.name}
+                            onCheckedChange={field.onChange}
+                            checked={field.value}
                           />
-                          <InputGroupAddon align="block-end">
-                            <InputGroupText>
-                              {field.value?.length ?? 0}/{120}
-                            </InputGroupText>
-                          </InputGroupAddon>
-                        </InputGroup>
-                      </Field>
-                    )}
-                  />
+                          <FieldLabel
+                            htmlFor="private-checkbox"
+                            className="font-normal"
+                          >
+                            Make my profile private
+                          </FieldLabel>
+                        </Field>
+                      )}
+                    />
+                  </div>
                 </FieldGroup>
-              </FieldSet>
-            </CardContent>
-            <CardContent>
-              <FieldGroup>
-                <FieldSeparator />
-                <div className="w-full mb-2">
-                  <Controller
-                    control={control}
-                    name={"isPrivate"}
-                    render={({ field }) => (
-                      <Field orientation={"horizontal"}>
-                        <Checkbox
-                          id={"private-checkbox"}
-                          name={field.name}
-                          onCheckedChange={field.onChange}
-                          checked={field.value}
-                        />
-                        <FieldLabel
-                          htmlFor="private-checkbox"
-                          className="font-normal"
-                        >
-                          Make my profile private
-                        </FieldLabel>
-                      </Field>
-                    )}
-                  />
-                </div>
-              </FieldGroup>
-            </CardContent>
-            <CardFooter>
-              {newProfile.isPending ? (
-                <Button variant={"outline"} disabled>
-                  Creating
-                </Button>
-              ) : (
-                <Button type="submit" className="w-full">
-                  Submit
-                </Button>
-              )}
-            </CardFooter>
-          </form>
+              </CardContent>
+              <CardFooter>
+                {newProfile.isPending ? (
+                  <Button variant={"outline"} disabled>
+                    Creating
+                  </Button>
+                ) : (
+                  <Button type="submit" className="w-full">
+                    Submit
+                  </Button>
+                )}
+              </CardFooter>
+            </form>
+          </FormProvider>
         </Card>
       </DialogContent>
     </Dialog>

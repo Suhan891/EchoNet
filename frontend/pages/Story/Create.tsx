@@ -48,7 +48,7 @@ export default function Create({
   setOpen: (open: boolean) => void;
 }) {
   const story = useCreateStory();
-  const { control, handleSubmit, reset } = useForm<storyType>({
+  const { control, handleSubmit, reset, formState: {errors: uunknownErr} } = useForm<storyType>({
     resolver: zodResolver(storySchema),
     mode: "onSubmit",
   });
@@ -56,6 +56,8 @@ export default function Create({
     control,
     name: "slides",
   });
+  if(uunknownErr)
+    console.log("Unknown error",uunknownErr)
   const setJob = useUserStore((state) => state.setJob);
   const onSubmit: SubmitHandler<storyType> = (data) => {
     console.log(data);

@@ -9,17 +9,18 @@ import { Input } from "@/components/ui/input";
 import { useProfileStore } from "@/stores/ProfileStore";
 import { avatarType } from "@/validations/profile/create.avatar";
 import { profileType } from "@/validations/profile/create.profile";
-import { CloudAlert, CloudUpload, Upload } from "lucide-react";
+import { CloudAlert, CloudUpload } from "lucide-react";
 import { useEffect, useReducer } from "react";
-import { Control, Controller, useWatch, Path } from "react-hook-form";
+import { Controller, useWatch, Path, FieldPath, useFormContext } from "react-hook-form";
 
 interface UploadAvatarProps<T extends avatarType | profileType> {
-  control: Control<T>;
+  name: FieldPath<T>;
   isUpdate: boolean;
 }
 
-export default function UploadAvatar<T extends avatarType | profileType>({ control, isUpdate }: UploadAvatarProps<T>) {
+export default function UploadAvatar<T extends avatarType | profileType>({ name, isUpdate }: UploadAvatarProps<T>) {
   const avatarUrl = useProfileStore((state) => state.avatarUrl);
+  const {control} = useFormContext<T>()
   const mode = useWatch({
     control,
     name: (isUpdate ? "mode" : "avatar.mode") as Path<T>,
@@ -43,7 +44,7 @@ export default function UploadAvatar<T extends avatarType | profileType>({ contr
     <FieldGroup>
       <Controller
         control={control}
-        name={(isUpdate ? "avatar" : "avatar.avatar") as Path<T>}
+        name={name}
         render={({ field: { onChange }, fieldState }) => (
           <Field aria-invalid={fieldState.invalid} className="flex justify-center items-center w-full py-4">
             <FieldLabel htmlFor="avatar">

@@ -10,7 +10,13 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { Field, FieldError, FieldGroup, FieldSet } from "@/components/ui/field";
-import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import {
+  Controller,
+  FormProvider,
+  SubmitHandler,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import { avatarSchema, avatarType } from "@/validations/profile/create.avatar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Switch } from "@/components/ui/switch";
@@ -31,11 +37,7 @@ export default function UpdateAvatar({
   setOpen: (open: boolean) => void;
 }) {
   const upAvatar = useUpdateAvatar();
-  const {
-    control,
-    handleSubmit,
-    formState: { errors: avatarError },
-  } = useForm<avatarType>({
+  const form = useForm<avatarType>({
     resolver: zodResolver(avatarSchema) as any,
     mode: "onSubmit",
     defaultValues: {
@@ -66,7 +68,7 @@ export default function UpdateAvatar({
     });
   };
   const watchAvatar = useWatch({
-    control,
+    control: form.control,
     defaultValue: {
       mode: "create",
       avatarUrl: "",
@@ -80,62 +82,64 @@ export default function UpdateAvatar({
   return (
     <Drawer onOpenChange={setOpen} open={open}>
       <DrawerContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mx-auto w-full max-w-sm">
-            <DrawerHeader>
-              <DrawerTitle className="flex justify-between items-center">
-                <h1>Update Avatar</h1>
-                <FieldSet>
-                  <FieldGroup>
-                    <Controller
-                      control={control}
-                      name={"mode"}
-                      render={({ field }) => (
-                        <Field orientation={"horizontal"}>
-                          {field.value === "create" && <span>Create</span>}
-                          <Switch
-                            checked={field.value === "upload"}
-                            {...field}
-                            onCheckedChange={(checked) => {
-                              field.onChange(checked ? "upload" : "create");
-                            }}
-                          />
-                          {field.value === "upload" && <span>Upload</span>}
-                        </Field>
-                      )}
-                    />
-                  </FieldGroup>
-                </FieldSet>
-              </DrawerTitle>
-              <DrawerDescription>
-                {watchAvatar.mode === "create"
-                  ? "Search and Select an Avatar"
-                  : "Upload an Image"}
-              </DrawerDescription>
-            </DrawerHeader>
-            {watchAvatar.mode === "create" ? (
-              <CreateAvatar control={control} isUpdate={true} />
-            ) : (
-              <UploadAvatar control={control} isUpdate={true} />
-            )}
-            <FieldError errors={[avatarError.mode]} />
-            <DrawerFooter>
-              {upAvatar.isPending ? (
-                <Button variant={"outline"} disabled>
-                  <Spinner />
-                  Uploading Avatar
-                </Button>
+        <FormProvider {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="mx-auto w-full max-w-sm">
+              <DrawerHeader>
+                <DrawerTitle className="flex justify-between items-center">
+                  <h1>Update Avatar</h1>
+                  <FieldSet>
+                    <FieldGroup>
+                      <Controller
+                        control={form.control}
+                        name={"mode"}
+                        render={({ field }) => (
+                          <Field orientation={"horizontal"}>
+                            {field.value === "create" && <span>Create</span>}
+                            <Switch
+                              checked={field.value === "upload"}
+                              {...field}
+                              onCheckedChange={(checked) => {
+                                field.onChange(checked ? "upload" : "create");
+                              }}
+                            />
+                            {field.value === "upload" && <span>Upload</span>}
+                          </Field>
+                        )}
+                      />
+                    </FieldGroup>
+                  </FieldSet>
+                </DrawerTitle>
+                <DrawerDescription>
+                  {watchAvatar.mode === "create"
+                    ? "Search and Select an Avatar"
+                    : "Upload an Image"}
+                </DrawerDescription>
+              </DrawerHeader>
+              {watchAvatar.mode === "create" ? (
+                <CreateAvatar<avatarType> name={"avatarUrl"} />
               ) : (
-                <Button type="submit" disabled={!isReady}>
-                  Submit
-                </Button>
+                <UploadAvatar<avatarType> name={"avatar"} isUpdate={true} />
               )}
-              <DrawerClose asChild>
-                <Button variant={"outline"}>Cancel</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </div>
-        </form>
+              <FieldError errors={[form.formState.errors.mode]} />
+              <DrawerFooter>
+                {upAvatar.isPending ? (
+                  <Button variant={"outline"} disabled>
+                    <Spinner />
+                    Uploading Avatar
+                  </Button>
+                ) : (
+                  <Button type="submit" disabled={!isReady}>
+                    Submit
+                  </Button>
+                )}
+                <DrawerClose asChild>
+                  <Button variant={"outline"}>Cancel</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </div>
+          </form>
+        </FormProvider>
       </DrawerContent>
     </Drawer>
   );

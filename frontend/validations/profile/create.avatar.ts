@@ -3,7 +3,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
 export const searchSchema = z.object({
-  name: z.string().min(1, "Minimum 1 charecters are required"),
+  name: z.string().optional(),
 });
 export type searchType = z.infer<typeof searchSchema>;
 
