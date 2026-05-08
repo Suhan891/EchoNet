@@ -35,10 +35,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useToggleLike } from "@/hooks/useLike";
+import { useFollowReq } from "@/features/Common/follow.request";
+import { useLikeReq } from "@/features/Common/like.request";
+import { useSavePostReq } from "@/features/Common/save.post";
 import { useAllPosts } from "@/hooks/usePost";
 import { cn } from "@/lib/utils";
 import { useProfileStore } from "@/stores/ProfileStore";
+import { useStore } from "@/stores/Store";
 import { queryKeys } from "@/utils/query.key";
 import { searchSchema, searchType } from "@/validations/profile/create.avatar";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -69,25 +72,13 @@ export default function AllPosts() {
     error,
   } = useAllPosts({ name: searchName });
   const queryCLient = useQueryClient();
-  const like = useToggleLike();
-  const queryClient = useQueryClient();
-  const handleLike = (id: string) => {
-    like.mutate(
-      { id, type: "POST" },
-      {
-        onSuccess: (results) => {
-          queryClient.invalidateQueries({ queryKey: [queryKeys.POSTS] });
-          queryClient.invalidateQueries({ queryKey: [queryKeys.ALL_POSTS] });
-          console.log(results);
-        },
-        onError: (errors) => {
-          console.error(errors.error);
-          console.error(errors);
-        },
-      },
-    );
-  };
-  const handleFollow = (id: string) => {}
+  const setFollowReq = useStore((state) => state.setFollowReq);
+  const setLikeReq = useStore((state) => state.setLikeReq);
+  const setSavePostReq = useStore((state) => state.setSavePost);
+  const isOngoingLikeReq = useLikeReq();
+  const isOngoingFollowReq = useFollowReq();
+  const isOngoingSavePost = useSavePostReq();
+  // const handleFollow = (id: string) => {};
   const { register, handleSubmit } = useForm<searchType>({
     resolver: zodResolver(searchSchema),
     defaultValues: {
@@ -98,6 +89,7 @@ export default function AllPosts() {
     if (!searched.name) return setSearchName("");
     setSearchName(searched.name);
     queryCLient.invalidateQueries({ queryKey: [queryKeys.ALL_POSTS] });
+    queryCLient.invalidateQueries({ queryKey: [queryKeys.POSTS] });
   };
   const profileId = useProfileStore((state) => state.id);
   const followings = useProfileStore((state) => state.followings);
@@ -177,8 +169,9 @@ export default function AllPosts() {
                         <Button
                           size="sm"
                           className="rounded-full px-4 h-8 text-xs"
+                          disabled={isOngoingFollowReq}
                           onClick={() =>
-                            handleFollow(post.profile.id)
+                            setFollowReq({ profileId: post.profile.id })
                           }
                         >
                           Follow
@@ -233,8 +226,15 @@ export default function AllPosts() {
                                           <Toggle
                                             aria-label="Toggle bookmark"
                                             variant="outline"
-                                            disabled={!isFollowing}
+                                            disabled={
+                                              !isFollowing || isOngoingSavePost
+                                            }
                                             pressed={isSavedPost}
+                                            onClick={() =>
+                                              setSavePostReq({
+                                                mediaId: photo.id,
+                                              })
+                                            }
                                             className={cn(
                                               "h-12 w-12 rounded-full border-white/20 bg-background/30 backdrop-blur-sm shadow-xl transition-all",
                                               "text-white hover:bg-background/50 hover:text-white",
@@ -254,10 +254,12 @@ export default function AllPosts() {
                                         side="bottom"
                                         className="text-xs"
                                       >
-                                        {isFollowing ? (
-                                          <p>Save Post Media</p>
-                                        ) : (
+                                        {!isFollowing ? (
                                           <p>Follow to save the media</p>
+                                        ) : isSavedPost ? (
+                                          <p>Unsave Post</p>
+                                        ) : (
+                                          <p>Save Post media</p>
                                         )}
                                       </TooltipContent>
                                     </Tooltip>
@@ -283,7 +285,10 @@ export default function AllPosts() {
                         size="sm"
                         variant={"outline"}
                         pressed={isLiked}
-                        onClick={() => handleLike(post.id)}
+                        disabled={isOngoingLikeReq}
+                        onClick={() =>
+                          setLikeReq({ type: "POST", id: post.id })
+                        }
                         className="flex gap-2 text-sm h-9 px-3 rounded-full hover:bg-rose-50 hover:text-rose-600 data-[state=on]:text-rose-600 data-[state=on]:bg-rose-50 transition-colors"
                       >
                         <Heart
