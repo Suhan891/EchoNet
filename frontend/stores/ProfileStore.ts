@@ -10,12 +10,13 @@ export const useProfileStore = create<ProfileState>()(
     avatarUrl: "",
     followers: [],
     followings: [],
-    story: 0,
+    story: "",
     posts: 0,
     savedPosts: [],
     reels: 0,
     isPrivate: false,
     sentNotifications: [],
+    socket: undefined,
 
     setId: (id) => set({ id }),
     setName: (name) => set({ name }),
@@ -27,6 +28,7 @@ export const useProfileStore = create<ProfileState>()(
     setPosts: (posts) => set({ posts }),
     setSavedPosts: (savedPosts) => set({ savedPosts }),
     setReels: (reels) => set({ reels }),
+    setSocket: (socket) => set({socket}),
     setIsPrivate: (isPrivate) => set({isPrivate}),
 
     setNotification: (sentNotifications) => set({ sentNotifications }),

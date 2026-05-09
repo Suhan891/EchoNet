@@ -8,7 +8,7 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 const axiosInstance = axios.create({
-  baseURL: process.env.REQUEST_APP_URL || "http://localhost:3001",
+  baseURL: process.env.NEXT_PUBLIC_REQUEST_APP_URL,
   headers: {
     "Content-Type": "application/json",
   },

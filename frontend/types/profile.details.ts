@@ -1,3 +1,5 @@
+import { Socket } from "socket.io-client";
+
 export interface OwnProfileResponse {
   id: string;
   name: string;
@@ -46,6 +48,7 @@ export interface ProfileState {
   story: string;
   isPrivate: boolean;
   sentNotifications: Notifications[] | undefined;
+  socket?: Socket;
 
   setId: (id: string) => void;
   setPosts: (posts: number) => void;
@@ -56,8 +59,9 @@ export interface ProfileState {
   setAvatar: (avatarUrl: string) => void;
   setFollowers: (followers: string[] | []) => void;
   setFollowinngs: (followings: string[] | []) => void;
-  setStory: (story: string | null) => void;
+  setStory: (story: string | undefined) => void;
   setIsPrivate: (isPrivate: boolean) => void;
+  setSocket: (socket: any) => void;
   setNotification: (sentNotifications: Notifications[] | undefined) => void;
 }
 
