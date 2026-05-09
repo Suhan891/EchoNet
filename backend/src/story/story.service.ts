@@ -85,7 +85,7 @@ export class StoryService {
 
     const profileKey = `profile:${profile.id}`;
     await this.cacheService.delete(profileKey);
-    await this.cacheService.delByPattern(`story:${profile.id}:*`); // Invalidate all story caches for profile
+    await this.cacheService.delByPattern(`story:${profile.id}`); // Invalidate all story caches for profile
     return await this.prisma.job.create({
       data: {
         userId: user.userId,
@@ -125,7 +125,7 @@ export class StoryService {
       await this.deleteStory(story.id);
       throw new BadRequestException('You story has expired');
     }
-    const key = `profile:${profile.id}:story:${story.id}`;
+    const key = `story:${profile.id}:own:${story.id}`;
     const cachedStories = await this.cacheService.get(key);
     if (cachedStories) return cachedStories;
 
@@ -187,7 +187,7 @@ export class StoryService {
   }
 
   async getStory(profile: profileDto, story: StoryDto) {
-    const key = `profile:${profile.id}:story:${story.id}`;
+    const key = `story:${story.profileId}:viewer:${profile.id}:${story.id}`;
     //const cachedStories = await this.cacheService.get(key);
     //if (cachedStories) return cachedStories;
     if (profile.id !== story.profileId)
@@ -208,7 +208,7 @@ export class StoryService {
   }
 
   async getStoryMedia(profile: profileDto, storyMedia: StoryDto) {
-    // const key = `story:${storyMedia.story.id}:meia:${storyMedia.id}:profile:${profile.id}`;
+    // const key = `story:${storyMedia.profileId}:media:${storyMedia.id}:viewer:${profile.id}`;
     // const cachedStory = await this.cacheService.get(key);
     // if (cachedStory) return cachedStory;
     const isOwn = profile.id === storyMedia.profileId;

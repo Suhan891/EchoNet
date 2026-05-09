@@ -14,8 +14,8 @@ export class LikeService {
   async toggleLike(data: ResLikeDto, profile: profileDto) {
     await this.cacheService.delete(`likes:${profile.id}`);
     if (data.name === 'POST') {
-      await this.cacheService.delByPattern(`posts:global:*`); // Invalidate global feeds
-      await this.cacheService.delByPattern(`profile:*`); // Invalidate post views
+      await this.cacheService.delByPattern(`posts:global:${profile.id}`); // Invalidate global feeds
+      await this.cacheService.delByPattern(`profile:${profile.id}`); // Invalidate post views
     }
     if (!data.likeId) return this.create(data);
     return this.remove(profile, data.likeId);

@@ -12,8 +12,6 @@ import { EventService } from './event.service';
 //import { UseFilters, UseInterceptors } from 'node_modules/@nestjs/common';
 
 @WebSocketGateway()
-//@UseInterceptors()
-//@UseFilters()
 export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
@@ -23,11 +21,10 @@ export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleConnection(client: AuthenticatedSocket) {
     //const userId = client.data.userId;
     const profileId = client.data.profileId;
-    const onlineProfiles = await this.eventService.getAllOnline();
     await this.eventService.createOnline(profileId);
+    const onlineProfiles = await this.eventService.getAllOnline();
     client.broadcast.emit('joined', profileId);
     client.emit('active_profiles', onlineProfiles);
-    // Send the client all active profiles
   }
 
   async handleDisconnect(client: AuthenticatedSocket) {
@@ -37,7 +34,7 @@ export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.server.emit('left', profileId);
   }
 
-  // Server calls
+  // Server sends
   sendNotification(profileId: string, payload: unknown) {
     this.server.to(profileId).emit('new_notification', payload);
   }

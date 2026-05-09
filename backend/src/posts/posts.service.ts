@@ -61,7 +61,7 @@ export class PostsService {
 
     const key = `profile:${profile.id}`;
     await this.cacheService.delete(key);
-    await this.cacheService.delByPattern(`posts:global`); // Invalidate global feeds
+    await this.cacheService.delByPattern(`posts:global`);
 
     return await this.prisma.job.create({
       data: {
@@ -146,6 +146,7 @@ export class PostsService {
 
   async getOthersPost(othersProf: OthersPostDto, profile: profileDto) {
     const key = `profile:${profile.id}:${othersProf.id}:posts`;
+    //await this.cacheService.delete(key);
     const cachedPosts = await this.cacheService.get<OthersPost[]>(key);
     if (cachedPosts) return cachedPosts;
     if (othersProf.id === profile.id)
