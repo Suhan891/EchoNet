@@ -17,6 +17,21 @@ export class AppCacheService {
     await this.redis.set(key, JSON.stringify(value), { EX: ttl ?? 60 });
   }
 
+  async getMatch(key: string): Promise<string[]> {
+    const matchKey = `${key}:*`;
+    let allKeys = [] as string[];
+    let cursor = 0;
+    do {
+      const result = await this.redis.scan(cursor.toString(), {
+        MATCH: matchKey,
+        COUNT: 100,
+      });
+      cursor = Number(result.cursor);
+      allKeys = allKeys.concat(result.keys);
+    } while (cursor !== 0);
+    return allKeys.map((k) => k.replace(`${key}:`, ''));
+  }
+
   async delete(key: string) {
     await this.redis.del(key);
   }
