@@ -1,15 +1,11 @@
 import { IoAdapter } from '@nestjs/platform-socket.io';
-import {
-  ForbiddenException,
-  INestApplicationContext,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { INestApplicationContext, Logger } from '@nestjs/common';
 import { JwtVerify } from 'src/auth/tokens/token.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Server, ServerOptions } from 'socket.io';
 //import { WsException } from '@nestjs/websockets';
 import { AuthenticatedSocket } from './dto/event.dto';
+import { WsException } from 'node_modules/@nestjs/websockets';
 
 export class AuthenicatedSocketAdapter extends IoAdapter {
   private readonly jwtVerify: JwtVerify;
@@ -43,12 +39,11 @@ export class AuthenicatedSocketAdapter extends IoAdapter {
         const token = auth.token?.split(' ')[1] as string;
         const profileId = auth.profileId as string;
 
-        if (!token || !profileId) return next(new ForbiddenException());
+        if (!token || !profileId)
+          return next(new WsException('All conditions not satisfied'));
         const payload = this.jwtVerify.accessToken(token);
 
-        if (!payload) throw new UnauthorizedException('Token has expired');
-
-        // Ensure you await this if it returns a Promise
+        if (!payload) throw new WsException('Token has expired');
 
         const user = await this.prisma.user.findUniqueOrThrow({
           where: { id: payload?.sub },
@@ -66,9 +61,9 @@ export class AuthenicatedSocketAdapter extends IoAdapter {
         const activeProfile = user.profile.find(
           (prof) => prof.isActive === true,
         );
-        if (!activeProfile) throw new Error('No active profile found');
+        if (!activeProfile) throw new WsException('No active profile found');
         if (activeProfile.id !== profileId)
-          throw new Error('Active profile Id not matching');
+          throw new WsException('Active profile Id not matching');
 
         socket.data = {
           userId: user.id,
