@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './common/interceptors/response';
 import { GlobaExceptionFilter } from './common/filters/http-exception.filter';
 import cookieParser from 'cookie-parser';
+import { AuthenicatedSocketAdapter } from './event/socket.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,9 +24,11 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   });
+
+  app.useWebSocketAdapter(new AuthenicatedSocketAdapter(app));
 
   await app.listen(3001);
 }
