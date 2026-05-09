@@ -237,9 +237,13 @@ export type CommentsScalarFieldEnum = (typeof CommentsScalarFieldEnum)[keyof typ
 export const NotificationScalarFieldEnum = {
   id: 'id',
   receiverId: 'receiverId',
-  senderId: 'senderId',
   purpose: 'purpose',
-  message: 'message',
+  content: 'content',
+  storyId: 'storyId',
+  postId: 'postId',
+  reelId: 'reelId',
+  chatId: 'chatId',
+  messageId: 'messageId',
   isRead: 'isRead',
   createdAt: 'createdAt'
 } as const
@@ -408,8 +412,12 @@ export type CommentsOrderByRelevanceFieldEnum = (typeof CommentsOrderByRelevance
 export const NotificationOrderByRelevanceFieldEnum = {
   id: 'id',
   receiverId: 'receiverId',
-  senderId: 'senderId',
-  message: 'message'
+  content: 'content',
+  storyId: 'storyId',
+  postId: 'postId',
+  reelId: 'reelId',
+  chatId: 'chatId',
+  messageId: 'messageId'
 } as const
 
 export type NotificationOrderByRelevanceFieldEnum = (typeof NotificationOrderByRelevanceFieldEnum)[keyof typeof NotificationOrderByRelevanceFieldEnum]

@@ -27,10 +27,12 @@ export type Media = (typeof Media)[keyof typeof Media]
 
 
 export const Purpose = {
-  LIKE: 'LIKE',
   COMMENT: 'COMMENT',
   MESSAGE: 'MESSAGE',
-  FOLLOW: 'FOLLOW'
+  POST: 'POST',
+  REEL: 'REEL',
+  STORY: 'STORY',
+  CHAT: 'CHAT'
 } as const
 
 export type Purpose = (typeof Purpose)[keyof typeof Purpose]

@@ -201,6 +201,7 @@ export type ReelWhereInput = {
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   likes?: Prisma.LikesListRelationFilter
   comments?: Prisma.CommentsListRelationFilter
+  notify?: Prisma.NotificationListRelationFilter
 }
 
 export type ReelOrderByWithRelationInput = {
@@ -214,6 +215,7 @@ export type ReelOrderByWithRelationInput = {
   profile?: Prisma.ProfileOrderByWithRelationInput
   likes?: Prisma.LikesOrderByRelationAggregateInput
   comments?: Prisma.CommentsOrderByRelationAggregateInput
+  notify?: Prisma.NotificationOrderByRelationAggregateInput
   _relevance?: Prisma.ReelOrderByRelevanceInput
 }
 
@@ -231,6 +233,7 @@ export type ReelWhereUniqueInput = Prisma.AtLeast<{
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   likes?: Prisma.LikesListRelationFilter
   comments?: Prisma.CommentsListRelationFilter
+  notify?: Prisma.NotificationListRelationFilter
 }, "id">
 
 export type ReelOrderByWithAggregationInput = {
@@ -269,6 +272,7 @@ export type ReelCreateInput = {
   profile: Prisma.ProfileCreateNestedOneWithoutReelsInput
   likes?: Prisma.LikesCreateNestedManyWithoutReelInput
   comments?: Prisma.CommentsCreateNestedManyWithoutReelInput
+  notify?: Prisma.NotificationCreateNestedManyWithoutReelInput
 }
 
 export type ReelUncheckedCreateInput = {
@@ -281,6 +285,7 @@ export type ReelUncheckedCreateInput = {
   updatedAt?: Date | string
   likes?: Prisma.LikesUncheckedCreateNestedManyWithoutReelInput
   comments?: Prisma.CommentsUncheckedCreateNestedManyWithoutReelInput
+  notify?: Prisma.NotificationUncheckedCreateNestedManyWithoutReelInput
 }
 
 export type ReelUpdateInput = {
@@ -293,6 +298,7 @@ export type ReelUpdateInput = {
   profile?: Prisma.ProfileUpdateOneRequiredWithoutReelsNestedInput
   likes?: Prisma.LikesUpdateManyWithoutReelNestedInput
   comments?: Prisma.CommentsUpdateManyWithoutReelNestedInput
+  notify?: Prisma.NotificationUpdateManyWithoutReelNestedInput
 }
 
 export type ReelUncheckedUpdateInput = {
@@ -305,6 +311,7 @@ export type ReelUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   likes?: Prisma.LikesUncheckedUpdateManyWithoutReelNestedInput
   comments?: Prisma.CommentsUncheckedUpdateManyWithoutReelNestedInput
+  notify?: Prisma.NotificationUncheckedUpdateManyWithoutReelNestedInput
 }
 
 export type ReelCreateManyInput = {
@@ -461,6 +468,22 @@ export type ReelUpdateOneWithoutCommentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ReelUpdateToOneWithWhereWithoutCommentsInput, Prisma.ReelUpdateWithoutCommentsInput>, Prisma.ReelUncheckedUpdateWithoutCommentsInput>
 }
 
+export type ReelCreateNestedOneWithoutNotifyInput = {
+  create?: Prisma.XOR<Prisma.ReelCreateWithoutNotifyInput, Prisma.ReelUncheckedCreateWithoutNotifyInput>
+  connectOrCreate?: Prisma.ReelCreateOrConnectWithoutNotifyInput
+  connect?: Prisma.ReelWhereUniqueInput
+}
+
+export type ReelUpdateOneWithoutNotifyNestedInput = {
+  create?: Prisma.XOR<Prisma.ReelCreateWithoutNotifyInput, Prisma.ReelUncheckedCreateWithoutNotifyInput>
+  connectOrCreate?: Prisma.ReelCreateOrConnectWithoutNotifyInput
+  upsert?: Prisma.ReelUpsertWithoutNotifyInput
+  disconnect?: Prisma.ReelWhereInput | boolean
+  delete?: Prisma.ReelWhereInput | boolean
+  connect?: Prisma.ReelWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ReelUpdateToOneWithWhereWithoutNotifyInput, Prisma.ReelUpdateWithoutNotifyInput>, Prisma.ReelUncheckedUpdateWithoutNotifyInput>
+}
+
 export type ReelCreateWithoutProfileInput = {
   id?: string
   videoUrl: string
@@ -470,6 +493,7 @@ export type ReelCreateWithoutProfileInput = {
   updatedAt?: Date | string
   likes?: Prisma.LikesCreateNestedManyWithoutReelInput
   comments?: Prisma.CommentsCreateNestedManyWithoutReelInput
+  notify?: Prisma.NotificationCreateNestedManyWithoutReelInput
 }
 
 export type ReelUncheckedCreateWithoutProfileInput = {
@@ -481,6 +505,7 @@ export type ReelUncheckedCreateWithoutProfileInput = {
   updatedAt?: Date | string
   likes?: Prisma.LikesUncheckedCreateNestedManyWithoutReelInput
   comments?: Prisma.CommentsUncheckedCreateNestedManyWithoutReelInput
+  notify?: Prisma.NotificationUncheckedCreateNestedManyWithoutReelInput
 }
 
 export type ReelCreateOrConnectWithoutProfileInput = {
@@ -531,6 +556,7 @@ export type ReelCreateWithoutLikesInput = {
   updatedAt?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutReelsInput
   comments?: Prisma.CommentsCreateNestedManyWithoutReelInput
+  notify?: Prisma.NotificationCreateNestedManyWithoutReelInput
 }
 
 export type ReelUncheckedCreateWithoutLikesInput = {
@@ -542,6 +568,7 @@ export type ReelUncheckedCreateWithoutLikesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   comments?: Prisma.CommentsUncheckedCreateNestedManyWithoutReelInput
+  notify?: Prisma.NotificationUncheckedCreateNestedManyWithoutReelInput
 }
 
 export type ReelCreateOrConnectWithoutLikesInput = {
@@ -569,6 +596,7 @@ export type ReelUpdateWithoutLikesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutReelsNestedInput
   comments?: Prisma.CommentsUpdateManyWithoutReelNestedInput
+  notify?: Prisma.NotificationUpdateManyWithoutReelNestedInput
 }
 
 export type ReelUncheckedUpdateWithoutLikesInput = {
@@ -580,6 +608,7 @@ export type ReelUncheckedUpdateWithoutLikesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   comments?: Prisma.CommentsUncheckedUpdateManyWithoutReelNestedInput
+  notify?: Prisma.NotificationUncheckedUpdateManyWithoutReelNestedInput
 }
 
 export type ReelCreateWithoutCommentsInput = {
@@ -591,6 +620,7 @@ export type ReelCreateWithoutCommentsInput = {
   updatedAt?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutReelsInput
   likes?: Prisma.LikesCreateNestedManyWithoutReelInput
+  notify?: Prisma.NotificationCreateNestedManyWithoutReelInput
 }
 
 export type ReelUncheckedCreateWithoutCommentsInput = {
@@ -602,6 +632,7 @@ export type ReelUncheckedCreateWithoutCommentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   likes?: Prisma.LikesUncheckedCreateNestedManyWithoutReelInput
+  notify?: Prisma.NotificationUncheckedCreateNestedManyWithoutReelInput
 }
 
 export type ReelCreateOrConnectWithoutCommentsInput = {
@@ -629,6 +660,7 @@ export type ReelUpdateWithoutCommentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutReelsNestedInput
   likes?: Prisma.LikesUpdateManyWithoutReelNestedInput
+  notify?: Prisma.NotificationUpdateManyWithoutReelNestedInput
 }
 
 export type ReelUncheckedUpdateWithoutCommentsInput = {
@@ -640,6 +672,71 @@ export type ReelUncheckedUpdateWithoutCommentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   likes?: Prisma.LikesUncheckedUpdateManyWithoutReelNestedInput
+  notify?: Prisma.NotificationUncheckedUpdateManyWithoutReelNestedInput
+}
+
+export type ReelCreateWithoutNotifyInput = {
+  id?: string
+  videoUrl: string
+  cloudId: string
+  caption?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile: Prisma.ProfileCreateNestedOneWithoutReelsInput
+  likes?: Prisma.LikesCreateNestedManyWithoutReelInput
+  comments?: Prisma.CommentsCreateNestedManyWithoutReelInput
+}
+
+export type ReelUncheckedCreateWithoutNotifyInput = {
+  id?: string
+  profileId: string
+  videoUrl: string
+  cloudId: string
+  caption?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  likes?: Prisma.LikesUncheckedCreateNestedManyWithoutReelInput
+  comments?: Prisma.CommentsUncheckedCreateNestedManyWithoutReelInput
+}
+
+export type ReelCreateOrConnectWithoutNotifyInput = {
+  where: Prisma.ReelWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReelCreateWithoutNotifyInput, Prisma.ReelUncheckedCreateWithoutNotifyInput>
+}
+
+export type ReelUpsertWithoutNotifyInput = {
+  update: Prisma.XOR<Prisma.ReelUpdateWithoutNotifyInput, Prisma.ReelUncheckedUpdateWithoutNotifyInput>
+  create: Prisma.XOR<Prisma.ReelCreateWithoutNotifyInput, Prisma.ReelUncheckedCreateWithoutNotifyInput>
+  where?: Prisma.ReelWhereInput
+}
+
+export type ReelUpdateToOneWithWhereWithoutNotifyInput = {
+  where?: Prisma.ReelWhereInput
+  data: Prisma.XOR<Prisma.ReelUpdateWithoutNotifyInput, Prisma.ReelUncheckedUpdateWithoutNotifyInput>
+}
+
+export type ReelUpdateWithoutNotifyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
+  caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.ProfileUpdateOneRequiredWithoutReelsNestedInput
+  likes?: Prisma.LikesUpdateManyWithoutReelNestedInput
+  comments?: Prisma.CommentsUpdateManyWithoutReelNestedInput
+}
+
+export type ReelUncheckedUpdateWithoutNotifyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudId?: Prisma.StringFieldUpdateOperationsInput | string
+  caption?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  likes?: Prisma.LikesUncheckedUpdateManyWithoutReelNestedInput
+  comments?: Prisma.CommentsUncheckedUpdateManyWithoutReelNestedInput
 }
 
 export type ReelCreateManyProfileInput = {
@@ -660,6 +757,7 @@ export type ReelUpdateWithoutProfileInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   likes?: Prisma.LikesUpdateManyWithoutReelNestedInput
   comments?: Prisma.CommentsUpdateManyWithoutReelNestedInput
+  notify?: Prisma.NotificationUpdateManyWithoutReelNestedInput
 }
 
 export type ReelUncheckedUpdateWithoutProfileInput = {
@@ -671,6 +769,7 @@ export type ReelUncheckedUpdateWithoutProfileInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   likes?: Prisma.LikesUncheckedUpdateManyWithoutReelNestedInput
   comments?: Prisma.CommentsUncheckedUpdateManyWithoutReelNestedInput
+  notify?: Prisma.NotificationUncheckedUpdateManyWithoutReelNestedInput
 }
 
 export type ReelUncheckedUpdateManyWithoutProfileInput = {
@@ -690,11 +789,13 @@ export type ReelUncheckedUpdateManyWithoutProfileInput = {
 export type ReelCountOutputType = {
   likes: number
   comments: number
+  notify: number
 }
 
 export type ReelCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   likes?: boolean | ReelCountOutputTypeCountLikesArgs
   comments?: boolean | ReelCountOutputTypeCountCommentsArgs
+  notify?: boolean | ReelCountOutputTypeCountNotifyArgs
 }
 
 /**
@@ -721,6 +822,13 @@ export type ReelCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.CommentsWhereInput
 }
 
+/**
+ * ReelCountOutputType without action
+ */
+export type ReelCountOutputTypeCountNotifyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
 
 export type ReelSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -733,6 +841,7 @@ export type ReelSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.Reel$likesArgs<ExtArgs>
   comments?: boolean | Prisma.Reel$commentsArgs<ExtArgs>
+  notify?: boolean | Prisma.Reel$notifyArgs<ExtArgs>
   _count?: boolean | Prisma.ReelCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reel"]>
 
@@ -773,6 +882,7 @@ export type ReelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   likes?: boolean | Prisma.Reel$likesArgs<ExtArgs>
   comments?: boolean | Prisma.Reel$commentsArgs<ExtArgs>
+  notify?: boolean | Prisma.Reel$notifyArgs<ExtArgs>
   _count?: boolean | Prisma.ReelCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ReelIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -788,6 +898,7 @@ export type $ReelPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     profile: Prisma.$ProfilePayload<ExtArgs>
     likes: Prisma.$LikesPayload<ExtArgs>[]
     comments: Prisma.$CommentsPayload<ExtArgs>[]
+    notify: Prisma.$NotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1194,6 +1305,7 @@ export interface Prisma__ReelClient<T, Null = never, ExtArgs extends runtime.Typ
   profile<T extends Prisma.ProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   likes<T extends Prisma.Reel$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reel$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LikesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   comments<T extends Prisma.Reel$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reel$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notify<T extends Prisma.Reel$notifyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reel$notifyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1676,6 +1788,30 @@ export type Reel$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.CommentsScalarFieldEnum | Prisma.CommentsScalarFieldEnum[]
+}
+
+/**
+ * Reel.notify
+ */
+export type Reel$notifyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**

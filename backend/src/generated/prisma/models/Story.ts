@@ -192,6 +192,7 @@ export type StoryWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   storyMedia?: Prisma.StoryMediaListRelationFilter
+  notify?: Prisma.NotificationListRelationFilter
 }
 
 export type StoryOrderByWithRelationInput = {
@@ -203,6 +204,7 @@ export type StoryOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   profile?: Prisma.ProfileOrderByWithRelationInput
   storyMedia?: Prisma.StoryMediaOrderByRelationAggregateInput
+  notify?: Prisma.NotificationOrderByRelationAggregateInput
   _relevance?: Prisma.StoryOrderByRelevanceInput
 }
 
@@ -218,6 +220,7 @@ export type StoryWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Story"> | Date | string
   profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
   storyMedia?: Prisma.StoryMediaListRelationFilter
+  notify?: Prisma.NotificationListRelationFilter
 }, "id" | "profileId">
 
 export type StoryOrderByWithAggregationInput = {
@@ -252,6 +255,7 @@ export type StoryCreateInput = {
   updatedAt?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutStoryInput
   storyMedia?: Prisma.StoryMediaCreateNestedManyWithoutStoryInput
+  notify?: Prisma.NotificationCreateNestedManyWithoutStoryInput
 }
 
 export type StoryUncheckedCreateInput = {
@@ -262,6 +266,7 @@ export type StoryUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   storyMedia?: Prisma.StoryMediaUncheckedCreateNestedManyWithoutStoryInput
+  notify?: Prisma.NotificationUncheckedCreateNestedManyWithoutStoryInput
 }
 
 export type StoryUpdateInput = {
@@ -272,6 +277,7 @@ export type StoryUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutStoryNestedInput
   storyMedia?: Prisma.StoryMediaUpdateManyWithoutStoryNestedInput
+  notify?: Prisma.NotificationUpdateManyWithoutStoryNestedInput
 }
 
 export type StoryUncheckedUpdateInput = {
@@ -282,6 +288,7 @@ export type StoryUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   storyMedia?: Prisma.StoryMediaUncheckedUpdateManyWithoutStoryNestedInput
+  notify?: Prisma.NotificationUncheckedUpdateManyWithoutStoryNestedInput
 }
 
 export type StoryCreateManyInput = {
@@ -399,6 +406,22 @@ export type StoryUpdateOneRequiredWithoutStoryMediaNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StoryUpdateToOneWithWhereWithoutStoryMediaInput, Prisma.StoryUpdateWithoutStoryMediaInput>, Prisma.StoryUncheckedUpdateWithoutStoryMediaInput>
 }
 
+export type StoryCreateNestedOneWithoutNotifyInput = {
+  create?: Prisma.XOR<Prisma.StoryCreateWithoutNotifyInput, Prisma.StoryUncheckedCreateWithoutNotifyInput>
+  connectOrCreate?: Prisma.StoryCreateOrConnectWithoutNotifyInput
+  connect?: Prisma.StoryWhereUniqueInput
+}
+
+export type StoryUpdateOneWithoutNotifyNestedInput = {
+  create?: Prisma.XOR<Prisma.StoryCreateWithoutNotifyInput, Prisma.StoryUncheckedCreateWithoutNotifyInput>
+  connectOrCreate?: Prisma.StoryCreateOrConnectWithoutNotifyInput
+  upsert?: Prisma.StoryUpsertWithoutNotifyInput
+  disconnect?: Prisma.StoryWhereInput | boolean
+  delete?: Prisma.StoryWhereInput | boolean
+  connect?: Prisma.StoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StoryUpdateToOneWithWhereWithoutNotifyInput, Prisma.StoryUpdateWithoutNotifyInput>, Prisma.StoryUncheckedUpdateWithoutNotifyInput>
+}
+
 export type StoryCreateWithoutProfileInput = {
   id?: string
   expiresAt: Date | string
@@ -406,6 +429,7 @@ export type StoryCreateWithoutProfileInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   storyMedia?: Prisma.StoryMediaCreateNestedManyWithoutStoryInput
+  notify?: Prisma.NotificationCreateNestedManyWithoutStoryInput
 }
 
 export type StoryUncheckedCreateWithoutProfileInput = {
@@ -415,6 +439,7 @@ export type StoryUncheckedCreateWithoutProfileInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   storyMedia?: Prisma.StoryMediaUncheckedCreateNestedManyWithoutStoryInput
+  notify?: Prisma.NotificationUncheckedCreateNestedManyWithoutStoryInput
 }
 
 export type StoryCreateOrConnectWithoutProfileInput = {
@@ -440,6 +465,7 @@ export type StoryUpdateWithoutProfileInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   storyMedia?: Prisma.StoryMediaUpdateManyWithoutStoryNestedInput
+  notify?: Prisma.NotificationUpdateManyWithoutStoryNestedInput
 }
 
 export type StoryUncheckedUpdateWithoutProfileInput = {
@@ -449,6 +475,7 @@ export type StoryUncheckedUpdateWithoutProfileInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   storyMedia?: Prisma.StoryMediaUncheckedUpdateManyWithoutStoryNestedInput
+  notify?: Prisma.NotificationUncheckedUpdateManyWithoutStoryNestedInput
 }
 
 export type StoryCreateWithoutStoryMediaInput = {
@@ -458,6 +485,7 @@ export type StoryCreateWithoutStoryMediaInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   profile: Prisma.ProfileCreateNestedOneWithoutStoryInput
+  notify?: Prisma.NotificationCreateNestedManyWithoutStoryInput
 }
 
 export type StoryUncheckedCreateWithoutStoryMediaInput = {
@@ -467,6 +495,7 @@ export type StoryUncheckedCreateWithoutStoryMediaInput = {
   isReady?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  notify?: Prisma.NotificationUncheckedCreateNestedManyWithoutStoryInput
 }
 
 export type StoryCreateOrConnectWithoutStoryMediaInput = {
@@ -492,6 +521,7 @@ export type StoryUpdateWithoutStoryMediaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   profile?: Prisma.ProfileUpdateOneRequiredWithoutStoryNestedInput
+  notify?: Prisma.NotificationUpdateManyWithoutStoryNestedInput
 }
 
 export type StoryUncheckedUpdateWithoutStoryMediaInput = {
@@ -501,6 +531,63 @@ export type StoryUncheckedUpdateWithoutStoryMediaInput = {
   isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  notify?: Prisma.NotificationUncheckedUpdateManyWithoutStoryNestedInput
+}
+
+export type StoryCreateWithoutNotifyInput = {
+  id?: string
+  expiresAt: Date | string
+  isReady?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  profile: Prisma.ProfileCreateNestedOneWithoutStoryInput
+  storyMedia?: Prisma.StoryMediaCreateNestedManyWithoutStoryInput
+}
+
+export type StoryUncheckedCreateWithoutNotifyInput = {
+  id?: string
+  profileId: string
+  expiresAt: Date | string
+  isReady?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  storyMedia?: Prisma.StoryMediaUncheckedCreateNestedManyWithoutStoryInput
+}
+
+export type StoryCreateOrConnectWithoutNotifyInput = {
+  where: Prisma.StoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.StoryCreateWithoutNotifyInput, Prisma.StoryUncheckedCreateWithoutNotifyInput>
+}
+
+export type StoryUpsertWithoutNotifyInput = {
+  update: Prisma.XOR<Prisma.StoryUpdateWithoutNotifyInput, Prisma.StoryUncheckedUpdateWithoutNotifyInput>
+  create: Prisma.XOR<Prisma.StoryCreateWithoutNotifyInput, Prisma.StoryUncheckedCreateWithoutNotifyInput>
+  where?: Prisma.StoryWhereInput
+}
+
+export type StoryUpdateToOneWithWhereWithoutNotifyInput = {
+  where?: Prisma.StoryWhereInput
+  data: Prisma.XOR<Prisma.StoryUpdateWithoutNotifyInput, Prisma.StoryUncheckedUpdateWithoutNotifyInput>
+}
+
+export type StoryUpdateWithoutNotifyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  profile?: Prisma.ProfileUpdateOneRequiredWithoutStoryNestedInput
+  storyMedia?: Prisma.StoryMediaUpdateManyWithoutStoryNestedInput
+}
+
+export type StoryUncheckedUpdateWithoutNotifyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  storyMedia?: Prisma.StoryMediaUncheckedUpdateManyWithoutStoryNestedInput
 }
 
 
@@ -510,10 +597,12 @@ export type StoryUncheckedUpdateWithoutStoryMediaInput = {
 
 export type StoryCountOutputType = {
   storyMedia: number
+  notify: number
 }
 
 export type StoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   storyMedia?: boolean | StoryCountOutputTypeCountStoryMediaArgs
+  notify?: boolean | StoryCountOutputTypeCountNotifyArgs
 }
 
 /**
@@ -533,6 +622,13 @@ export type StoryCountOutputTypeCountStoryMediaArgs<ExtArgs extends runtime.Type
   where?: Prisma.StoryMediaWhereInput
 }
 
+/**
+ * StoryCountOutputType without action
+ */
+export type StoryCountOutputTypeCountNotifyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
 
 export type StorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -543,6 +639,7 @@ export type StorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   updatedAt?: boolean
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   storyMedia?: boolean | Prisma.Story$storyMediaArgs<ExtArgs>
+  notify?: boolean | Prisma.Story$notifyArgs<ExtArgs>
   _count?: boolean | Prisma.StoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["story"]>
 
@@ -579,6 +676,7 @@ export type StoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
 export type StoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
   storyMedia?: boolean | Prisma.Story$storyMediaArgs<ExtArgs>
+  notify?: boolean | Prisma.Story$notifyArgs<ExtArgs>
   _count?: boolean | Prisma.StoryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type StoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -593,6 +691,7 @@ export type $StoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     profile: Prisma.$ProfilePayload<ExtArgs>
     storyMedia: Prisma.$StoryMediaPayload<ExtArgs>[]
+    notify: Prisma.$NotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -997,6 +1096,7 @@ export interface Prisma__StoryClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   profile<T extends Prisma.ProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   storyMedia<T extends Prisma.Story$storyMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Story$storyMediaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StoryMediaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notify<T extends Prisma.Story$notifyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Story$notifyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1454,6 +1554,30 @@ export type Story$storyMediaArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.StoryMediaScalarFieldEnum | Prisma.StoryMediaScalarFieldEnum[]
+}
+
+/**
+ * Story.notify
+ */
+export type Story$notifyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**
