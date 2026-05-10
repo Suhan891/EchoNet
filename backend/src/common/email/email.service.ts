@@ -2,6 +2,7 @@ import { Injectable, NotImplementedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createTransport, SendMailOptions, Transporter } from 'nodemailer';
 import { SendEmailDto } from './email.dto';
+import { EmailDto } from 'src/auth/dto/async.work';
 
 @Injectable()
 export class EmailService {
@@ -40,5 +41,22 @@ export class EmailService {
     } catch (error) {
       throw new NotImplementedException(error);
     }
+  }
+
+  async sendGmail(data: EmailDto) {
+    const transporter = createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.EMAIL_PROVIDER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+    await transporter.sendMail({
+      from: 'echonet@gmail.com',
+      to: data.to,
+      subject: data.subject,
+      text: data.text,
+      html: data.html,
+    });
   }
 }
