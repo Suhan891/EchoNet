@@ -43,7 +43,41 @@ export class EmailWorker extends WorkerHost {
     await this.emailService.sendGmail({ to, text, subject, html });
   }
 
-  private async emailForgotPassword(job: Job<EmailEvent>) {}
+  private async emailForgotPassword(job: Job<EmailEvent>) {
+    const data = job.data;
+    const to = data.email;
+    const text = `Hi ${data.name}, your password reset code is: ${data.url}. It expires in 10 minutes.`;
+    const subject = 'Password reset';
+    const html = `
+  <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333; line-height: 1.6;">
+    <h2 style="color: #222;">Password Reset Request</h2>
+    
+    <p>Hi <strong>${data.name}</strong>,</p>
+    
+    <p>We received a request to access your account. Please use the following One-Time Password (OTP) to complete your password reset:</p>
+    
+    <div style="background-color: #f8f9fa; border: 1px dashed #dee2e6; padding: 25px; text-align: center; border-radius: 8px; margin: 25px 0;">
+      <div style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #007bff;">
+        ${data.url}
+      </div>
+      <p style="font-size: 13px; color: #6c757d; margin-top: 10px; margin-bottom: 0;">
+        (This code expires in 10 minutes)
+      </p>
+    </div>
+
+    <p style="font-size: 14px; color: #555;">
+      If you did not request this, you can safely ignore this email. Your password will not change until you use the code above to verify your identity.
+    </p>
+    
+    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;" />
+    
+    <p style="font-size: 12px; color: #999; text-align: center;">
+      Sent to ${data.email} for <strong>Social Media App</strong>
+    </p>
+  </div>
+`;
+    await this.emailService.sendGmail({ to, text, subject, html });
+  }
 
   @OnWorkerEvent('active')
   onAdded(job: Job) {
