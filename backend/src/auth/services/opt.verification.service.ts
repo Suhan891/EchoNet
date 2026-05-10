@@ -13,6 +13,7 @@ export class OtpVerificationService {
 
   private readonly OTP_EXPIRATION_TIME = 10 * 60; // Expiration after 10 min
   private readonly MAX_RETRY_COUNT = 5;
+  private readonly MAX_REQUESTS = 15;
   private readonly SHORT_COOLDOWN_TIME = 60;
   private readonly LONG_COOLDOWN_TIME = 3600;
 
@@ -26,6 +27,11 @@ export class OtpVerificationService {
       `${email}:otp_retry_count`,
       0,
       this.OTP_EXPIRATION_TIME,
+    );
+    await this.cacheService.set<boolean>(
+      `${email}:verification`,
+      false,
+      24 * 60 * 60,
     );
   }
 
@@ -61,10 +67,17 @@ export class OtpVerificationService {
   async requestOTP(email: string) {
     await this.isOnCooldown(email);
 
+    const requests = await this.cacheService.get<number>(`${email}:requests`);
+    if (requests && requests > this.MAX_REQUESTS)
+      throw new ForbiddenException('You have crossed the daily limit');
+
     const otp = randomInt(100000, 1000000).toString();
     const hashedOtp = bcrypt.hashSync(otp, 10);
 
     await this.storeOtp(email, hashedOtp);
+    if (requests) await this.cacheService.increment(`${email}:requests`);
+    if (!requests)
+      await this.cacheService.set<number>(`${email}:requests`, 0, 24 * 60 * 60);
 
     await this.applyCooldown(email, this.SHORT_COOLDOWN_TIME);
     return otp;
@@ -92,6 +105,11 @@ export class OtpVerificationService {
     }
 
     await this.cacheService.delByPattern(`${email}`);
+    await this.cacheService.set<boolean>(
+      `${email}:verification`,
+      true,
+      24 * 60 * 60,
+    );
     return isVerified;
   }
 }

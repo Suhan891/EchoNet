@@ -18,21 +18,21 @@ export class JwtCreate {
     });
   }
 
-  accessToken(payload: any) {
+  accessToken(payload: accessDto) {
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_ACCESS_SECRET,
       expiresIn: '30m',
     });
   }
 
-  refreshToken(payload: any) {
+  refreshToken(payload: refreshDto) {
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: '7d',
     });
   }
 
-  forgotPassToken(payload: any) {
+  forgotPassToken(payload: passResetDto) {
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_PASSWORD_SECRET || 'forgot_pass',
       expiresIn: '1d',

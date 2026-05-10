@@ -1,32 +1,38 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto';
 
 import { RegisterDto } from './dto/register.dto';
 import { EmailService } from 'src/common/email/email.service';
-import { JwtCreate } from './tokens/token.service';
+import { JwtCreate, JwtVerify } from './tokens/token.service';
 import { CreateProfileDto } from 'src/profile/dto/profile.dto';
 import { verifyDto } from './dto/verify-email.dto';
 import { ProfileService } from 'src/profile/profile.service';
 import { LoginDto, RefreshAccessDto, resetDto } from './dto/login.dto';
 import { authUserDto } from './tokens/token.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
+import { EmailEvent } from './dto/async.work';
+import EventEmitter2 from 'eventemitter2';
+import { OtpVerificationService } from './services/opt.verification.service';
+import { NewPassDto, OtpVerifyDto, TokenDto } from './dto/password.reset.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private mailService: EmailService,
-    private tokenService: JwtCreate,
+    private jwtCreate: JwtCreate,
+    private jwtVerify: JwtVerify,
     private profileService: ProfileService,
     private cacheService: AppCacheService,
+    private eventEmitter: EventEmitter2,
+    private otpService: OtpVerificationService,
   ) {}
 
   async register(registerData: RegisterDto) {
@@ -34,7 +40,6 @@ export class AuthService {
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     });
-    console.log(existingUser);
 
     if (existingUser) {
       throw new ConflictException('Email already registered');
@@ -56,14 +61,21 @@ export class AuthService {
       },
     });
 
-    const token = this.tokenService.emailVerifyToken({ sub: user.id });
+    const token = this.jwtCreate.emailVerifyToken({ sub: user.id });
     const url = `http://localhost:3000/verify?token=${token}`;
-    await this.mailService.sendEmail({
-      receipents: user.email,
-      text: `Welcome ${user.username} to Social Media App`,
-      html: `<p>Please click this below link to verify: <br/>${url}</p>`,
-      subject: 'Email verification',
-    });
+    // await this.mailService.sendEmail({
+    //   receipents: user.email,
+    //   text: `Welcome ${user.username} to Social Media App`,
+    //   html: `<p>Please click this below link to verify: <br/>${url}</p>`,
+    //   subject: 'Email verification',
+    // });
+    const eventData = {
+      name: user.username,
+      email: user.email,
+      url,
+    } as EmailEvent;
+
+    this.eventEmitter.emit('email.verify', eventData);
 
     return {
       ...user,
@@ -185,42 +197,103 @@ export class AuthService {
   async reset(data: resetDto) {
     const user = await this.prisma.user.findUnique({
       where: { email: data.email },
-      select: { id: true, isEmailVerified: true },
-    });
-    if (!user) throw new NotFoundException('No such user exists');
-
-    if (user.isEmailVerified !== true)
-      throw new UnauthorizedException('Firstly verify your email');
-
-    const rawToken = crypto.randomBytes(32).toString('hex');
-    const tokenHash = crypto
-      .createHash('sha256')
-      .update(rawToken)
-      .digest('hex');
-
-    const updatedUser = await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        passResetToken: tokenHash,
-        passResetExpTime: new Date(Date.now() + 15 * 60 * 1000),
-      },
       select: {
-        passResetExpTime: true,
-        email: true,
         username: true,
+        email: true,
+        isEmailVerified: true,
+        tokenVersion: true,
       },
     });
 
-    const token = this.tokenService.forgotPassToken({ sub: user.id });
-    const url = `http://localhost:3000/verify-reset?token=${token}`;
-    await this.mailService.sendEmail({
-      receipents: updatedUser.email,
-      text: `Hello ${updatedUser.username} there was a reset password request`,
-      html: `<p>Please click this below link to create a new password: <br/>${url}</p>`,
-      subject: 'Password Reset',
-    });
+    if (!user) {
+      // If this email is not registered => to make the user feel like it is present
+      const token = this.jwtCreate.forgotPassToken({
+        email: data.email,
+        isValidUser: false,
+        name: undefined,
+        tokenVersion: 0,
+      });
+      return token;
+    }
 
-    return updatedUser;
+    if (!user.isEmailVerified)
+      throw new BadRequestException('Validate your email before reset');
+
+    const otp = await this.otpService.requestOTP(user.email);
+    const eventData = {
+      name: user.username,
+      email: user.email,
+      url: otp,
+    } as EmailEvent;
+
+    this.eventEmitter.emit('email.forgot-pass', eventData);
+    const token = this.jwtCreate.forgotPassToken({
+      email: user.email,
+      isValidUser: true,
+      name: user.username,
+      tokenVersion: user.tokenVersion,
+    });
+    return token;
+  }
+
+  async reEmail(data: TokenDto) {
+    const payload = this.jwtVerify.forgotPassToken(data.token);
+    if (!payload) throw new ForbiddenException('Invalid token');
+    if (!payload.isValidUser) return; // Not a valid user
+    const isVerified = await this.cacheService.get<boolean>(
+      `${payload.email}:verification`,
+    );
+    if (isVerified === null)
+      throw new BadRequestException('Your session has expired');
+
+    const otp = await this.otpService.requestOTP(payload.email);
+
+    const eventData = {
+      name: payload.name,
+      email: payload.email,
+      url: otp,
+    } as EmailEvent;
+
+    this.eventEmitter.emit('email.forgot-pass', eventData);
+  }
+
+  async verifyOtp(data: OtpVerifyDto) {
+    const { token, otp } = data;
+    const payload = this.jwtVerify.forgotPassToken(token);
+    if (!payload) throw new ForbiddenException('Invalid token');
+    const { email, isValidUser } = payload;
+    if (!isValidUser) throw new BadRequestException('Invalid otp'); // For those which is a wrong email => If attacker cannot guess the email
+
+    const isValidOtp = await this.otpService.verifyOtp(email, otp.toString());
+
+    return isValidOtp;
+  }
+
+  async newPassword(data: NewPassDto) {
+    const { token, password } = data;
+    const payload = this.jwtVerify.forgotPassToken(token);
+    if (!payload) throw new ForbiddenException('Invalid token');
+
+    const { email, isValidUser, tokenVersion } = payload;
+    if (!isValidUser)
+      throw new BadRequestException('Verification still not completed');
+
+    const isVerified = await this.cacheService.get<boolean>(
+      `${email}:verification`,
+    );
+
+    if (isVerified === null)
+      throw new BadRequestException('Verification time has expired');
+    if (!isVerified)
+      throw new BadRequestException('Verification still not completed');
+
+    const hashedPassword = this.hashPassword(password);
+
+    await this.prisma.user.update({
+      where: { email },
+      data: { password: hashedPassword, tokenVersion: tokenVersion + 1 },
+    });
+    await this.cacheService.delete(`${email}:verification`);
   }
 
   private hashPassword(password: string): string {

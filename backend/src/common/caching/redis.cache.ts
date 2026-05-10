@@ -17,6 +17,10 @@ export class AppCacheService {
     await this.redis.set(key, JSON.stringify(value), { EX: ttl ?? 60 });
   }
 
+  async increment(key: string) {
+    await this.redis.incr(key);
+  }
+
   async getMatch(key: string): Promise<string[]> {
     const matchKey = `${key}:*`;
     let allKeys = [] as string[];

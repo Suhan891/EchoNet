@@ -11,8 +11,10 @@ export interface accessDto {
   role: string;
 }
 export interface passResetDto {
-  sub: string; // Random token created and stored in db
-  userId: string;
+  email: string;
+  name?: string;
+  isValidUser: boolean;
+  tokenVersion: number;
 }
 
 export interface UserProfile {
