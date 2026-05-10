@@ -12,7 +12,7 @@ import { JwtCreate } from './tokens/token.service';
 class userDto {
   id: string;
   role: string;
-  tokenVersion: string;
+  tokenVersion: number;
 }
 
 @Injectable()

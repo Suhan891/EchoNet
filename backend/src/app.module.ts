@@ -25,6 +25,7 @@ import { JwtAuthGaurd } from './common/gaurds/jwt-auth';
 import { JobsModule } from './jobs/jobs.module';
 import { GlobaExceptionFilter } from './common/filters/http-exception.filter';
 import { EventModule } from './event/event.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -39,7 +40,6 @@ import { EventModule } from './event/event.module';
         removeOnComplete: true,
       },
     }),
-    // BullModule.registerQueue({ name: 'stories' }, { name: 'email' }),
     EventEmitterModule.forRoot({
       global: true,
       wildcard: false,
@@ -69,6 +69,7 @@ import { EventModule } from './event/event.module';
     CommonModule,
     JobsModule,
     EventModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [

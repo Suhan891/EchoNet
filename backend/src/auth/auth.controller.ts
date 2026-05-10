@@ -27,6 +27,7 @@ import type { authUserDto } from './tokens/token.dto';
 import { Throttle } from '@nestjs/throttler';
 import { NotActive } from 'src/profile/decorator/no-profile';
 import type { Response } from 'express';
+import { NewPassDto, OtpVerifyDto, TokenDto } from './dto/password.reset.dto';
 
 @Controller('auth')
 @NoAccount(true)
@@ -103,9 +104,27 @@ export class AuthController {
     return this.authService.logout(user);
   }
 
-  @Post('reset')
+  @Put('reset')
   @ResponseMessage('Reset Password session started.Please check your inbox')
   async reset(@Body() data: resetDto) {
     return this.authService.reset(data);
+  }
+
+  @Put('reset/re-email')
+  @ResponseMessage('Otp sent to your registered email')
+  async reEmail(@Body() data: TokenDto) {
+    return await this.authService.reEmail(data);
+  }
+
+  @Post('reset/otp')
+  @ResponseMessage('Otp verified, create a new password')
+  async validateOtp(@Body() data: OtpVerifyDto) {
+    return this.authService.verifyOtp(data);
+  }
+
+  @Post('reset/password')
+  @ResponseMessage('Password updated. Login again')
+  async updatePassword(@Body() data: NewPassDto) {
+    return this.authService.newPassword(data);
   }
 }
