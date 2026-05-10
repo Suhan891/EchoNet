@@ -139,7 +139,7 @@ export class CloudinaryService implements OnModuleInit {
           resource_type: 'image',
           transformation: [
             { height: 1080, width: 1350, crop: 'fill', gravity: 'auto' },
-          ], // Combined into one object
+          ],
         },
         (
           error: UploadApiErrorResponse | undefined,
@@ -190,28 +190,24 @@ export class CloudinaryService implements OnModuleInit {
     imgPublicId: string,
     fileName: string,
   ): Promise<CloudinaryUploadResult> {
+    const imageLayer = imgPublicId.replace(/\//g, ':');
+
     return new Promise<UploadApiResponse>((resolve, reject) => {
       const uploadStream = this.cloudinary.uploader.upload_stream(
         {
-          folder: `social_media/story`,
+          folder: 'social_media/story',
           public_id: fileName,
           resource_type: 'video',
           transformation: [
-            { width: 1080, height: 1350, crop: 'fill' },
-
-            { underlay: imgPublicId.replace(/\//g, ':') },
-
+            { width: 1350, height: 1080, crop: 'fill' }, // base canvas
+            { overlay: { resource_type: 'image', public_id: imageLayer } },
+            { width: 1350, height: 1080, crop: 'fill' }, // ← no gravity here
             { flags: 'layer_apply' },
-
             { end_offset: '15' },
-
             { quality: 'auto', fetch_format: 'mp4' },
           ],
         },
-        (
-          error: UploadApiErrorResponse | undefined,
-          result: UploadApiResponse | undefined,
-        ) => {
+        (error, result) => {
           if (error) return reject(new Error(error.message));
           if (!result)
             return reject(new Error('Upload failed: No result returned'));
@@ -222,7 +218,6 @@ export class CloudinaryService implements OnModuleInit {
       streamifier.createReadStream(audioFile.buffer).pipe(uploadStream);
     });
   }
-
   async delete(publicId: string): Promise<any> {
     return await this.cloudinary.uploader.destroy(publicId);
   }
