@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { deleteCookie } from "@/service/common/cookies";
 import { useUserStore } from "@/stores/UserStore";
 
-export function useProfileDetails() {
+export function useProfileDetails(): boolean {
   const router = useRouter();
 
   const userId = useUserStore((s) => s.userId);
@@ -36,7 +36,7 @@ export function useProfileDetails() {
   const storeSavedPosts = useProfileStore((state) => state.savedPosts);
   const storeIsPrivate = useProfileStore((state) => state.isPrivate);
 
-  const { data: profile, isSuccess, isError, error } = useMyProfile(userId);
+  const { data: profile, isSuccess, isError, error, isLoading } = useMyProfile(userId);
 
   useEffect(() => {
     if (!userId) return;
@@ -61,7 +61,7 @@ export function useProfileDetails() {
         );
       if (storeName !== profile.data.name) setName(profile.data.name);
       if (storeBio !== profile.data.bio) setBio(profile.data.bio);
-      if (storeStory !== profile.data.story?.id) setStory(profile.data.story?.id ?? null);
+      if (storeStory !== profile.data.story?.id) setStory(profile.data.story?.id ?? undefined);
       if (storePosts !== profile.data._count.posts)
         setPosts(profile.data._count.posts);
       if (storeReels !== profile.data._count.reels)
@@ -103,5 +103,5 @@ export function useProfileDetails() {
     setSavedPosts,
     setIsPrivate,
   ]);
-  return isSuccess;
+  return isLoading;
 }

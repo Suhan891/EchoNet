@@ -110,7 +110,7 @@ export default function Login() {
                 <FieldLabel htmlFor="password" className="ps-1.5">
                   Password{" "}
                   <div className="ml-auto text-sm text-amber-50 hover:text-blue-400">
-                    <Link href={"#"}>Forgot password</Link>{" "}
+                    <Link href={"/reset"}>Forgot password</Link>{" "}
                   </div>{" "}
                 </FieldLabel>
                 <InputGroup>

@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { RegisterRequest, VerifyRequest } from "@/service/auth/authentication";
+import { RegisterRequest, ReRequestEmail, StartReset, UpdatePassword, VerifyOtp, VerifyRequest } from "@/service/auth/authentication";
 import {
   LoginRequest,
   RefreshTokenRequest,
@@ -19,6 +19,7 @@ import {
 } from "@/types/auth.user";
 import { GetUser, Logout } from "@/service/auth/authorise";
 import { queryKeys } from "@/utils/query.key";
+import { startResetType, TokenType, upPassType, VerifyOtpType } from "@/validations/auth/password-reset";
 
 export function useRegister() {
   return useMutation<
@@ -64,4 +65,25 @@ export function useLogout() {
   return useMutation<SuccessResponse<LogoutResult>, ErrorResponse>({
     mutationFn: () => Logout(),
   });
+}
+
+export function useStartReset() {
+  return useMutation<SuccessResponse<string>,ErrorResponse,startResetType>({
+    mutationFn: (payload) => StartReset(payload)
+  })
+}
+export function useReRequestEmail() {
+  return useMutation<SuccessResponse<null>,ErrorResponse, {token: TokenType}>({
+    mutationFn: (payload) => ReRequestEmail(payload)
+  })
+}
+export function useValidateOtp() {
+  return useMutation<SuccessResponse<null>,ErrorResponse, VerifyOtpType>({
+    mutationFn: (payload) => VerifyOtp(payload)
+  })
+}
+export function useUpdatePassword() {
+  return useMutation<SuccessResponse<null>,ErrorResponse, upPassType>({
+    mutationFn: (payload) => UpdatePassword(payload)
+  })
 }
