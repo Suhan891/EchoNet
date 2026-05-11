@@ -71,10 +71,8 @@ model Profile {
   pofileLikes      Likes[]
   profileCommentes Comments[]
 
-  chat    Chat[]        @relation("ProfileChats")
-  admin   Chat[]        @relation("ChatCreator")
-  message Message[]
-  msgView MessageView[]
+  chats ChatMember[]
+  admin Chat[]       @relation("ChatCreator")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -100,7 +98,7 @@ model Post {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
-  isReady Boolean @default(false) // Later me removed
+  isReady Boolean @default(false) // Later be removed
 
   caption     String
   description String?
@@ -132,7 +130,7 @@ model SavePost {
   id          String @id @default(uuid())
   postMediaId String
 
-  profileId String // It will be the id of the user who saves
+  profileId String // It is id of the user who saves
 
   post    PostMedia @relation(fields: [postMediaId], references: [id], onDelete: Cascade)
   profile Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
@@ -279,18 +277,17 @@ model Notification {
   isApproved Boolean?
 
   // After making them as isRead true => these id would be sent in return 
-  storyId String?
-  postId String?
-  reelId String?
-  chatId String?
+  storyId   String?
+  postId    String?
+  reelId    String?
+  chatId    String?
   messageId String?
 
-  story Story? @relation("StoryNotify", fields: [storyId], references: [id], onDelete: Cascade)
-  post Post? @relation("PostNotify", fields: [postId], references: [id], onDelete: Cascade)
-  reel Reel? @relation("ReelNotify", fields: [reelId], references: [id], onDelete: Cascade)
-  chat Chat? @relation("NewChatNotify", fields: [chatId], references: [id], onDelete: Cascade)
+  story   Story?   @relation("StoryNotify", fields: [storyId], references: [id], onDelete: Cascade)
+  post    Post?    @relation("PostNotify", fields: [postId], references: [id], onDelete: Cascade)
+  reel    Reel?    @relation("ReelNotify", fields: [reelId], references: [id], onDelete: Cascade)
+  chat    Chat?    @relation("NewChatNotify", fields: [chatId], references: [id], onDelete: Cascade)
   message Message? @relation("NewMessageNotify", fields: [messageId], references: [id], onDelete: Cascade)
-
 
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -322,6 +319,11 @@ model Job {
   createdAt DateTime @default(now())
 }
 
+enum ChatType {
+  PRIVATE
+  GROUP
+}
+
 model Chat {
   id String @id @default(uuid())
 
@@ -329,17 +331,33 @@ model Chat {
   mediaUrl String?
   cloudId  String?
 
-  profiles Profile[] @relation("ProfileChats")
-  creatorId  String // This could easily handle in both private and group chat
-  creator    Profile  @relation("ChatCreator", fields: [creatorId], references: [id])
+  creatorId String
+  creator   Profile @relation("ChatCreator", fields: [creatorId], references: [id])
+
+  type ChatType
+
+  notify  Notification[] @relation("NewChatNotify")
+  members ChatMember[]
+  message Message[]
+
+  createdAt DateTime @default(now())
+}
+
+model ChatMember {
+  id        String @id @default(uuid())
+  chatId    String
+  profileId String
+  chat      Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  profile  Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  joinedAt DateTime @default(now())
 
   isApproved Boolean? @default(false)
-  isGroup    Boolean  @default(false)
 
-  notify Notification[] @relation("NewChatNotify")
+  message Message[]
+  views   MessageView[]
 
-  message   Message[]
-  createdAt DateTime  @default(now())
+  @@unique([chatId, profileId])
 }
 
 enum Format {
@@ -359,14 +377,14 @@ model Message {
   cloudId  String?
 
   senderId String
-  sender   Profile @relation(fields: [senderId], references: [id])
+  sender   ChatMember @relation(fields: [senderId], references: [id])
 
   replyId String?
   reply   Message?  @relation("MessageReply", fields: [replyId], references: [id])
   replyTo Message[] @relation("MessageReply")
 
   chatId String
-  chat   Chat   @relation(fields: [chatId], references: [id])
+  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   notify Notification[] @relation("NewMessageNotify")
 
@@ -376,12 +394,13 @@ model Message {
 }
 
 model MessageView {
-  id        String   @id @default(uuid())
-  profileId String
-  msgId     String
-  profile   Profile  @relation(fields: [profileId], references: [id])
-  message   Message  @relation(fields: [msgId], references: [id])
-  viewedAt  DateTime @default(now())
+  id       String @id @default(uuid())
+  memberId String
 
-  @@unique([msgId, profileId])
+  msgId    String
+  member   ChatMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  message  Message    @relation(fields: [msgId], references: [id], onDelete: Cascade)
+  viewedAt DateTime   @default(now())
+
+  @@unique([msgId, memberId])
 }
