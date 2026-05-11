@@ -71,6 +71,11 @@ model Profile {
   pofileLikes      Likes[]
   profileCommentes Comments[]
 
+  chat    Chat[]        @relation("ProfileChats")
+  admin   Chat[]        @relation("ChatCreator")
+  message Message[]
+  msgView MessageView[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -271,6 +276,8 @@ model Notification {
   purpose Purpose
   content String
 
+  isApproved Boolean?
+
   // After making them as isRead true => these id would be sent in return 
   storyId String?
   postId String?
@@ -278,9 +285,11 @@ model Notification {
   chatId String?
   messageId String?
 
-  story Story? @relation("StoryNotify", fields: [storyId], references: [id])
-  post Post? @relation("PostNotify", fields: [postId], references: [id])
-  reel Reel? @relation("ReelNotify", fields: [reelId], references: [id])
+  story Story? @relation("StoryNotify", fields: [storyId], references: [id], onDelete: Cascade)
+  post Post? @relation("PostNotify", fields: [postId], references: [id], onDelete: Cascade)
+  reel Reel? @relation("ReelNotify", fields: [reelId], references: [id], onDelete: Cascade)
+  chat Chat? @relation("NewChatNotify", fields: [chatId], references: [id], onDelete: Cascade)
+  message Message? @relation("NewMessageNotify", fields: [messageId], references: [id], onDelete: Cascade)
 
 
   isRead    Boolean  @default(false)
@@ -311,4 +320,68 @@ model Job {
   user   User   @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
+}
+
+model Chat {
+  id String @id @default(uuid())
+
+  name     String?
+  mediaUrl String?
+  cloudId  String?
+
+  profiles Profile[] @relation("ProfileChats")
+  creatorId  String // This could easily handle in both private and group chat
+  creator    Profile  @relation("ChatCreator", fields: [creatorId], references: [id])
+
+  isApproved Boolean? @default(false)
+  isGroup    Boolean  @default(false)
+
+  notify Notification[] @relation("NewChatNotify")
+
+  message   Message[]
+  createdAt DateTime  @default(now())
+}
+
+enum Format {
+  TEXT
+  FILE
+  VIDEO
+  GIF
+  IMAGE
+}
+
+model Message {
+  id String @id @default(uuid())
+
+  format   Format  @default(TEXT)
+  content  String?
+  mediaUrl String?
+  cloudId  String?
+
+  senderId String
+  sender   Profile @relation(fields: [senderId], references: [id])
+
+  replyId String?
+  reply   Message?  @relation("MessageReply", fields: [replyId], references: [id])
+  replyTo Message[] @relation("MessageReply")
+
+  chatId String
+  chat   Chat   @relation(fields: [chatId], references: [id])
+
+  notify Notification[] @relation("NewMessageNotify")
+
+  msgView MessageView[]
+
+  @@index([chatId])
+}
+
+model MessageView {
+  id        String   @id @default(uuid())
+  profileId String
+  msgId     String
+  profile   Profile  @relation(fields: [profileId], references: [id])
+  message   Message  @relation(fields: [msgId], references: [id])
+  viewedAt  DateTime @default(now())
+
+  @@unique([msgId, profileId])
 }
