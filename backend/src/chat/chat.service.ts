@@ -176,4 +176,57 @@ export class ChatService {
     await Promise.all(addMembers);
   }
 
+  async addMembers(
+    profile: profileDto,
+    chat: AddChatDto,
+    otherProf: ChatProfileDto,
+  ) {
+    if (profile.id === otherProf.id)
+      throw new ForbiddenException('You cannot add yourself again in the chat');
+
+    const existingChat = otherProf.chats.find((c) => c.chatId === chat.id);
+
+    if (chat.type !== 'GROUP')
+      throw new BadRequestException('Members can only be added in group chat');
+
+    if (existingChat)
+      throw new BadRequestException('Chat already has this member');
+
+    await this.prisma.chatMember.create({
+      data: {
+        chatId: chat.id,
+        profileId: otherProf.id,
+        isApproved: !otherProf.isPrivate,
+      },
+    });
+
+    const notify = {
+      format: {
+        type: 'CHAT',
+        chatId: chat.id,
+      },
+      content: `${profile.name} has added you in chat ${chat.name}`,
+      receiverId: otherProf.id,
+    } as NotifyDto;
+
+    await this.notifyService.createNotification(notify);
+  }
+
+  async toggleChatApproval(profile: profileDto, chat: ChatDto) {
+    if (chat.type === 'GROUP' && profile.id === chat.creatorId)
+      throw new BadRequestException(
+        'Creator cannot update approval of himself',
+      );
+    const existProf = chat.members.find(
+      (prof) => prof.profileId === profile.id,
+    );
+    if (!existProf)
+      throw new BadRequestException(
+        'You are not a existing member of the chat',
+      );
+    await this.prisma.chatMember.update({
+      where: { id: existProf.id },
+      data: { isApproved: !existProf.isApproved },
+    });
+  }
 }
