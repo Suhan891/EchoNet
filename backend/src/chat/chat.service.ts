@@ -6,10 +6,13 @@ import {
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { profileDto } from 'src/profile/dto/profile.dto';
-import { AddChatDto, ChatDto, ChatProfileDto } from './dto/chat';
+import { AddChatDto, ChatDto, ChatProfileDto } from './dto/chat.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { NotifyDto } from 'src/notification/dto/notification.dto';
 import { GroupChatDto } from './dto/group-chat';
+import { MessageDto } from './dto/message.dto';
+import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
+import { Format } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class ChatService {
@@ -17,37 +20,39 @@ export class ChatService {
     private prisma: PrismaService,
     private cacheService: AppCacheService,
     private notifyService: NotificationService,
+    private cloudService: CloudinaryService,
   ) {}
 
   async getProfileForPersonal(profile: profileDto) {
     const key = `profile:${profile.id}:chat:personal`;
     const cachedPersonal = await this.cacheService.get(key);
     if (cachedPersonal) return cachedPersonal;
-    const profiles = await this.prisma.chat.findMany({
-      // needds more examination
+    const profiles = await this.prisma.profile.findMany({
       where: {
-        NOT: {
-          type: 'PRIVATE',
-          members: {
-            some: {
-              profileId: profile.id,
+        NOT: [
+          { id: profile.id },
+          { avatarUrl: null },
+          {
+            chats: {
+              some: {
+                chat: {
+                  type: 'PRIVATE',
+                  members: {
+                    some: {
+                      profileId: profile.id,
+                    },
+                  },
+                },
+              },
             },
           },
-        },
+        ],
       },
       select: {
-        members: {
-          where: {
-            NOT: {
-              profileId: profile.id,
-            },
-          },
-          select: {
-            name: true,
-            id: true,
-            avatarUrl: true,
-          },
-        },
+        id: true,
+        name: true,
+        avatarUrl: true,
+        isPrivate: true,
       },
     });
     await this.cacheService.set<typeof profiles>(key, profiles);
@@ -58,7 +63,7 @@ export class ChatService {
     const key = `chat:group:profile:${profile.id}`;
     const cachedGroup = await this.cacheService.get(key);
     if (cachedGroup) return cachedGroup;
-    const chats = await this.prisma.profile.findMany({
+    const profiles = await this.prisma.profile.findMany({
       where: {
         NOT: [
           { id: profile.id },
@@ -69,13 +74,14 @@ export class ChatService {
         id: true,
         name: true,
         avatarUrl: true,
+        isPrivate: true,
       },
     });
-    await this.cacheService.set<typeof chats>(key, chats);
-    return chats;
+    await this.cacheService.set<typeof profiles>(key, profiles);
+    return profiles;
   }
 
-  async createPrivatechat(profile: profileDto, otherProfile: ChatDto) {
+  async createPrivatechat(profile: profileDto, otherProfile: ChatProfileDto) {
     if (profile.id === otherProfile.id)
       throw new ForbiddenException(
         'You cannot create with yourself personal chat',
@@ -97,7 +103,6 @@ export class ChatService {
       data: {
         creatorId: profile.id,
         type: 'PRIVATE',
-        isApproved: false,
         members: {
           createMany: {
             data: [
@@ -124,6 +129,9 @@ export class ChatService {
     await this.notifyService.createNotification(notify);
 
     await this.cacheService.delete(`profile:${profile.id}:chat:personal`);
+
+    await this.cacheService.delete(`profile:${otherProfile.id}:chats`);
+    await this.cacheService.delete(`profile:${profile.id}:chats`);
   }
 
   async crateGroupChat(profile: profileDto, data: GroupChatDto) {
@@ -171,9 +179,11 @@ export class ChatService {
       } as NotifyDto;
 
       await this.notifyService.createNotification(notify);
+      await this.cacheService.delete(`profile:${prof.id}:chats`);
     });
 
     await Promise.all(addMembers);
+    await this.cacheService.delete(`profile:${profile.id}:chats`);
   }
 
   async addMembers(
@@ -187,7 +197,7 @@ export class ChatService {
     const existingChat = otherProf.chats.find((c) => c.chatId === chat.id);
 
     if (chat.type !== 'GROUP')
-      throw new BadRequestException('Members can only be added in group chat');
+      throw new BadRequestException('Add members in a group chat');
 
     if (existingChat)
       throw new BadRequestException('Chat already has this member');
@@ -210,6 +220,9 @@ export class ChatService {
     } as NotifyDto;
 
     await this.notifyService.createNotification(notify);
+
+    await this.cacheService.delete(`profile:${profile.id}:chats`);
+    await this.cacheService.delete(`profile:${otherProf.id}:chats`);
   }
 
   async toggleChatApproval(profile: profileDto, chat: ChatDto) {
@@ -227,6 +240,129 @@ export class ChatService {
     await this.prisma.chatMember.update({
       where: { id: existProf.id },
       data: { isApproved: !existProf.isApproved },
+    });
+  }
+
+  async getMsgsFromChat(profile: profileDto, chat: ChatDto) {
+    const existProf = chat.members.find((c) => c.profileId === profile.id);
+    if (!existProf)
+      throw new ForbiddenException(
+        'Be the member of the chat to view messages',
+      );
+    if (!existProf.isApproved)
+      throw new BadRequestException('Approve before viewing the chat');
+
+    const key = `chat:${chat.id}`;
+    const cachedMesgs = await this.cacheService.get(key);
+    if (cachedMesgs) return cachedMesgs;
+    const msgs = await this.prisma.chat.findUnique({
+      where: { id: chat.id },
+      select: {
+        id: true,
+        name: true,
+        creatorId: true,
+        mediaUrl: true,
+        message: {
+          select: {
+            id: true,
+            content: true,
+            mediaUrl: true,
+            format: true,
+            senderId: true,
+            msgView: {
+              select: {
+                member: {
+                  select: {
+                    profileId: true,
+                  },
+                },
+              },
+            },
+            sender: {
+              select: {
+                profile: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatarUrl: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    await this.cacheService.set<typeof msgs>(key, msgs);
+  }
+
+  async getChatFromProfile(profile: profileDto) {
+    const key = `profile:${profile.id}:chats`;
+    const cachedChat = await this.cacheService.get(key);
+    if (cachedChat) return cachedChat;
+    const chats = await this.prisma.chatMember.findMany({
+      where: { profileId: profile.id },
+      select: {
+        chat: {
+          select: {
+            mediaUrl: true,
+            name: true,
+            type: true,
+          },
+        },
+        isApproved: true,
+      },
+    });
+    await this.cacheService.set<typeof chats>(key, chats);
+    return chats;
+  }
+
+  async createMsg(
+    message: MessageDto,
+    profile: profileDto,
+    chat: ChatDto,
+    file: Express.Multer.File | null,
+  ) {
+    const existProf = chat.members.find(
+      (prof) => prof.profileId === profile.id,
+    );
+    if (!existProf) throw new BadRequestException('Not a member of the chat');
+    if (!existProf.isApproved)
+      throw new BadRequestException('Approve yourself before messaging');
+
+    if (message.format !== 'TEXT' && message.format !== 'GIF') {
+      // Will be done later
+      // if(message.format === 'IMAGE')
+      //   const upload = await this.cloudService.
+    }
+
+    if (message.format === 'TEXT' || message.format === 'GIF')
+      await this.createMessage({
+        chatId: chat.id,
+        content: message.name,
+        mediaUrl: message.mediaUrl,
+        format: message.format,
+        senderId: profile.id,
+      });
+  }
+
+  private async createMessage(data: {
+    chatId: string;
+    content?: string;
+    mediaUrl?: string;
+    format: Format;
+    senderId: string;
+    cloudId?: string;
+  }) {
+    await this.prisma.message.create({
+      data: {
+        chatId: data.chatId,
+        content: data.content ?? null,
+        mediaUrl: data.mediaUrl ?? null,
+        format: data.format,
+        senderId: data.senderId,
+        cloudId: data.cloudId ?? null,
+      },
     });
   }
 }
