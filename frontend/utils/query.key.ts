@@ -9,5 +9,6 @@ export const queryKeys = {
     ALL_POSTS: 'all_posts',
     LIKE: 'likes',
     FOLLOW: 'follow',
-    SAVE_POST: 'save_post'
+    SAVE_POST: 'save_post',
+    CHAT: 'chat',
 }

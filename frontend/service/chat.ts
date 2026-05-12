@@ -13,3 +13,10 @@ export async function getProfForPrivate() {
 export async function getProfForGroup() {
     return await getJson('group')
 }
+
+export async function CreatePrivate(name: string) {
+  return postJson(`private?profile=${name}`, undefined)
+}
+export async function CreateGroup(data:FormData) {
+  return postJson(`group/create`, data)
+}
