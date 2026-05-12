@@ -26,6 +26,7 @@ import { JobsModule } from './jobs/jobs.module';
 import { GlobaExceptionFilter } from './common/filters/http-exception.filter';
 import { EventModule } from './event/event.module';
 import { NotificationModule } from './notification/notification.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { NotificationModule } from './notification/notification.module';
     JobsModule,
     EventModule,
     NotificationModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [

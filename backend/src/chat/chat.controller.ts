@@ -5,6 +5,9 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ResponseMessage } from 'src/common/decorators/response-message';
@@ -13,6 +16,8 @@ import { currentProfile } from 'src/profile/decorator/get-profile';
 import { ValidatePersonalPipe } from './pipe/validate.profile.chat';
 import type { ChatProfileDto } from './dto/chat.dto';
 import { GroupChatDto } from './dto/group-chat';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { MediaValidationPipe } from './pipe/group.media.pipe';
 
 @Controller('chat')
 export class ChatController {
@@ -21,7 +26,6 @@ export class ChatController {
   @Get('private')
   @ResponseMessage('Profiles received for personal chat')
   async getProfilesForPrivateChat(@currentProfile() profile: profileDto) {
-    console.log('Profile', profile);
     return await this.chatService.getProfileForPersonal(profile);
   }
 
@@ -31,11 +35,11 @@ export class ChatController {
     return await this.chatService.getProfileForGroup(profile);
   }
 
-  @Post('private/:profileId')
+  @Post('private')
   @ResponseMessage('Private chat created, waiting for receiver approval')
   async createPrivate(
     @currentProfile() profile: profileDto,
-    @Param('profileId', ParseUUIDPipe, ValidatePersonalPipe)
+    @Query('profile', ValidatePersonalPipe)
     otherProf: ChatProfileDto,
   ) {
     return await this.chatService.createPrivatechat(profile, otherProf);
@@ -43,10 +47,19 @@ export class ChatController {
 
   @Post('group/create')
   @ResponseMessage('Group chat created')
+  @UseInterceptors(FileInterceptor('avatar'))
   async createGroup(
     @currentProfile() profile: profileDto,
     @Body() data: GroupChatDto,
+    @UploadedFile(new MediaValidationPipe())
+    avatar: Express.Multer.File,
   ) {
-    return await this.chatService.crateGroupChat(profile, data);
+    return await this.chatService.crateGroupChat(profile, avatar, data);
+  }
+
+  @Get()
+  @ResponseMessage('Received All Chats')
+  async getChats(@currentProfile() profile: profileDto) {
+    return await this.chatService.getChatFromProfile(profile);
   }
 }

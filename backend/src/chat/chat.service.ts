@@ -134,7 +134,11 @@ export class ChatService {
     await this.cacheService.delete(`profile:${profile.id}:chats`);
   }
 
-  async crateGroupChat(profile: profileDto, data: GroupChatDto) {
+  async crateGroupChat(
+    profile: profileDto,
+    avatar: Express.Multer.File,
+    data: GroupChatDto,
+  ) {
     const ValidatedProfile = data.profiles.map(async (prof) => {
       return await this.prisma.profile.findUniqueOrThrow({
         where: { id: prof },
@@ -142,10 +146,13 @@ export class ChatService {
       });
     });
     const profiles = await Promise.all(ValidatedProfile);
+    const fileName = `${crypto.randomUUID()}`;
+    const upload = await this.cloudService.uploadedAvatar(avatar, fileName);
     const chat = await this.prisma.chat.create({
       data: {
         name: data.name,
-        mediaUrl: data.mediaUrl,
+        mediaUrl: upload.secure_url,
+        cloudId: upload.public_id,
         creatorId: profile.id,
         type: 'GROUP',
         members: {
@@ -305,9 +312,28 @@ export class ChatService {
       select: {
         chat: {
           select: {
+            id: true,
             mediaUrl: true,
             name: true,
             type: true,
+            members: {
+              where: {
+                NOT: {
+                  chat: {
+                    type: 'GROUP',
+                  },
+                },
+              },
+              select: {
+                profile: {
+                  select: {
+                    id: true,
+                    avatarUrl: true,
+                    name: true,
+                  },
+                },
+              },
+            },
           },
         },
         isApproved: true,
