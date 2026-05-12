@@ -230,6 +230,8 @@ export class ChatService {
 
     await this.cacheService.delete(`profile:${profile.id}:chats`);
     await this.cacheService.delete(`profile:${otherProf.id}:chats`);
+
+    await this.cacheService.delete(`chat:${chat.id}:members`);
   }
 
   async toggleChatApproval(profile: profileDto, chat: ChatDto) {
@@ -248,59 +250,7 @@ export class ChatService {
       where: { id: existProf.id },
       data: { isApproved: !existProf.isApproved },
     });
-  }
-
-  async getMsgsFromChat(profile: profileDto, chat: ChatDto) {
-    const existProf = chat.members.find((c) => c.profileId === profile.id);
-    if (!existProf)
-      throw new ForbiddenException(
-        'Be the member of the chat to view messages',
-      );
-    if (!existProf.isApproved)
-      throw new BadRequestException('Approve before viewing the chat');
-
-    const key = `chat:${chat.id}`;
-    const cachedMesgs = await this.cacheService.get(key);
-    if (cachedMesgs) return cachedMesgs;
-    const msgs = await this.prisma.chat.findUnique({
-      where: { id: chat.id },
-      select: {
-        id: true,
-        name: true,
-        creatorId: true,
-        mediaUrl: true,
-        message: {
-          select: {
-            id: true,
-            content: true,
-            mediaUrl: true,
-            format: true,
-            senderId: true,
-            msgView: {
-              select: {
-                member: {
-                  select: {
-                    profileId: true,
-                  },
-                },
-              },
-            },
-            sender: {
-              select: {
-                profile: {
-                  select: {
-                    id: true,
-                    name: true,
-                    avatarUrl: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-    await this.cacheService.set<typeof msgs>(key, msgs);
+    await this.cacheService.delete(`chat:${chat.id}`);
   }
 
   async getChatFromProfile(profile: profileDto) {
@@ -341,6 +291,137 @@ export class ChatService {
     });
     await this.cacheService.set<typeof chats>(key, chats);
     return chats;
+  }
+
+  async getMembersOfGroup(profile: profileDto, chat: ChatDto) {
+    const existProf = chat.members.find((c) => c.profileId === profile.id);
+    if (!existProf)
+      throw new ForbiddenException('Be the member of the chat to members');
+
+    if (chat.type !== 'GROUP')
+      throw new BadRequestException('Only a group chat can see members');
+
+    const key = `chat:${chat.id}:members`;
+    const cachedMembers = await this.cacheService.get(key);
+    if (cachedMembers) return cachedMembers;
+    const members = await this.prisma.chatMember.findMany({
+      where: { chatId: chat.id },
+      select: {
+        id: true,
+        chat: {
+          select: {
+            creatorId: true,
+          },
+        },
+        isApproved: true,
+        profile: {
+          select: {
+            id: true,
+            name: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
+
+    await this.cacheService.set<typeof members>(key, members);
+    return members;
+  }
+
+  async getMsgsOnChat(profile: profileDto, chat: ChatDto) {
+    const existProf = chat.members.find((c) => c.profileId === profile.id);
+    if (!existProf)
+      throw new ForbiddenException(
+        'Be the member of the chat to view messages',
+      );
+    const key = `chat:${chat.id}`;
+    const cachedMesgs = await this.cacheService.get(key);
+    if (cachedMesgs) return cachedMesgs;
+    const msgs = await this.prisma.chat.findUnique({
+      where: { id: chat.id },
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        creatorId: true,
+        mediaUrl: true,
+        members: {
+          select: {
+            id: true,
+            isApproved: true,
+            createdAt: true,
+            profile: {
+              select: {
+                name: true,
+                avatarUrl: true,
+                id: true,
+              },
+            },
+          },
+        },
+        message: {
+          where: {
+            NOT: {
+              chat: {
+                members: {
+                  some: {
+                    profileId: profile.id,
+                    isApproved: false,
+                  },
+                },
+              },
+            },
+          },
+          select: {
+            id: true,
+            content: true,
+            mediaUrl: true,
+            format: true,
+            senderId: true,
+            msgView: {
+              select: {
+                member: {
+                  select: {
+                    id: true,
+                    profileId: true,
+                  },
+                },
+              },
+            },
+            sender: {
+              select: {
+                profile: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatarUrl: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    const ownProf = msgs?.members.find((p) => p.profile.id === profile.id);
+    if (msgs && ownProf && ownProf.isApproved) {
+      const awaitMsgs = msgs.message.map(async (m) => {
+        const isExisting = m.msgView.some(
+          (v) => v.member.profileId === profile.id,
+        );
+
+        if (!isExisting)
+          await this.prisma.messageView.create({
+            data: {
+              memberId: ownProf.id,
+              msgId: m.id,
+            },
+          });
+      });
+      await Promise.all(awaitMsgs);
+    }
+    await this.cacheService.set<typeof msgs>(key, msgs);
+    return msgs;
   }
 
   async createMsg(
