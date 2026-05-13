@@ -26,21 +26,21 @@ export type AggregateMessageView = {
 
 export type MessageViewMinAggregateOutputType = {
   id: string | null
-  profileId: string | null
+  memberId: string | null
   msgId: string | null
   viewedAt: Date | null
 }
 
 export type MessageViewMaxAggregateOutputType = {
   id: string | null
-  profileId: string | null
+  memberId: string | null
   msgId: string | null
   viewedAt: Date | null
 }
 
 export type MessageViewCountAggregateOutputType = {
   id: number
-  profileId: number
+  memberId: number
   msgId: number
   viewedAt: number
   _all: number
@@ -49,21 +49,21 @@ export type MessageViewCountAggregateOutputType = {
 
 export type MessageViewMinAggregateInputType = {
   id?: true
-  profileId?: true
+  memberId?: true
   msgId?: true
   viewedAt?: true
 }
 
 export type MessageViewMaxAggregateInputType = {
   id?: true
-  profileId?: true
+  memberId?: true
   msgId?: true
   viewedAt?: true
 }
 
 export type MessageViewCountAggregateInputType = {
   id?: true
-  profileId?: true
+  memberId?: true
   msgId?: true
   viewedAt?: true
   _all?: true
@@ -143,7 +143,7 @@ export type MessageViewGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 
 export type MessageViewGroupByOutputType = {
   id: string
-  profileId: string
+  memberId: string
   msgId: string
   viewedAt: Date
   _count: MessageViewCountAggregateOutputType | null
@@ -171,39 +171,39 @@ export type MessageViewWhereInput = {
   OR?: Prisma.MessageViewWhereInput[]
   NOT?: Prisma.MessageViewWhereInput | Prisma.MessageViewWhereInput[]
   id?: Prisma.StringFilter<"MessageView"> | string
-  profileId?: Prisma.StringFilter<"MessageView"> | string
+  memberId?: Prisma.StringFilter<"MessageView"> | string
   msgId?: Prisma.StringFilter<"MessageView"> | string
   viewedAt?: Prisma.DateTimeFilter<"MessageView"> | Date | string
-  profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
+  member?: Prisma.XOR<Prisma.ChatMemberScalarRelationFilter, Prisma.ChatMemberWhereInput>
   message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.MessageWhereInput>
 }
 
 export type MessageViewOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  profileId?: Prisma.SortOrder
+  memberId?: Prisma.SortOrder
   msgId?: Prisma.SortOrder
   viewedAt?: Prisma.SortOrder
-  profile?: Prisma.ProfileOrderByWithRelationInput
+  member?: Prisma.ChatMemberOrderByWithRelationInput
   message?: Prisma.MessageOrderByWithRelationInput
   _relevance?: Prisma.MessageViewOrderByRelevanceInput
 }
 
 export type MessageViewWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  msgId_profileId?: Prisma.MessageViewMsgIdProfileIdCompoundUniqueInput
+  msgId_memberId?: Prisma.MessageViewMsgIdMemberIdCompoundUniqueInput
   AND?: Prisma.MessageViewWhereInput | Prisma.MessageViewWhereInput[]
   OR?: Prisma.MessageViewWhereInput[]
   NOT?: Prisma.MessageViewWhereInput | Prisma.MessageViewWhereInput[]
-  profileId?: Prisma.StringFilter<"MessageView"> | string
+  memberId?: Prisma.StringFilter<"MessageView"> | string
   msgId?: Prisma.StringFilter<"MessageView"> | string
   viewedAt?: Prisma.DateTimeFilter<"MessageView"> | Date | string
-  profile?: Prisma.XOR<Prisma.ProfileScalarRelationFilter, Prisma.ProfileWhereInput>
+  member?: Prisma.XOR<Prisma.ChatMemberScalarRelationFilter, Prisma.ChatMemberWhereInput>
   message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.MessageWhereInput>
-}, "id" | "msgId_profileId">
+}, "id" | "msgId_memberId">
 
 export type MessageViewOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  profileId?: Prisma.SortOrder
+  memberId?: Prisma.SortOrder
   msgId?: Prisma.SortOrder
   viewedAt?: Prisma.SortOrder
   _count?: Prisma.MessageViewCountOrderByAggregateInput
@@ -216,7 +216,7 @@ export type MessageViewScalarWhereWithAggregatesInput = {
   OR?: Prisma.MessageViewScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MessageViewScalarWhereWithAggregatesInput | Prisma.MessageViewScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"MessageView"> | string
-  profileId?: Prisma.StringWithAggregatesFilter<"MessageView"> | string
+  memberId?: Prisma.StringWithAggregatesFilter<"MessageView"> | string
   msgId?: Prisma.StringWithAggregatesFilter<"MessageView"> | string
   viewedAt?: Prisma.DateTimeWithAggregatesFilter<"MessageView"> | Date | string
 }
@@ -224,13 +224,13 @@ export type MessageViewScalarWhereWithAggregatesInput = {
 export type MessageViewCreateInput = {
   id?: string
   viewedAt?: Date | string
-  profile: Prisma.ProfileCreateNestedOneWithoutMsgViewInput
+  member: Prisma.ChatMemberCreateNestedOneWithoutViewsInput
   message: Prisma.MessageCreateNestedOneWithoutMsgViewInput
 }
 
 export type MessageViewUncheckedCreateInput = {
   id?: string
-  profileId: string
+  memberId: string
   msgId: string
   viewedAt?: Date | string
 }
@@ -238,20 +238,20 @@ export type MessageViewUncheckedCreateInput = {
 export type MessageViewUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   viewedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.ProfileUpdateOneRequiredWithoutMsgViewNestedInput
+  member?: Prisma.ChatMemberUpdateOneRequiredWithoutViewsNestedInput
   message?: Prisma.MessageUpdateOneRequiredWithoutMsgViewNestedInput
 }
 
 export type MessageViewUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberId?: Prisma.StringFieldUpdateOperationsInput | string
   msgId?: Prisma.StringFieldUpdateOperationsInput | string
   viewedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MessageViewCreateManyInput = {
   id?: string
-  profileId: string
+  memberId: string
   msgId: string
   viewedAt?: Date | string
 }
@@ -263,7 +263,7 @@ export type MessageViewUpdateManyMutationInput = {
 
 export type MessageViewUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberId?: Prisma.StringFieldUpdateOperationsInput | string
   msgId?: Prisma.StringFieldUpdateOperationsInput | string
   viewedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -284,71 +284,71 @@ export type MessageViewOrderByRelevanceInput = {
   search: string
 }
 
-export type MessageViewMsgIdProfileIdCompoundUniqueInput = {
+export type MessageViewMsgIdMemberIdCompoundUniqueInput = {
   msgId: string
-  profileId: string
+  memberId: string
 }
 
 export type MessageViewCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  profileId?: Prisma.SortOrder
+  memberId?: Prisma.SortOrder
   msgId?: Prisma.SortOrder
   viewedAt?: Prisma.SortOrder
 }
 
 export type MessageViewMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  profileId?: Prisma.SortOrder
+  memberId?: Prisma.SortOrder
   msgId?: Prisma.SortOrder
   viewedAt?: Prisma.SortOrder
 }
 
 export type MessageViewMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  profileId?: Prisma.SortOrder
+  memberId?: Prisma.SortOrder
   msgId?: Prisma.SortOrder
   viewedAt?: Prisma.SortOrder
 }
 
-export type MessageViewCreateNestedManyWithoutProfileInput = {
-  create?: Prisma.XOR<Prisma.MessageViewCreateWithoutProfileInput, Prisma.MessageViewUncheckedCreateWithoutProfileInput> | Prisma.MessageViewCreateWithoutProfileInput[] | Prisma.MessageViewUncheckedCreateWithoutProfileInput[]
-  connectOrCreate?: Prisma.MessageViewCreateOrConnectWithoutProfileInput | Prisma.MessageViewCreateOrConnectWithoutProfileInput[]
-  createMany?: Prisma.MessageViewCreateManyProfileInputEnvelope
+export type MessageViewCreateNestedManyWithoutMemberInput = {
+  create?: Prisma.XOR<Prisma.MessageViewCreateWithoutMemberInput, Prisma.MessageViewUncheckedCreateWithoutMemberInput> | Prisma.MessageViewCreateWithoutMemberInput[] | Prisma.MessageViewUncheckedCreateWithoutMemberInput[]
+  connectOrCreate?: Prisma.MessageViewCreateOrConnectWithoutMemberInput | Prisma.MessageViewCreateOrConnectWithoutMemberInput[]
+  createMany?: Prisma.MessageViewCreateManyMemberInputEnvelope
   connect?: Prisma.MessageViewWhereUniqueInput | Prisma.MessageViewWhereUniqueInput[]
 }
 
-export type MessageViewUncheckedCreateNestedManyWithoutProfileInput = {
-  create?: Prisma.XOR<Prisma.MessageViewCreateWithoutProfileInput, Prisma.MessageViewUncheckedCreateWithoutProfileInput> | Prisma.MessageViewCreateWithoutProfileInput[] | Prisma.MessageViewUncheckedCreateWithoutProfileInput[]
-  connectOrCreate?: Prisma.MessageViewCreateOrConnectWithoutProfileInput | Prisma.MessageViewCreateOrConnectWithoutProfileInput[]
-  createMany?: Prisma.MessageViewCreateManyProfileInputEnvelope
+export type MessageViewUncheckedCreateNestedManyWithoutMemberInput = {
+  create?: Prisma.XOR<Prisma.MessageViewCreateWithoutMemberInput, Prisma.MessageViewUncheckedCreateWithoutMemberInput> | Prisma.MessageViewCreateWithoutMemberInput[] | Prisma.MessageViewUncheckedCreateWithoutMemberInput[]
+  connectOrCreate?: Prisma.MessageViewCreateOrConnectWithoutMemberInput | Prisma.MessageViewCreateOrConnectWithoutMemberInput[]
+  createMany?: Prisma.MessageViewCreateManyMemberInputEnvelope
   connect?: Prisma.MessageViewWhereUniqueInput | Prisma.MessageViewWhereUniqueInput[]
 }
 
-export type MessageViewUpdateManyWithoutProfileNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageViewCreateWithoutProfileInput, Prisma.MessageViewUncheckedCreateWithoutProfileInput> | Prisma.MessageViewCreateWithoutProfileInput[] | Prisma.MessageViewUncheckedCreateWithoutProfileInput[]
-  connectOrCreate?: Prisma.MessageViewCreateOrConnectWithoutProfileInput | Prisma.MessageViewCreateOrConnectWithoutProfileInput[]
-  upsert?: Prisma.MessageViewUpsertWithWhereUniqueWithoutProfileInput | Prisma.MessageViewUpsertWithWhereUniqueWithoutProfileInput[]
-  createMany?: Prisma.MessageViewCreateManyProfileInputEnvelope
+export type MessageViewUpdateManyWithoutMemberNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageViewCreateWithoutMemberInput, Prisma.MessageViewUncheckedCreateWithoutMemberInput> | Prisma.MessageViewCreateWithoutMemberInput[] | Prisma.MessageViewUncheckedCreateWithoutMemberInput[]
+  connectOrCreate?: Prisma.MessageViewCreateOrConnectWithoutMemberInput | Prisma.MessageViewCreateOrConnectWithoutMemberInput[]
+  upsert?: Prisma.MessageViewUpsertWithWhereUniqueWithoutMemberInput | Prisma.MessageViewUpsertWithWhereUniqueWithoutMemberInput[]
+  createMany?: Prisma.MessageViewCreateManyMemberInputEnvelope
   set?: Prisma.MessageViewWhereUniqueInput | Prisma.MessageViewWhereUniqueInput[]
   disconnect?: Prisma.MessageViewWhereUniqueInput | Prisma.MessageViewWhereUniqueInput[]
   delete?: Prisma.MessageViewWhereUniqueInput | Prisma.MessageViewWhereUniqueInput[]
   connect?: Prisma.MessageViewWhereUniqueInput | Prisma.MessageViewWhereUniqueInput[]
-  update?: Prisma.MessageViewUpdateWithWhereUniqueWithoutProfileInput | Prisma.MessageViewUpdateWithWhereUniqueWithoutProfileInput[]
-  updateMany?: Prisma.MessageViewUpdateManyWithWhereWithoutProfileInput | Prisma.MessageViewUpdateManyWithWhereWithoutProfileInput[]
+  update?: Prisma.MessageViewUpdateWithWhereUniqueWithoutMemberInput | Prisma.MessageViewUpdateWithWhereUniqueWithoutMemberInput[]
+  updateMany?: Prisma.MessageViewUpdateManyWithWhereWithoutMemberInput | Prisma.MessageViewUpdateManyWithWhereWithoutMemberInput[]
   deleteMany?: Prisma.MessageViewScalarWhereInput | Prisma.MessageViewScalarWhereInput[]
 }
 
-export type MessageViewUncheckedUpdateManyWithoutProfileNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageViewCreateWithoutProfileInput, Prisma.MessageViewUncheckedCreateWithoutProfileInput> | Prisma.MessageViewCreateWithoutProfileInput[] | Prisma.MessageViewUncheckedCreateWithoutProfileInput[]
-  connectOrCreate?: Prisma.MessageViewCreateOrConnectWithoutProfileInput | Prisma.MessageViewCreateOrConnectWithoutProfileInput[]
-  upsert?: Prisma.MessageViewUpsertWithWhereUniqueWithoutProfileInput | Prisma.MessageViewUpsertWithWhereUniqueWithoutProfileInput[]
-  createMany?: Prisma.MessageViewCreateManyProfileInputEnvelope
+export type MessageViewUncheckedUpdateManyWithoutMemberNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageViewCreateWithoutMemberInput, Prisma.MessageViewUncheckedCreateWithoutMemberInput> | Prisma.MessageViewCreateWithoutMemberInput[] | Prisma.MessageViewUncheckedCreateWithoutMemberInput[]
+  connectOrCreate?: Prisma.MessageViewCreateOrConnectWithoutMemberInput | Prisma.MessageViewCreateOrConnectWithoutMemberInput[]
+  upsert?: Prisma.MessageViewUpsertWithWhereUniqueWithoutMemberInput | Prisma.MessageViewUpsertWithWhereUniqueWithoutMemberInput[]
+  createMany?: Prisma.MessageViewCreateManyMemberInputEnvelope
   set?: Prisma.MessageViewWhereUniqueInput | Prisma.MessageViewWhereUniqueInput[]
   disconnect?: Prisma.MessageViewWhereUniqueInput | Prisma.MessageViewWhereUniqueInput[]
   delete?: Prisma.MessageViewWhereUniqueInput | Prisma.MessageViewWhereUniqueInput[]
   connect?: Prisma.MessageViewWhereUniqueInput | Prisma.MessageViewWhereUniqueInput[]
-  update?: Prisma.MessageViewUpdateWithWhereUniqueWithoutProfileInput | Prisma.MessageViewUpdateWithWhereUniqueWithoutProfileInput[]
-  updateMany?: Prisma.MessageViewUpdateManyWithWhereWithoutProfileInput | Prisma.MessageViewUpdateManyWithWhereWithoutProfileInput[]
+  update?: Prisma.MessageViewUpdateWithWhereUniqueWithoutMemberInput | Prisma.MessageViewUpdateWithWhereUniqueWithoutMemberInput[]
+  updateMany?: Prisma.MessageViewUpdateManyWithWhereWithoutMemberInput | Prisma.MessageViewUpdateManyWithWhereWithoutMemberInput[]
   deleteMany?: Prisma.MessageViewScalarWhereInput | Prisma.MessageViewScalarWhereInput[]
 }
 
@@ -394,42 +394,42 @@ export type MessageViewUncheckedUpdateManyWithoutMessageNestedInput = {
   deleteMany?: Prisma.MessageViewScalarWhereInput | Prisma.MessageViewScalarWhereInput[]
 }
 
-export type MessageViewCreateWithoutProfileInput = {
+export type MessageViewCreateWithoutMemberInput = {
   id?: string
   viewedAt?: Date | string
   message: Prisma.MessageCreateNestedOneWithoutMsgViewInput
 }
 
-export type MessageViewUncheckedCreateWithoutProfileInput = {
+export type MessageViewUncheckedCreateWithoutMemberInput = {
   id?: string
   msgId: string
   viewedAt?: Date | string
 }
 
-export type MessageViewCreateOrConnectWithoutProfileInput = {
+export type MessageViewCreateOrConnectWithoutMemberInput = {
   where: Prisma.MessageViewWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageViewCreateWithoutProfileInput, Prisma.MessageViewUncheckedCreateWithoutProfileInput>
+  create: Prisma.XOR<Prisma.MessageViewCreateWithoutMemberInput, Prisma.MessageViewUncheckedCreateWithoutMemberInput>
 }
 
-export type MessageViewCreateManyProfileInputEnvelope = {
-  data: Prisma.MessageViewCreateManyProfileInput | Prisma.MessageViewCreateManyProfileInput[]
+export type MessageViewCreateManyMemberInputEnvelope = {
+  data: Prisma.MessageViewCreateManyMemberInput | Prisma.MessageViewCreateManyMemberInput[]
   skipDuplicates?: boolean
 }
 
-export type MessageViewUpsertWithWhereUniqueWithoutProfileInput = {
+export type MessageViewUpsertWithWhereUniqueWithoutMemberInput = {
   where: Prisma.MessageViewWhereUniqueInput
-  update: Prisma.XOR<Prisma.MessageViewUpdateWithoutProfileInput, Prisma.MessageViewUncheckedUpdateWithoutProfileInput>
-  create: Prisma.XOR<Prisma.MessageViewCreateWithoutProfileInput, Prisma.MessageViewUncheckedCreateWithoutProfileInput>
+  update: Prisma.XOR<Prisma.MessageViewUpdateWithoutMemberInput, Prisma.MessageViewUncheckedUpdateWithoutMemberInput>
+  create: Prisma.XOR<Prisma.MessageViewCreateWithoutMemberInput, Prisma.MessageViewUncheckedCreateWithoutMemberInput>
 }
 
-export type MessageViewUpdateWithWhereUniqueWithoutProfileInput = {
+export type MessageViewUpdateWithWhereUniqueWithoutMemberInput = {
   where: Prisma.MessageViewWhereUniqueInput
-  data: Prisma.XOR<Prisma.MessageViewUpdateWithoutProfileInput, Prisma.MessageViewUncheckedUpdateWithoutProfileInput>
+  data: Prisma.XOR<Prisma.MessageViewUpdateWithoutMemberInput, Prisma.MessageViewUncheckedUpdateWithoutMemberInput>
 }
 
-export type MessageViewUpdateManyWithWhereWithoutProfileInput = {
+export type MessageViewUpdateManyWithWhereWithoutMemberInput = {
   where: Prisma.MessageViewScalarWhereInput
-  data: Prisma.XOR<Prisma.MessageViewUpdateManyMutationInput, Prisma.MessageViewUncheckedUpdateManyWithoutProfileInput>
+  data: Prisma.XOR<Prisma.MessageViewUpdateManyMutationInput, Prisma.MessageViewUncheckedUpdateManyWithoutMemberInput>
 }
 
 export type MessageViewScalarWhereInput = {
@@ -437,7 +437,7 @@ export type MessageViewScalarWhereInput = {
   OR?: Prisma.MessageViewScalarWhereInput[]
   NOT?: Prisma.MessageViewScalarWhereInput | Prisma.MessageViewScalarWhereInput[]
   id?: Prisma.StringFilter<"MessageView"> | string
-  profileId?: Prisma.StringFilter<"MessageView"> | string
+  memberId?: Prisma.StringFilter<"MessageView"> | string
   msgId?: Prisma.StringFilter<"MessageView"> | string
   viewedAt?: Prisma.DateTimeFilter<"MessageView"> | Date | string
 }
@@ -445,12 +445,12 @@ export type MessageViewScalarWhereInput = {
 export type MessageViewCreateWithoutMessageInput = {
   id?: string
   viewedAt?: Date | string
-  profile: Prisma.ProfileCreateNestedOneWithoutMsgViewInput
+  member: Prisma.ChatMemberCreateNestedOneWithoutViewsInput
 }
 
 export type MessageViewUncheckedCreateWithoutMessageInput = {
   id?: string
-  profileId: string
+  memberId: string
   viewedAt?: Date | string
 }
 
@@ -480,25 +480,25 @@ export type MessageViewUpdateManyWithWhereWithoutMessageInput = {
   data: Prisma.XOR<Prisma.MessageViewUpdateManyMutationInput, Prisma.MessageViewUncheckedUpdateManyWithoutMessageInput>
 }
 
-export type MessageViewCreateManyProfileInput = {
+export type MessageViewCreateManyMemberInput = {
   id?: string
   msgId: string
   viewedAt?: Date | string
 }
 
-export type MessageViewUpdateWithoutProfileInput = {
+export type MessageViewUpdateWithoutMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   viewedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   message?: Prisma.MessageUpdateOneRequiredWithoutMsgViewNestedInput
 }
 
-export type MessageViewUncheckedUpdateWithoutProfileInput = {
+export type MessageViewUncheckedUpdateWithoutMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   msgId?: Prisma.StringFieldUpdateOperationsInput | string
   viewedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type MessageViewUncheckedUpdateManyWithoutProfileInput = {
+export type MessageViewUncheckedUpdateManyWithoutMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   msgId?: Prisma.StringFieldUpdateOperationsInput | string
   viewedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -506,25 +506,25 @@ export type MessageViewUncheckedUpdateManyWithoutProfileInput = {
 
 export type MessageViewCreateManyMessageInput = {
   id?: string
-  profileId: string
+  memberId: string
   viewedAt?: Date | string
 }
 
 export type MessageViewUpdateWithoutMessageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   viewedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  profile?: Prisma.ProfileUpdateOneRequiredWithoutMsgViewNestedInput
+  member?: Prisma.ChatMemberUpdateOneRequiredWithoutViewsNestedInput
 }
 
 export type MessageViewUncheckedUpdateWithoutMessageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberId?: Prisma.StringFieldUpdateOperationsInput | string
   viewedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MessageViewUncheckedUpdateManyWithoutMessageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  profileId?: Prisma.StringFieldUpdateOperationsInput | string
+  memberId?: Prisma.StringFieldUpdateOperationsInput | string
   viewedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -532,61 +532,61 @@ export type MessageViewUncheckedUpdateManyWithoutMessageInput = {
 
 export type MessageViewSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  profileId?: boolean
+  memberId?: boolean
   msgId?: boolean
   viewedAt?: boolean
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
+  member?: boolean | Prisma.ChatMemberDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["messageView"]>
 
 export type MessageViewSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  profileId?: boolean
+  memberId?: boolean
   msgId?: boolean
   viewedAt?: boolean
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
+  member?: boolean | Prisma.ChatMemberDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["messageView"]>
 
 export type MessageViewSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  profileId?: boolean
+  memberId?: boolean
   msgId?: boolean
   viewedAt?: boolean
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
+  member?: boolean | Prisma.ChatMemberDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["messageView"]>
 
 export type MessageViewSelectScalar = {
   id?: boolean
-  profileId?: boolean
+  memberId?: boolean
   msgId?: boolean
   viewedAt?: boolean
 }
 
-export type MessageViewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "profileId" | "msgId" | "viewedAt", ExtArgs["result"]["messageView"]>
+export type MessageViewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "memberId" | "msgId" | "viewedAt", ExtArgs["result"]["messageView"]>
 export type MessageViewInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
+  member?: boolean | Prisma.ChatMemberDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
 }
 export type MessageViewIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
+  member?: boolean | Prisma.ChatMemberDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
 }
 export type MessageViewIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  profile?: boolean | Prisma.ProfileDefaultArgs<ExtArgs>
+  member?: boolean | Prisma.ChatMemberDefaultArgs<ExtArgs>
   message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
 }
 
 export type $MessageViewPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "MessageView"
   objects: {
-    profile: Prisma.$ProfilePayload<ExtArgs>
+    member: Prisma.$ChatMemberPayload<ExtArgs>
     message: Prisma.$MessagePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    profileId: string
+    memberId: string
     msgId: string
     viewedAt: Date
   }, ExtArgs["result"]["messageView"]>
@@ -983,7 +983,7 @@ readonly fields: MessageViewFieldRefs;
  */
 export interface Prisma__MessageViewClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  profile<T extends Prisma.ProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  member<T extends Prisma.ChatMemberDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatMemberDefaultArgs<ExtArgs>>): Prisma.Prisma__ChatMemberClient<runtime.Types.Result.GetResult<Prisma.$ChatMemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   message<T extends Prisma.MessageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MessageDefaultArgs<ExtArgs>>): Prisma.Prisma__MessageClient<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1015,7 +1015,7 @@ export interface Prisma__MessageViewClient<T, Null = never, ExtArgs extends runt
  */
 export interface MessageViewFieldRefs {
   readonly id: Prisma.FieldRef<"MessageView", 'String'>
-  readonly profileId: Prisma.FieldRef<"MessageView", 'String'>
+  readonly memberId: Prisma.FieldRef<"MessageView", 'String'>
   readonly msgId: Prisma.FieldRef<"MessageView", 'String'>
   readonly viewedAt: Prisma.FieldRef<"MessageView", 'DateTime'>
 }

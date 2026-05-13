@@ -87,3 +87,23 @@ export type Notification = Prisma.NotificationModel
  * 
  */
 export type Job = Prisma.JobModel
+/**
+ * Model Chat
+ * 
+ */
+export type Chat = Prisma.ChatModel
+/**
+ * Model ChatMember
+ * 
+ */
+export type ChatMember = Prisma.ChatMemberModel
+/**
+ * Model Message
+ * 
+ */
+export type Message = Prisma.MessageModel
+/**
+ * Model MessageView
+ * 
+ */
+export type MessageView = Prisma.MessageViewModel

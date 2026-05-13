@@ -206,16 +206,16 @@ export type JobOrderByWithRelationInput = {
 
 export type JobWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  jobId?: string
   AND?: Prisma.JobWhereInput | Prisma.JobWhereInput[]
   OR?: Prisma.JobWhereInput[]
   NOT?: Prisma.JobWhereInput | Prisma.JobWhereInput[]
-  jobId?: Prisma.StringFilter<"Job"> | string
   name?: Prisma.EnumJobNameFilter<"Job"> | $Enums.JobName
   status?: Prisma.EnumJobStatusFilter<"Job"> | $Enums.JobStatus
   userId?: Prisma.StringFilter<"Job"> | string
   createdAt?: Prisma.DateTimeFilter<"Job"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "jobId">
 
 export type JobOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

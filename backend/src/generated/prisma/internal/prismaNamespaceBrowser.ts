@@ -64,7 +64,11 @@ export const ModelName = {
   Likes: 'Likes',
   Comments: 'Comments',
   Notification: 'Notification',
-  Job: 'Job'
+  Job: 'Job',
+  Chat: 'Chat',
+  ChatMember: 'ChatMember',
+  Message: 'Message',
+  MessageView: 'MessageView'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -243,7 +247,6 @@ export const NotificationScalarFieldEnum = {
   postId: 'postId',
   reelId: 'reelId',
   chatId: 'chatId',
-  messageId: 'messageId',
   isRead: 'isRead',
   createdAt: 'createdAt'
 } as const
@@ -261,6 +264,56 @@ export const JobScalarFieldEnum = {
 } as const
 
 export type JobScalarFieldEnum = (typeof JobScalarFieldEnum)[keyof typeof JobScalarFieldEnum]
+
+
+export const ChatScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  mediaUrl: 'mediaUrl',
+  cloudId: 'cloudId',
+  creatorId: 'creatorId',
+  type: 'type',
+  createdAt: 'createdAt'
+} as const
+
+export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
+
+
+export const ChatMemberScalarFieldEnum = {
+  id: 'id',
+  chatId: 'chatId',
+  profileId: 'profileId',
+  joinedAt: 'joinedAt',
+  isApproved: 'isApproved',
+  createdAt: 'createdAt'
+} as const
+
+export type ChatMemberScalarFieldEnum = (typeof ChatMemberScalarFieldEnum)[keyof typeof ChatMemberScalarFieldEnum]
+
+
+export const MessageScalarFieldEnum = {
+  id: 'id',
+  format: 'format',
+  content: 'content',
+  mediaUrl: 'mediaUrl',
+  cloudId: 'cloudId',
+  senderId: 'senderId',
+  replyId: 'replyId',
+  chatId: 'chatId',
+  createdAt: 'createdAt'
+} as const
+
+export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const MessageViewScalarFieldEnum = {
+  id: 'id',
+  memberId: 'memberId',
+  msgId: 'msgId',
+  viewedAt: 'viewedAt'
+} as const
+
+export type MessageViewScalarFieldEnum = (typeof MessageViewScalarFieldEnum)[keyof typeof MessageViewScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -416,8 +469,7 @@ export const NotificationOrderByRelevanceFieldEnum = {
   storyId: 'storyId',
   postId: 'postId',
   reelId: 'reelId',
-  chatId: 'chatId',
-  messageId: 'messageId'
+  chatId: 'chatId'
 } as const
 
 export type NotificationOrderByRelevanceFieldEnum = (typeof NotificationOrderByRelevanceFieldEnum)[keyof typeof NotificationOrderByRelevanceFieldEnum]
@@ -430,4 +482,46 @@ export const JobOrderByRelevanceFieldEnum = {
 } as const
 
 export type JobOrderByRelevanceFieldEnum = (typeof JobOrderByRelevanceFieldEnum)[keyof typeof JobOrderByRelevanceFieldEnum]
+
+
+export const ChatOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  mediaUrl: 'mediaUrl',
+  cloudId: 'cloudId',
+  creatorId: 'creatorId'
+} as const
+
+export type ChatOrderByRelevanceFieldEnum = (typeof ChatOrderByRelevanceFieldEnum)[keyof typeof ChatOrderByRelevanceFieldEnum]
+
+
+export const ChatMemberOrderByRelevanceFieldEnum = {
+  id: 'id',
+  chatId: 'chatId',
+  profileId: 'profileId'
+} as const
+
+export type ChatMemberOrderByRelevanceFieldEnum = (typeof ChatMemberOrderByRelevanceFieldEnum)[keyof typeof ChatMemberOrderByRelevanceFieldEnum]
+
+
+export const MessageOrderByRelevanceFieldEnum = {
+  id: 'id',
+  content: 'content',
+  mediaUrl: 'mediaUrl',
+  cloudId: 'cloudId',
+  senderId: 'senderId',
+  replyId: 'replyId',
+  chatId: 'chatId'
+} as const
+
+export type MessageOrderByRelevanceFieldEnum = (typeof MessageOrderByRelevanceFieldEnum)[keyof typeof MessageOrderByRelevanceFieldEnum]
+
+
+export const MessageViewOrderByRelevanceFieldEnum = {
+  id: 'id',
+  memberId: 'memberId',
+  msgId: 'msgId'
+} as const
+
+export type MessageViewOrderByRelevanceFieldEnum = (typeof MessageViewOrderByRelevanceFieldEnum)[keyof typeof MessageViewOrderByRelevanceFieldEnum]
 

@@ -28,11 +28,11 @@ export type Media = (typeof Media)[keyof typeof Media]
 
 export const Purpose = {
   COMMENT: 'COMMENT',
-  MESSAGE: 'MESSAGE',
   POST: 'POST',
   REEL: 'REEL',
   STORY: 'STORY',
-  CHAT: 'CHAT'
+  CHAT: 'CHAT',
+  MESSAGE: 'MESSAGE'
 } as const
 
 export type Purpose = (typeof Purpose)[keyof typeof Purpose]
@@ -49,7 +49,27 @@ export type JobName = (typeof JobName)[keyof typeof JobName]
 export const JobStatus = {
   PROGRESS: 'PROGRESS',
   SUCCESS: 'SUCCESS',
-  FAILED: 'FAILED'
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
 } as const
 
 export type JobStatus = (typeof JobStatus)[keyof typeof JobStatus]
+
+
+export const ChatType = {
+  PRIVATE: 'PRIVATE',
+  GROUP: 'GROUP'
+} as const
+
+export type ChatType = (typeof ChatType)[keyof typeof ChatType]
+
+
+export const Format = {
+  TEXT: 'TEXT',
+  FILE: 'FILE',
+  VIDEO: 'VIDEO',
+  GIF: 'GIF',
+  IMAGE: 'IMAGE'
+} as const
+
+export type Format = (typeof Format)[keyof typeof Format]

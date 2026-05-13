@@ -3,9 +3,8 @@ import { INestApplicationContext, Logger } from '@nestjs/common';
 import { JwtVerify } from 'src/auth/tokens/token.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Server, ServerOptions } from 'socket.io';
-//import { WsException } from '@nestjs/websockets';
 import { AuthenticatedSocket } from './dto/event.dto';
-import { WsException } from 'node_modules/@nestjs/websockets';
+import { WsException } from '@nestjs/websockets';
 
 export class AuthenicatedSocketAdapter extends IoAdapter {
   private readonly jwtVerify: JwtVerify;

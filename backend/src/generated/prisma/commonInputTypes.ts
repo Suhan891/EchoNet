@@ -264,6 +264,40 @@ export type EnumJobStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumJobStatusFilter<$PrismaModel>
 }
 
+export type EnumChatTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChatType | Prisma.EnumChatTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumChatTypeFilter<$PrismaModel> | $Enums.ChatType
+}
+
+export type EnumChatTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChatType | Prisma.EnumChatTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumChatTypeWithAggregatesFilter<$PrismaModel> | $Enums.ChatType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumChatTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumChatTypeFilter<$PrismaModel>
+}
+
+export type EnumFormatFilter<$PrismaModel = never> = {
+  equals?: $Enums.Format | Prisma.EnumFormatFieldRefInput<$PrismaModel>
+  in?: $Enums.Format[] | Prisma.ListEnumFormatFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Format[] | Prisma.ListEnumFormatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFormatFilter<$PrismaModel> | $Enums.Format
+}
+
+export type EnumFormatWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Format | Prisma.EnumFormatFieldRefInput<$PrismaModel>
+  in?: $Enums.Format[] | Prisma.ListEnumFormatFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Format[] | Prisma.ListEnumFormatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFormatWithAggregatesFilter<$PrismaModel> | $Enums.Format
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFormatFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFormatFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -525,6 +559,40 @@ export type NestedEnumJobStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumJobStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumJobStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumChatTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChatType | Prisma.EnumChatTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumChatTypeFilter<$PrismaModel> | $Enums.ChatType
+}
+
+export type NestedEnumChatTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChatType | Prisma.EnumChatTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ChatType[] | Prisma.ListEnumChatTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumChatTypeWithAggregatesFilter<$PrismaModel> | $Enums.ChatType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumChatTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumChatTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumFormatFilter<$PrismaModel = never> = {
+  equals?: $Enums.Format | Prisma.EnumFormatFieldRefInput<$PrismaModel>
+  in?: $Enums.Format[] | Prisma.ListEnumFormatFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Format[] | Prisma.ListEnumFormatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFormatFilter<$PrismaModel> | $Enums.Format
+}
+
+export type NestedEnumFormatWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.Format | Prisma.EnumFormatFieldRefInput<$PrismaModel>
+  in?: $Enums.Format[] | Prisma.ListEnumFormatFieldRefInput<$PrismaModel>
+  notIn?: $Enums.Format[] | Prisma.ListEnumFormatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFormatWithAggregatesFilter<$PrismaModel> | $Enums.Format
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFormatFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFormatFilter<$PrismaModel>
 }
 
 
