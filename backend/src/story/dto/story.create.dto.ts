@@ -46,6 +46,7 @@ export type StoryCreateDto = ImageAudioMedia | ImageMedia | VideoMedia;
 export interface StoryCreateEvent {
   stories: StoryCreateDto[];
   profileId: string;
+  name: string;
   storyId: string;
 }
 

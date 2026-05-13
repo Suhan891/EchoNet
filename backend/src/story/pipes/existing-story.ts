@@ -22,6 +22,7 @@ export class ValidateStoryExists implements PipeTransform {
     return {
       id: story.id,
       profileId: story.profile.id,
+      storyId: story.id,
     };
   }
 }

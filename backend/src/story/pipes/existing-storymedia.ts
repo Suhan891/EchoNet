@@ -13,6 +13,7 @@ export class ValidateStoryMediaPipe implements PipeTransform {
         id: true,
         story: {
           select: {
+            id: true,
             profileId: true,
           },
         },
@@ -22,6 +23,7 @@ export class ValidateStoryMediaPipe implements PipeTransform {
       throw new BadRequestException('No such story Media exists');
     return {
       id: storyMedia.id,
+      storyId: storyMedia.story.id,
       profileId: storyMedia.story.profileId,
     };
   }
