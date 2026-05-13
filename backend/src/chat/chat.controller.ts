@@ -20,6 +20,7 @@ import { GroupChatDto } from './dto/group-chat';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MediaValidationPipe } from './pipe/group.media.pipe';
 import { ValidateChatPipe } from './pipe/add-profile.group';
+import { MessageDto } from './dto/message.dto';
 
 @Controller('chat')
 export class ChatController {
@@ -81,5 +82,15 @@ export class ChatController {
     @Param('chatId', ParseUUIDPipe, ValidateChatPipe) chat: ChatDto,
   ) {
     return await this.chatService.getMsgsOnChat(profile, chat);
+  }
+
+  @Post('message/:chatId')
+  @ResponseMessage('Message added')
+  async addMessage(
+    @currentProfile() profile: profileDto,
+    @Param('chatId', ParseUUIDPipe, ValidateChatPipe) chat: ChatDto,
+    @Body() data: MessageDto,
+  ) {
+    return await this.chatService.createMsg(data, profile, chat);
   }
 }

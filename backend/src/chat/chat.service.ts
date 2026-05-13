@@ -428,7 +428,7 @@ export class ChatService {
     message: MessageDto,
     profile: profileDto,
     chat: ChatDto,
-    file: Express.Multer.File | null,
+    //file: Express.Multer.File | null, => Later
   ) {
     const existProf = chat.members.find(
       (prof) => prof.profileId === profile.id,
@@ -437,39 +437,63 @@ export class ChatService {
     if (!existProf.isApproved)
       throw new BadRequestException('Approve yourself before messaging');
 
-    if (message.format !== 'TEXT' && message.format !== 'GIF') {
-      // Will be done later
-      // if(message.format === 'IMAGE')
-      //   const upload = await this.cloudService.
-    }
-
-    if (message.format === 'TEXT' || message.format === 'GIF')
-      await this.createMessage({
-        chatId: chat.id,
-        content: message.name,
-        mediaUrl: message.mediaUrl,
-        format: message.format,
-        senderId: profile.id,
-      });
-  }
-
-  private async createMessage(data: {
-    chatId: string;
-    content?: string;
-    mediaUrl?: string;
-    format: Format;
-    senderId: string;
-    cloudId?: string;
-  }) {
     await this.prisma.message.create({
       data: {
-        chatId: data.chatId,
-        content: data.content ?? null,
-        mediaUrl: data.mediaUrl ?? null,
-        format: data.format,
-        senderId: data.senderId,
-        cloudId: data.cloudId ?? null,
+        chatId: chat.id,
+        content: message.content,
+        mediaUrl: null,
+        format: message.format,
+        senderId: existProf.id,
       },
     });
+
+    const allOtherProf = chat.members.map(async (memb) => {
+      if (memb.profileId !== profile.id && memb.isApproved) {
+        await this.notifyService.createNotification({
+          format: {
+            type: 'MESSAGE',
+            chatId: chat.id,
+          },
+          content: `${profile.name} has texted you ${chat.type === 'GROUP' ? chat.name : 'personally'}`,
+          receiverId: memb.profileId,
+        });
+      }
+    });
+    await Promise.all(allOtherProf);
+    await this.cacheService.delete(`chat:${chat.id}`);
+    // if (message.format !== 'TEXT' && message.format !== 'GIF') {
+    //   // Will be done later
+    //   // if(message.format === 'IMAGE')
+    //   //   const upload = await this.cloudService.
+    // }
+
+    // if (message.format === 'TEXT' || message.format === 'GIF')
+    //   await this.createMessage({
+    //     chatId: chat.id,
+    //     content: message.content,
+    //     mediaUrl: message.mediaUrl,
+    //     format: message.format,
+    //     senderId: profile.id,
+    //   });
   }
+
+  // private async createMessage(data: {
+  //   chatId: string;
+  //   content?: string;
+  //   mediaUrl?: string;
+  //   format: Format;
+  //   senderId: string;
+  //   cloudId?: string;
+  // }) {
+  //   await this.prisma.message.create({
+  //     data: {
+  //       chatId: data.chatId,
+  //       content: data.content ?? null,
+  //       mediaUrl: data.mediaUrl ?? null,
+  //       format: data.format,
+  //       senderId: data.senderId,
+  //       cloudId: data.cloudId ?? null,
+  //     },
+  //   });
+  // }
 }
