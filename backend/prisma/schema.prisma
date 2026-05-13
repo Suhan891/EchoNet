@@ -86,8 +86,8 @@ model Follow {
 
   createdAt DateTime @default(now())
 
-  follower  Profile @relation("followings", fields: [followerId], references: [id])
-  following Profile @relation("followers", fields: [followingId], references: [id])
+  follower  Profile @relation("followings", fields: [followerId], references: [id], onDelete: Cascade)
+  following Profile @relation("followers", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
 }
@@ -103,6 +103,8 @@ model Post {
   caption     String
   description String?
   postPhoto   PostMedia[]
+
+  // job Job
 
   notify Notification[] @relation("PostNotify")
 
@@ -140,7 +142,7 @@ model Reel {
   id String @id @default(uuid())
 
   profileId String
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   videoUrl String
   cloudId  String
@@ -163,6 +165,8 @@ model Story {
 
   expiresAt DateTime
   isReady   Boolean  @default(false) // Later be removed => And have One to Many with Jobs
+
+  // job Job
 
   storyMedia StoryMedia[]
 
@@ -202,7 +206,7 @@ model StoryViews {
   storyMedia   StoryMedia @relation(fields: [storyMediaId], references: [id], onDelete: Cascade)
 
   viewerId String
-  viewer   Profile @relation(fields: [viewerId], references: [id])
+  viewer   Profile @relation(fields: [viewerId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -256,38 +260,33 @@ model Comments {
 
 enum Purpose {
   COMMENT
-  MESSAGE
   POST
   REEL
   STORY
   CHAT
+  MESSAGE
 }
 
 model Notification {
   id String @id @default(uuid())
 
   receiverId String
-
   receiver Profile @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
 
   // This 2 below only would be sent to client with notification
   purpose Purpose
   content String
 
-  isApproved Boolean?
-
   // After making them as isRead true => these id would be sent in return 
   storyId   String?
   postId    String?
   reelId    String?
   chatId    String?
-  messageId String?
 
   story   Story?   @relation("StoryNotify", fields: [storyId], references: [id], onDelete: Cascade)
   post    Post?    @relation("PostNotify", fields: [postId], references: [id], onDelete: Cascade)
   reel    Reel?    @relation("ReelNotify", fields: [reelId], references: [id], onDelete: Cascade)
   chat    Chat?    @relation("NewChatNotify", fields: [chatId], references: [id], onDelete: Cascade)
-  message Message? @relation("NewMessageNotify", fields: [messageId], references: [id], onDelete: Cascade)
 
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -304,17 +303,24 @@ enum JobStatus {
   PROGRESS
   SUCCESS
   FAILED
+  CANCELLED
 }
 
 model Job {
   id String @id @default(uuid())
 
-  jobId  String
+  jobId  String @unique
   name   JobName
   status JobStatus
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  // storyId String?
+  // postId String?
+
+  // story Story? @relation(fields: [storyId], references: [id])
+  // post Post? @relation(fields: [postId], references: [id])
+
+  userId String // Be removed
+  user   User   @relation(fields: [userId], references: [id]) // Be removed
 
   createdAt DateTime @default(now())
 }
@@ -352,10 +358,12 @@ model ChatMember {
   profile  Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   joinedAt DateTime @default(now())
 
-  isApproved Boolean? @default(false)
+  isApproved Boolean @default(false)
 
   message Message[]
   views   MessageView[]
+
+  createdAt DateTime @default(now())
 
   @@unique([chatId, profileId])
 }
@@ -386,9 +394,8 @@ model Message {
   chatId String
   chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
-  notify Notification[] @relation("NewMessageNotify")
-
   msgView MessageView[]
+  createdAt DateTime @default(now())
 
   @@index([chatId])
 }
