@@ -23,6 +23,7 @@ export interface JobStoryCreateDto {
 }
 export interface JobParentCreateDto {
   profileId: string;
+  name: string;
   storyId: string;
 }
 

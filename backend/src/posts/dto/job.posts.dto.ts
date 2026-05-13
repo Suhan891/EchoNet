@@ -2,6 +2,7 @@ import { Job } from 'bullmq';
 
 export interface JobParentData {
   postId: string;
+  name: string;
   profileId: string;
 }
 

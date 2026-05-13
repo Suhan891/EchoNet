@@ -22,6 +22,7 @@ export class CreatePostDto {
 
 export interface PostEvent {
   postId: string;
+  name: string;
   profileId: string;
   medias: Array<Express.Multer.File>;
 }

@@ -22,7 +22,7 @@ export class LikeService {
   }
 
   async viewProfiles(profile: profileDto, id: string, type: RequestType) {
-    const key = `likes:${profile.id}`;
+    const key = `profile:${profile.id}:like:${type}`;
     const cachedProfiles = await this.cacheService.get(key);
     if (cachedProfiles) return cachedProfiles;
 

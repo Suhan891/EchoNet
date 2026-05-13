@@ -25,7 +25,7 @@ export class JobsService {
         status: jobData.status,
       };
     }
-    const job = await this.storyQueue.getJob(jobData.id);
+    const job = await this.storyQueue.getJob(jobData.jobId);
     if (!job) {
       // Means success , as it deletes after success
       return await this.JobStatusUpdate(jobData.id, 'SUCCESS');

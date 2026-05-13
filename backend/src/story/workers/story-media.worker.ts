@@ -11,6 +11,7 @@ import {
 } from '../dto/job.story-create';
 import { Readable } from 'node:stream';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Processor('story-task', { concurrency: 5 })
 export class StoryProcessor extends WorkerHost {
@@ -18,6 +19,7 @@ export class StoryProcessor extends WorkerHost {
     private readonly storyService: StoryService,
     private prisma: PrismaService,
     private cacheService: AppCacheService,
+    private notificationService: NotificationService,
   ) {
     super();
   }
@@ -58,7 +60,6 @@ export class StoryProcessor extends WorkerHost {
       };
       return await this.storyService.createImageMedia(result);
     }
-    //return await this.storyService.createImageMedia(data);
     if (data.type === 'video' && data.videoFile) {
       const vidBuffer = Buffer.from(data.videoFile.buffer, 'base64');
       const result = {
@@ -120,14 +121,31 @@ export class StoryProcessor extends WorkerHost {
   }
 
   private async processParent(job: Job<JobParentCreateDto>) {
-    const { storyId, profileId } = job.data;
+    const { storyId, profileId, name } = job.data;
     await this.prisma.story.update({
       where: { id: storyId },
       data: { isReady: true },
     });
     const profileKey = `profile:${profileId}`;
     await this.cacheService.delete(profileKey);
-    // Later here Notification feature to all followers or followings
+
+    const followers = await this.prisma.follow.findMany({
+      where: { followingId: profileId },
+      select: { followerId: true },
+    });
+
+    const notifyFollowers = followers.map(async (prof) => {
+      if (prof.followerId)
+        await this.notificationService.createNotification({
+          format: {
+            type: 'STORY',
+            storyId,
+          },
+          content: `${name} posted a new story`,
+          receiverId: prof.followerId,
+        });
+    });
+    await Promise.all(notifyFollowers);
     return storyId;
   }
 
@@ -165,7 +183,6 @@ export class StoryProcessor extends WorkerHost {
     }
 
     if (job.name === 'batch-complete') {
-      // Later when notification shall be called
       this.logger.error(`Batch parent job failed: ${job.id}`, err.stack);
     }
   }

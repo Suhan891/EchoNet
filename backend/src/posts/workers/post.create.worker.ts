@@ -6,12 +6,14 @@ import { PostsService } from '../posts.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { Logger } from '@nestjs/common';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Processor('posts-task', { concurrency: 5 })
 export class PostProcessor extends WorkerHost {
   constructor(
     private postService: PostsService,
     private prisma: PrismaService,
+    private notificationService: NotificationService,
     private cacheService: AppCacheService,
   ) {
     super();
@@ -45,11 +47,29 @@ export class PostProcessor extends WorkerHost {
 
   private async parentJob(job: Job<JobParentData>) {
     const data = job.data;
-    // Later notification to followers
     await this.prisma.post.update({
       where: { id: data.postId },
       data: { isReady: true },
     });
+
+    const followers = await this.prisma.follow.findMany({
+      where: { followingId: data.profileId },
+      select: { followerId: true },
+    });
+
+    const notifyFollowers = followers.map(async (prof) => {
+      if (prof.followerId)
+        await this.notificationService.createNotification({
+          format: {
+            type: 'POST',
+            postId: data.postId,
+          },
+          content: `${data.name} posted a new post`,
+          receiverId: prof.followerId,
+        });
+    });
+    await Promise.all(notifyFollowers);
+
     const profileKey = `profile:${data.profileId}`;
     await this.cacheService.delete(profileKey);
     await this.cacheService.delByPattern(profileKey);

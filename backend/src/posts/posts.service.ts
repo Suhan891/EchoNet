@@ -52,6 +52,7 @@ export class PostsService {
       postId: post.id,
       profileId: post.profile.id,
       medias: postMedia,
+      name: profile.name,
     } as PostEvent;
 
     const jobId = (await this.eventEmitter.emitAsync(
@@ -128,8 +129,14 @@ export class PostsService {
   async removePosts(profile: profileDto, post: PostDto) {
     if (post.profileId !== profile.id)
       throw new BadRequestException('You are not allowed to remove');
+
+    await this.deletePost(post.id);
+    await this.cacheService.delete(`profile:${profile.id}`);
+  }
+
+  async deletePost(postId: string) {
     const postMedias = await this.prisma.postMedia.findMany({
-      where: { id: post.id },
+      where: { id: postId },
       select: { cloudId: true },
     });
     const postPrmomise = postMedias.map(async (media) => {
@@ -138,10 +145,9 @@ export class PostsService {
     });
     await Promise.all(postPrmomise);
     await this.prisma.post.delete({
-      where: { id: post.id },
+      where: { id: postId },
     });
     await this.cacheService.delByPattern(`posts:global`);
-    await this.cacheService.delete(`profile:${profile.id}`);
   }
 
   async getOthersPost(othersProf: OthersPostDto, profile: profileDto) {

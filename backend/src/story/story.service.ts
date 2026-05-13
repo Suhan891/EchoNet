@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { profileDto } from 'src/profile/dto/profile.dto';
@@ -21,6 +20,7 @@ import {
   VideoMedia,
 } from './dto/story.create.dto';
 import { authUserDto } from 'src/auth/tokens/token.dto';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class StoryService {
@@ -29,6 +29,7 @@ export class StoryService {
     private cloudService: CloudinaryService,
     private readonly eventEmitter: EventEmitter2,
     private cacheService: AppCacheService,
+    private notificationService: NotificationService,
   ) {}
 
   async createStory(
@@ -43,15 +44,15 @@ export class StoryService {
         id: true,
       },
     });
-    if (existingStory) await this.deleteStory(existingStory.id);
+    if (existingStory) await this.deleteStory(existingStory.id, profile.id);
 
-    if (existingStory && existingStory.expiresAt >= new Date(Date.now()))
-      throw new BadRequestException(
-        'You already have a existing story still not expired',
-      );
-    if (existingStory && existingStory.expiresAt < new Date(Date.now())) {
-      await this.deleteStory(existingStory.id);
-    }
+    // if (existingStory && existingStory.expiresAt >= new Date(Date.now()))
+    //   throw new BadRequestException(
+    //     'You already have a existing story still not expired',
+    //   );
+    // if (existingStory && existingStory.expiresAt < new Date(Date.now())) {
+    //   await this.deleteStory(existingStory.id, profile.id);
+    // }
 
     const story = await this.prisma.story.create({
       data: {
@@ -76,6 +77,7 @@ export class StoryService {
       stories,
       storyId: story.id,
       profileId: profile.id,
+      name: profile.name,
     } as StoryCreateEvent;
 
     const jobId = (await this.eventEmitter.emitAsync(
@@ -109,7 +111,7 @@ export class StoryService {
     if (!story)
       throw new BadRequestException('No story wxists for the profile');
 
-    await this.deleteStory(story.id);
+    await this.deleteStory(story.id, profile.id);
     const profileKey = `profile:${profile.id}`;
     await this.cacheService.delete(profileKey);
   }
@@ -122,7 +124,7 @@ export class StoryService {
     if (!story)
       throw new BadRequestException('No story available for this profile');
     if (story && story.expiresAt < new Date(Date.now())) {
-      await this.deleteStory(story.id);
+      await this.deleteStory(story.id, profile.id);
       throw new BadRequestException('You story has expired');
     }
     const key = `story:${profile.id}:own:${story.id}`;
@@ -187,9 +189,9 @@ export class StoryService {
   }
 
   async getStory(profile: profileDto, story: StoryDto) {
-    const key = `story:${story.profileId}:viewer:${profile.id}:${story.id}`;
-    //const cachedStories = await this.cacheService.get(key);
-    //if (cachedStories) return cachedStories;
+    const key = `story:${story.profileId}:${story.id}`;
+    const cachedStories = await this.cacheService.get(key);
+    if (cachedStories) return cachedStories;
     if (profile.id !== story.profileId)
       await this.ValidateProfile(profile.id, story.profileId);
 
@@ -203,16 +205,17 @@ export class StoryService {
       },
     });
     const storiesIds = [...storyMediaData.map((media) => media.id)];
-    await this.cacheService.set<typeof storiesIds>(key, storiesIds);
+    await this.cacheService.set<typeof storiesIds>(key, storiesIds, 60 * 30);
     return storiesIds;
   }
 
   async getStoryMedia(profile: profileDto, storyMedia: StoryDto) {
-    // const key = `story:${storyMedia.profileId}:media:${storyMedia.id}:viewer:${profile.id}`;
-    // const cachedStory = await this.cacheService.get(key);
-    // if (cachedStory) return cachedStory;
     const isOwn = profile.id === storyMedia.profileId;
     if (!isOwn) await this.ValidateProfile(profile.id, storyMedia.profileId);
+
+    const key = `story:${storyMedia.storyId}:${storyMedia.id}`;
+    const cachedStory = await this.cacheService.get(key);
+    if (cachedStory) return cachedStory;
 
     const story = await this.prisma.storyMedia.findUnique({
       where: { id: storyMedia.id },
@@ -231,18 +234,19 @@ export class StoryService {
         }),
       },
     });
+    await this.cacheService.set<typeof story>(key, story, 60 * 30);
     return story;
   }
 
   private async ValidateProfile(profileId: string, storyOwnerId: string) {
-    const existingFollow = await this.prisma.follow.count({
+    await this.prisma.follow.findUniqueOrThrow({
       where: {
-        followerId: profileId,
-        followingId: storyOwnerId,
+        followerId_followingId: {
+          followerId: profileId,
+          followingId: storyOwnerId,
+        },
       },
     });
-    if (!existingFollow)
-      throw new UnauthorizedException('Not a following user');
   }
   async createImageMedia(data: ImageMedia) {
     const fileName = `${crypto.randomUUID()}-${data.order}`;
@@ -301,7 +305,7 @@ export class StoryService {
     });
   }
 
-  async deleteStory(storyId: string): Promise<string> {
+  async deleteStory(storyId: string, profileId: string): Promise<string> {
     const storyMedias = await this.prisma.storyMedia.findMany({
       where: { storyId },
       select: {
@@ -325,6 +329,10 @@ export class StoryService {
     const key = `story:${storyId}`;
     await this.cacheService.delete(key);
 
+    await this.cacheService.delByPattern(`story:${storyId}`);
+    await this.cacheService.delete(`story:${profileId}:${story.id}`);
+
+    await this.notificationService.clearNotifyCacheOfFollowers(profileId);
     return story.id;
   }
 

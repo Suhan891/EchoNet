@@ -34,7 +34,7 @@ export class JwtCreate {
 
   forgotPassToken(payload: passResetDto) {
     return this.jwtService.sign(payload, {
-      secret: process.env.JWT_PASSWORD_SECRET || 'forgot_pass',
+      secret: process.env.JWT_PASSWORD_SECRET,
       expiresIn: '1d',
     });
   }
@@ -79,7 +79,7 @@ export class JwtVerify {
   forgotPassToken(token: string): passResetDto | null {
     try {
       return this.jwtService.verify<passResetDto>(token, {
-        secret: process.env.JWT_PASSWORD_SECRET || 'forgot_pass',
+        secret: process.env.JWT_PASSWORD_SECRET,
       });
     } catch {
       throw new ForbiddenException('Invalid token');

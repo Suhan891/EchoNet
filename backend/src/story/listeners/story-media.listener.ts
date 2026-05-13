@@ -14,10 +14,11 @@ export class StoryListener {
 
   @OnEvent('story.create')
   async handleCreateStory(event: StoryCreateEvent) {
-    const { stories, storyId, profileId } = event;
+    const { stories, storyId, profileId, name } = event;
     const parentData = {
       storyId,
       profileId,
+      name,
     } as JobParentCreateDto;
     const jobs: JobStoryCreateDto[] = stories
       .map((event): JobStoryCreateDto | undefined => {

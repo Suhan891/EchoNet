@@ -14,10 +14,11 @@ export class PostsListener {
 
   @OnEvent('posts.create')
   async handleCreateEvent(event: PostEvent) {
-    const { medias, postId, profileId } = event;
+    const { medias, postId, profileId, name } = event;
     const parentData = {
       postId,
       profileId,
+      name,
     } as JobParentData;
     const childrenData = medias.map(
       (media) =>

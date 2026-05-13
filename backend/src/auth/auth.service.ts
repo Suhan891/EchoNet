@@ -155,8 +155,8 @@ export class AuthService {
       (profile) => profile.isActive === true,
     );
     const profileKey = `profile:${activeProfile?.id}`;
-    await this.cacheService.delete(profileKey); // Delete specific profile cache if needed, but user cache is primary
-    await this.cacheService.set<typeof authUser>(key, authUser, 1000 * 60 * 20);
+    await this.cacheService.delete(profileKey);
+    await this.cacheService.set<typeof authUser>(key, authUser, 60 * 30);
     return authUser;
   }
 
