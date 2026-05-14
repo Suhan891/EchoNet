@@ -62,7 +62,7 @@
 
 ## 🚧 Work in Progress (Upcoming Features)
 
-* **Infinite Feed & Timeline:** Infinite scrolling implementation on the frontend to consume aggregated Post, Reel, and Story APIs.
+* **Infinite Feed & Timeline:** Infinite scrolling implementation on the frontend to consume aggregated Reel APIs.
 * **Admin Dashboard:** Interfaces for moderation and platform management based on existing `Role.ADMIN` schemas.
 
 ---
