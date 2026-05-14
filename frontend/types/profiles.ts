@@ -10,7 +10,7 @@ export interface ProfileDto {
   avatarUrl: string;
   isPrivate: boolean;
   story?: {
-    id: true;
+    id: string;
   };
   _count: {
     posts: number;
