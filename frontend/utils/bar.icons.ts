@@ -15,7 +15,7 @@ export const items = [
   },
   {
     title: "Inbox",
-    url: "#",
+    url: "/notifications",
     icon: Inbox,
   },
   {
@@ -34,8 +34,8 @@ export const items = [
     icon: Video,
   },
   {
-    title: "Message",
-    url: "#",
+    title: "Chats",
+    url: "/chats",
     icon: MessageSquare,
   },
 ];

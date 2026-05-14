@@ -22,9 +22,9 @@ export async function RemoveStroy() {
   return putJson('remove', null)
 }
 
-export async function StoriesOwnRequest() {
-  return getJson('own')
-}
+// export async function StoriesOwnRequest() {
+//   return getJson('own')
+// }
 
 export async function GetStory(storyId: string) {
   return getJson(`story/${storyId}`)

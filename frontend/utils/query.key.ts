@@ -11,4 +11,5 @@ export const queryKeys = {
     FOLLOW: 'follow',
     SAVE_POST: 'save_post',
     CHAT: 'chat',
+    NOTIFICATIONS: 'notifications'
 }

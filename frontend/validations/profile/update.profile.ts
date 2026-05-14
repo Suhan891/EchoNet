@@ -8,7 +8,7 @@ export const UpdateProfileSchema = z.object({
 
   name: z
     .string()
-    .min(3, "Name must be at least 2 characters.")
+    .min(3, "Name must be at least 3 characters.")
     .max(100, "Name must be at most 200 characters."),
 });
 
