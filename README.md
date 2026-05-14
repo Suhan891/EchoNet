@@ -32,6 +32,34 @@
 
 ---
 
+## 🏗️ Architecture Highlights
+
+- **Custom NestJS Pipeline** — Global guard chain with decorator-based route 
+  protection. Typed pipes validate and fetch entities before controllers receive 
+  them. Param decorators inject authenticated user and active profile directly 
+  into controller methods.
+- **Multi-Profile System** — One user account supports multiple profiles with 
+  header-based switching via `x-profile-id`, mirroring YouTube's channel model. 
+  ProfileGuard handles ownership verification and profile attachment per request.
+- **Async Media Processing** — Parent/child BullMQ job flow processes story and 
+  reel media in background workers with concurrency of 5. Base64 buffer 
+  serialization handles Redis transport. Frontend polls job status with full 
+  retry support on failure.
+- **Hybrid Messaging Architecture** — HTTP POST for message persistence to 
+  PostgreSQL, Socket.io for real-time delivery to recipient rooms. Redis tracks 
+  online presence with automatic 24hr TTL expiry as safety net.
+- **Polymorphic Interactions** — Single Likes table handles Posts, Reels, and 
+  Stories via nullable foreign keys with composite unique constraints preventing 
+  duplicates at DB level.
+- **Redis Caching Layer** — Pattern-based cache invalidation across auth, 
+  profile, feed, and follow layers. Cache-first reads with targeted TTL 
+  management reduce DB load on hot paths.
+- **Consistent API Contract** — Global ResponseInterceptor wraps all responses 
+  in typed envelope. GlobalExceptionFilter catches all errors including 
+  unexpected crashes, returning consistent shape to frontend.
+
+---
+
 ## ✨ Features
 
 ### 🔐 Authentication & Security
