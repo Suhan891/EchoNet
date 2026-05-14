@@ -15,3 +15,20 @@ export class MessageDto {
   })
   format: Format;
 }
+
+export interface MsgViewDto {
+  id: string;
+  sender: {
+    profileId: string;
+  };
+  msgView: {
+    viewedAt: Date;
+    member: {
+      profile: {
+        id: string;
+        name: string;
+        avatarUrl: string | null;
+      };
+    };
+  }[];
+}
