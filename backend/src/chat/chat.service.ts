@@ -6,19 +6,20 @@ import {
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { profileDto } from 'src/profile/dto/profile.dto';
-import { AddChatDto, ChatDto, ChatProfileDto } from './dto/chat.dto';
+import { ChatDto, ChatProfileDto } from './dto/chat.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { NotifyDto } from 'src/notification/dto/notification.dto';
 import { GroupChatDto } from './dto/group-chat';
-import { MessageDto } from './dto/message.dto';
+import { MessageDto, MsgViewDto } from './dto/message.dto';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
-import { Format } from 'src/generated/prisma/enums';
+import { EventService } from 'src/event/event.service';
 
 @Injectable()
 export class ChatService {
   constructor(
     private prisma: PrismaService,
     private cacheService: AppCacheService,
+    private eventService: EventService,
     private notifyService: NotificationService,
     private cloudService: CloudinaryService,
   ) {}
@@ -193,18 +194,55 @@ export class ChatService {
     await this.cacheService.delete(`profile:${profile.id}:chats`);
   }
 
+  async getProfToAdd(profile: profileDto, chat: ChatDto) {
+    if (profile.id !== chat.creatorId)
+      throw new ForbiddenException('Be the admin to add members');
+    const key = `profile:${profile.id}:new:members`;
+    const cachedOtherProf = await this.cacheService.get(key);
+    //if (cachedOtherProf) return cachedOtherProf;
+    const profiles = await this.prisma.profile.findMany({
+      where: {
+        NOT: {
+          OR: [
+            { avatarUrl: null }, // As some wrong data present
+            {
+              chats: {
+                some: {
+                  chat: {
+                    id: chat.id,
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        avatarUrl: true,
+        isPrivate: true,
+      },
+    });
+    await this.cacheService.set<typeof profiles>(key, profiles, 60 * 30);
+    return profiles;
+  }
+
   async addMembers(
     profile: profileDto,
-    chat: AddChatDto,
+    chat: ChatDto,
     otherProf: ChatProfileDto,
   ) {
     if (profile.id === otherProf.id)
       throw new ForbiddenException('You cannot add yourself again in the chat');
 
+    if (chat.creatorId !== profile.id)
+      throw new ForbiddenException('Be the admin to add members');
+
     const existingChat = otherProf.chats.find((c) => c.chatId === chat.id);
 
     if (chat.type !== 'GROUP')
-      throw new BadRequestException('Add members in a group chat');
+      throw new BadRequestException('Members can only be added in the group');
 
     if (existingChat)
       throw new BadRequestException('Chat already has this member');
@@ -232,6 +270,7 @@ export class ChatService {
     await this.cacheService.delete(`profile:${otherProf.id}:chats`);
 
     await this.cacheService.delete(`chat:${chat.id}:members`);
+    await this.cacheService.delete(`profile:${profile.id}:new:members`);
   }
 
   async toggleChatApproval(profile: profileDto, chat: ChatDto) {
@@ -304,28 +343,29 @@ export class ChatService {
     const key = `chat:${chat.id}:members`;
     const cachedMembers = await this.cacheService.get(key);
     if (cachedMembers) return cachedMembers;
-    const members = await this.prisma.chatMember.findMany({
-      where: { chatId: chat.id },
+    const chatMembers = await this.prisma.chat.findUniqueOrThrow({
+      where: { id: chat.id },
       select: {
         id: true,
-        chat: {
+        creatorId: true,
+        members: {
           select: {
-            creatorId: true,
-          },
-        },
-        isApproved: true,
-        profile: {
-          select: {
+            isApproved: true,
             id: true,
-            name: true,
-            avatarUrl: true,
+            profile: {
+              select: {
+                id: true,
+                avatarUrl: true,
+                name: true,
+              },
+            },
           },
         },
       },
     });
 
-    await this.cacheService.set<typeof members>(key, members);
-    return members;
+    await this.cacheService.set<typeof chatMembers>(key, chatMembers);
+    return chatMembers;
   }
 
   async getMsgsOnChat(profile: profileDto, chat: ChatDto) {
@@ -337,6 +377,7 @@ export class ChatService {
     const key = `chat:${chat.id}`;
     const cachedMesgs = await this.cacheService.get(key);
     if (cachedMesgs) return cachedMesgs;
+
     const msgs = await this.prisma.chat.findUnique({
       where: { id: chat.id },
       select: {
@@ -360,6 +401,9 @@ export class ChatService {
           },
         },
         message: {
+          orderBy: {
+            createdAt: 'asc',
+          },
           where: {
             NOT: {
               chat: {
@@ -378,6 +422,12 @@ export class ChatService {
             mediaUrl: true,
             format: true,
             senderId: true,
+            createdAt: true,
+            _count: {
+              select: {
+                msgView: true,
+              },
+            },
             msgView: {
               select: {
                 member: {
@@ -410,18 +460,30 @@ export class ChatService {
           (v) => v.member.profileId === profile.id,
         );
 
-        if (!isExisting)
+        if (!isExisting) {
           await this.prisma.messageView.create({
             data: {
               memberId: ownProf.id,
               msgId: m.id,
             },
           });
+          await this.cacheService.delete(`message:${m.id}`);
+        }
       });
       await Promise.all(awaitMsgs);
     }
     await this.cacheService.set<typeof msgs>(key, msgs);
     return msgs;
+  }
+
+  async msgView(profile: profileDto, data: MsgViewDto) {
+    if (data.sender.profileId !== profile.id)
+      throw new ForbiddenException('Be the sender to view the message');
+    const key = `message:${data.id}`;
+    const cachedViews = await this.cacheService.get(key);
+    if (cachedViews) return cachedViews;
+    await this.cacheService.set<typeof data>(key, data);
+    return data;
   }
 
   async createMsg(
@@ -446,17 +508,23 @@ export class ChatService {
         senderId: existProf.id,
       },
     });
+    await this.cacheService.delete(`chat:${chat.id}`);
 
     const allOtherProf = chat.members.map(async (memb) => {
       if (memb.profileId !== profile.id && memb.isApproved) {
-        await this.notifyService.createNotification({
-          format: {
-            type: 'MESSAGE',
-            chatId: chat.id,
-          },
-          content: `${profile.name} has texted you ${chat.type === 'GROUP' ? chat.name : 'personally'}`,
-          receiverId: memb.profileId,
-        });
+        const isOnline = await this.eventService.isOnline(memb.profileId);
+        const content = `${profile.name} has texted you  ${chat.type === 'GROUP' ? chat.name : 'personally'}`;
+        if (isOnline)
+          this.eventService.sendMsg(memb.profileId, chat.id, content);
+        if (!isOnline)
+          await this.notifyService.createNotification({
+            format: {
+              type: 'MESSAGE',
+              chatId: chat.id,
+            },
+            content: `${profile.name} has texted you ${chat.type === 'GROUP' ? chat.name : 'personally'}`,
+            receiverId: memb.profileId,
+          });
       }
     });
     await Promise.all(allOtherProf);
@@ -476,24 +544,4 @@ export class ChatService {
     //     senderId: profile.id,
     //   });
   }
-
-  // private async createMessage(data: {
-  //   chatId: string;
-  //   content?: string;
-  //   mediaUrl?: string;
-  //   format: Format;
-  //   senderId: string;
-  //   cloudId?: string;
-  // }) {
-  //   await this.prisma.message.create({
-  //     data: {
-  //       chatId: data.chatId,
-  //       content: data.content ?? null,
-  //       mediaUrl: data.mediaUrl ?? null,
-  //       format: data.format,
-  //       senderId: data.senderId,
-  //       cloudId: data.cloudId ?? null,
-  //     },
-  //   });
-  // }
 }

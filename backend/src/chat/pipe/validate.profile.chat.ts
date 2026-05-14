@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ChatProfileDto } from '../dto/chat.dto';
 
 @Injectable()
-export class ValidatePersonalPipe implements PipeTransform {
+export class ValidateProfilePipe implements PipeTransform {
   constructor(private prisma: PrismaService) {}
   async transform(ProfName: string): Promise<ChatProfileDto> {
     const profile = await this.prisma.profile.findUniqueOrThrow({

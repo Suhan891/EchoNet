@@ -14,13 +14,15 @@ import { ChatService } from './chat.service';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 import type { profileDto } from 'src/profile/dto/profile.dto';
 import { currentProfile } from 'src/profile/decorator/get-profile';
-import { ValidatePersonalPipe } from './pipe/validate.profile.chat';
+import { ValidateProfilePipe } from './pipe/validate.profile.chat';
 import type { ChatDto, ChatProfileDto } from './dto/chat.dto';
 import { GroupChatDto } from './dto/group-chat';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MediaValidationPipe } from './pipe/group.media.pipe';
 import { ValidateChatPipe } from './pipe/add-profile.group';
 import { MessageDto } from './dto/message.dto';
+import type { MsgViewDto } from './dto/message.dto';
+import { ValidateMessagePipe } from './pipe/message.pipe';
 
 @Controller('chat')
 export class ChatController {
@@ -38,11 +40,40 @@ export class ChatController {
     return await this.chatService.getProfileForGroup(profile);
   }
 
+  @Get('group/:chatId/memb')
+  @ResponseMessage('Members received')
+  async getGroupMembers(
+    @currentProfile() profile: profileDto,
+    @Param('chatId', ParseUUIDPipe, ValidateChatPipe) chat: ChatDto,
+  ) {
+    return await this.chatService.getMembersOfGroup(profile, chat);
+  }
+
+  @Get('group/:chatId')
+  @ResponseMessage('All profiles for group received')
+  async getProfForGroupAdd(
+    @currentProfile() profile: profileDto,
+    @Param('chatId', ParseUUIDPipe, ValidateChatPipe) chat: ChatDto,
+  ) {
+    return await this.chatService.getProfToAdd(profile, chat);
+  }
+
+  @Put('group/:chatId')
+  @ResponseMessage('Member has been added')
+  async addMember(
+    @currentProfile() profile: profileDto,
+    @Query('profileId', ValidateProfilePipe)
+    otherProf: ChatProfileDto,
+    @Param('chatId', ParseUUIDPipe, ValidateChatPipe) chat: ChatDto,
+  ) {
+    return await this.chatService.addMembers(profile, chat, otherProf);
+  }
+
   @Post('private')
   @ResponseMessage('Private chat created, waiting for receiver approval')
   async createPrivate(
     @currentProfile() profile: profileDto,
-    @Query('profile', ValidatePersonalPipe)
+    @Query('profile', ValidateProfilePipe)
     otherProf: ChatProfileDto,
   ) {
     return await this.chatService.createPrivatechat(profile, otherProf);
@@ -92,5 +123,14 @@ export class ChatController {
     @Body() data: MessageDto,
   ) {
     return await this.chatService.createMsg(data, profile, chat);
+  }
+
+  @Get('message/view/:id')
+  @ResponseMessage('Receved all viewed messages')
+  async viewedMessages(
+    @currentProfile() profile: profileDto,
+    @Param('id', ParseUUIDPipe, ValidateMessagePipe) message: MsgViewDto,
+  ) {
+    return await this.chatService.msgView(profile, message);
   }
 }

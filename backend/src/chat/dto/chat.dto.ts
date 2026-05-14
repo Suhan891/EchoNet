@@ -38,12 +38,3 @@ export interface ProfGroupDto {
   profileId: string;
   isPrivate: boolean;
 }
-export interface AddChatDto {
-  id: string;
-  creatorId: string;
-  name: string;
-  type: ChatType;
-  profiles: {
-    id: string;
-  }[];
-}
