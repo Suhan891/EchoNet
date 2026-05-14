@@ -16,23 +16,18 @@ datasource db {
 
 model User {
   id      String    @id @default(uuid())
-  profile Profile[] // is 0-Many
+  profile Profile[]
 
   email    String @unique
   username String @db.VarChar(200)
   password String @db.VarChar(255)
   role     Role   @default(USER)
 
-  // Also add enum of :role:
+  // Later enum of roles would be added => To let user have different permissions
 
   isEmailVerified Boolean @default(false)
   isActive        Boolean @default(false) // Later shall be removed => To let user use from different browsers at the same time
   tokenVersion    Int     @default(0)
-
-  passResetToken   String? // Shall be removed
-  passResetExpTime DateTime? // Shall be removed
-
-  jobs Job[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -62,6 +57,8 @@ model Profile {
   reels         Reel[]
   savedPosts    SavePost[]
   storiesViewed StoryViews[]
+
+  job Job[]
 
   receivedNotifications Notification[] @relation("Receiver")
 
@@ -103,8 +100,6 @@ model Post {
   caption     String
   description String?
   postPhoto   PostMedia[]
-
-  // job Job
 
   notify Notification[] @relation("PostNotify")
 
@@ -165,8 +160,6 @@ model Story {
 
   expiresAt DateTime
   isReady   Boolean  @default(false) // Later be removed => And have One to Many with Jobs
-
-  // job Job
 
   storyMedia StoryMedia[]
 
@@ -313,14 +306,11 @@ model Job {
   name   JobName
   status JobStatus
 
-  // storyId String?
-  // postId String?
+  profileId String
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
-  // story Story? @relation(fields: [storyId], references: [id])
-  // post Post? @relation(fields: [postId], references: [id])
-
-  userId String // Be removed
-  user   User   @relation(fields: [userId], references: [id]) // Be removed
+  storyId String?
+  postId  String?
 
   createdAt DateTime @default(now())
 }
@@ -338,7 +328,7 @@ model Chat {
   cloudId  String?
 
   creatorId String
-  creator   Profile @relation("ChatCreator", fields: [creatorId], references: [id])
+  creator   Profile @relation("ChatCreator", fields: [creatorId], references: [id], onDelete: Cascade)
 
   type ChatType
 
@@ -385,10 +375,10 @@ model Message {
   cloudId  String?
 
   senderId String
-  sender   ChatMember @relation(fields: [senderId], references: [id])
+  sender   ChatMember @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   replyId String?
-  reply   Message?  @relation("MessageReply", fields: [replyId], references: [id])
+  reply   Message?  @relation("MessageReply", fields: [replyId], references: [id], onDelete: Cascade)
   replyTo Message[] @relation("MessageReply")
 
   chatId String
