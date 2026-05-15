@@ -11,7 +11,7 @@ export class JobValidatePipe implements PipeTransform {
       select: {
         id: true,
         status: true,
-        userId: true,
+        profileId: true,
         jobId: true,
         name: true,
       },

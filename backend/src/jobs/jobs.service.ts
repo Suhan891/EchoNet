@@ -1,20 +1,22 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { authUserDto } from 'src/auth/tokens/token.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JobData } from './dto/job.status.view.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { JobStatus } from 'src/generated/prisma/enums';
+import { profileDto } from 'src/profile/dto/profile.dto';
+import { AppCacheService } from 'src/common/caching/redis.cache';
 
 @Injectable()
 export class JobsService {
   constructor(
     private prisma: PrismaService,
+    private cacheService: AppCacheService,
     @InjectQueue('story-task') private storyQueue: Queue,
   ) {}
 
-  async jobStatus(user: authUserDto, jobData: JobData) {
-    if (user.userId !== jobData.userId)
+  async jobStatus(profile: profileDto, jobData: JobData) {
+    if (profile.id !== jobData.profileId)
       throw new BadRequestException(
         'You are not allowed to view others status',
       );
@@ -27,14 +29,14 @@ export class JobsService {
     }
     const job = await this.storyQueue.getJob(jobData.jobId);
     if (!job) {
-      // Means success , as it deletes after success
-      return await this.JobStatusUpdate(jobData.id, 'SUCCESS');
+      return await this.JobStatusUpdate(jobData.id, 'SUCCESS', profile.id);
     }
     const state = await job.getState();
     if (state === 'completed') {
-      return await this.JobStatusUpdate(jobData.id, 'SUCCESS');
+      return await this.JobStatusUpdate(jobData.id, 'SUCCESS', profile.id);
     }
-    if (state === 'failed') return this.JobStatusUpdate(jobData.id, 'FAILED');
+    if (state === 'failed')
+      return this.JobStatusUpdate(jobData.id, 'FAILED', profile.id);
 
     return {
       id: jobData.id,
@@ -43,8 +45,8 @@ export class JobsService {
     };
   }
 
-  async jobRetry(user: authUserDto, jobData: JobData) {
-    if (user.userId !== jobData.userId)
+  async jobRetry(profile: profileDto, jobData: JobData) {
+    if (profile.id !== jobData.profileId)
       throw new BadRequestException(
         'You are not allowed to restart others job',
       );
@@ -58,15 +60,21 @@ export class JobsService {
     const job = await this.storyQueue.getJob(jobData.jobId);
     if (!job) {
       // Means success , as it deletes after success
-      await this.JobStatusUpdate(jobData.id, 'SUCCESS');
+      await this.JobStatusUpdate(jobData.id, 'SUCCESS', profile.id);
       throw new BadRequestException('Job is already successfull');
     }
 
     await job.retry('failed'); // As it was a failed job
-    return this.JobStatusUpdate(jobData.id, 'PROGRESS');
+    return this.JobStatusUpdate(jobData.id, 'PROGRESS', profile.id);
   }
 
-  private async JobStatusUpdate(id: string, status: JobStatus) {
+  private async JobStatusUpdate(
+    id: string,
+    status: JobStatus,
+    profileId: string,
+  ) {
+    if (status === 'SUCCESS')
+      await this.cacheService.delete(`profile:${profileId}`);
     return await this.prisma.job.update({
       where: { id },
       data: { status },
