@@ -96,8 +96,6 @@ export const UserScalarFieldEnum = {
   isEmailVerified: 'isEmailVerified',
   isActive: 'isActive',
   tokenVersion: 'tokenVersion',
-  passResetToken: 'passResetToken',
-  passResetExpTime: 'passResetExpTime',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -259,7 +257,9 @@ export const JobScalarFieldEnum = {
   jobId: 'jobId',
   name: 'name',
   status: 'status',
-  userId: 'userId',
+  profileId: 'profileId',
+  storyId: 'storyId',
+  postId: 'postId',
   createdAt: 'createdAt'
 } as const
 
@@ -332,23 +332,22 @@ export const QueryMode = {
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
+export const UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  email: 'email',
+  username: 'username',
+  password: 'password'
+} as const
+
+export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
 export const NullsOrder = {
   first: 'first',
   last: 'last'
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
-export const UserOrderByRelevanceFieldEnum = {
-  id: 'id',
-  email: 'email',
-  username: 'username',
-  password: 'password',
-  passResetToken: 'passResetToken'
-} as const
-
-export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
 export const ProfileOrderByRelevanceFieldEnum = {
@@ -478,7 +477,9 @@ export type NotificationOrderByRelevanceFieldEnum = (typeof NotificationOrderByR
 export const JobOrderByRelevanceFieldEnum = {
   id: 'id',
   jobId: 'jobId',
-  userId: 'userId'
+  profileId: 'profileId',
+  storyId: 'storyId',
+  postId: 'postId'
 } as const
 
 export type JobOrderByRelevanceFieldEnum = (typeof JobOrderByRelevanceFieldEnum)[keyof typeof JobOrderByRelevanceFieldEnum]

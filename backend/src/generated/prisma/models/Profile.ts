@@ -228,6 +228,7 @@ export type ProfileWhereInput = {
   reels?: Prisma.ReelListRelationFilter
   savedPosts?: Prisma.SavePostListRelationFilter
   storiesViewed?: Prisma.StoryViewsListRelationFilter
+  job?: Prisma.JobListRelationFilter
   receivedNotifications?: Prisma.NotificationListRelationFilter
   followers?: Prisma.FollowListRelationFilter
   followings?: Prisma.FollowListRelationFilter
@@ -254,6 +255,7 @@ export type ProfileOrderByWithRelationInput = {
   reels?: Prisma.ReelOrderByRelationAggregateInput
   savedPosts?: Prisma.SavePostOrderByRelationAggregateInput
   storiesViewed?: Prisma.StoryViewsOrderByRelationAggregateInput
+  job?: Prisma.JobOrderByRelationAggregateInput
   receivedNotifications?: Prisma.NotificationOrderByRelationAggregateInput
   followers?: Prisma.FollowOrderByRelationAggregateInput
   followings?: Prisma.FollowOrderByRelationAggregateInput
@@ -284,6 +286,7 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   reels?: Prisma.ReelListRelationFilter
   savedPosts?: Prisma.SavePostListRelationFilter
   storiesViewed?: Prisma.StoryViewsListRelationFilter
+  job?: Prisma.JobListRelationFilter
   receivedNotifications?: Prisma.NotificationListRelationFilter
   followers?: Prisma.FollowListRelationFilter
   followings?: Prisma.FollowListRelationFilter
@@ -341,6 +344,7 @@ export type ProfileCreateInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -366,6 +370,7 @@ export type ProfileUncheckedCreateInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -391,6 +396,7 @@ export type ProfileUpdateInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -416,6 +422,7 @@ export type ProfileUncheckedUpdateInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -565,6 +572,10 @@ export type ProfileUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.ProfileScalarWhereInput | Prisma.ProfileScalarWhereInput[]
 }
 
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
 export type ProfileCreateNestedOneWithoutFollowingsInput = {
   create?: Prisma.XOR<Prisma.ProfileCreateWithoutFollowingsInput, Prisma.ProfileUncheckedCreateWithoutFollowingsInput>
   connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutFollowingsInput
@@ -705,6 +716,20 @@ export type ProfileUpdateOneRequiredWithoutReceivedNotificationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfileUpdateToOneWithWhereWithoutReceivedNotificationsInput, Prisma.ProfileUpdateWithoutReceivedNotificationsInput>, Prisma.ProfileUncheckedUpdateWithoutReceivedNotificationsInput>
 }
 
+export type ProfileCreateNestedOneWithoutJobInput = {
+  create?: Prisma.XOR<Prisma.ProfileCreateWithoutJobInput, Prisma.ProfileUncheckedCreateWithoutJobInput>
+  connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutJobInput
+  connect?: Prisma.ProfileWhereUniqueInput
+}
+
+export type ProfileUpdateOneRequiredWithoutJobNestedInput = {
+  create?: Prisma.XOR<Prisma.ProfileCreateWithoutJobInput, Prisma.ProfileUncheckedCreateWithoutJobInput>
+  connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutJobInput
+  upsert?: Prisma.ProfileUpsertWithoutJobInput
+  connect?: Prisma.ProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProfileUpdateToOneWithWhereWithoutJobInput, Prisma.ProfileUpdateWithoutJobInput>, Prisma.ProfileUncheckedUpdateWithoutJobInput>
+}
+
 export type ProfileCreateNestedOneWithoutAdminInput = {
   create?: Prisma.XOR<Prisma.ProfileCreateWithoutAdminInput, Prisma.ProfileUncheckedCreateWithoutAdminInput>
   connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutAdminInput
@@ -748,6 +773,7 @@ export type ProfileCreateWithoutUserInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -772,6 +798,7 @@ export type ProfileUncheckedCreateWithoutUserInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -839,6 +866,7 @@ export type ProfileCreateWithoutFollowingsInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   pofileLikes?: Prisma.LikesCreateNestedManyWithoutProfileInput
@@ -863,6 +891,7 @@ export type ProfileUncheckedCreateWithoutFollowingsInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   pofileLikes?: Prisma.LikesUncheckedCreateNestedManyWithoutProfileInput
@@ -892,6 +921,7 @@ export type ProfileCreateWithoutFollowersInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
   pofileLikes?: Prisma.LikesCreateNestedManyWithoutProfileInput
@@ -916,6 +946,7 @@ export type ProfileUncheckedCreateWithoutFollowersInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
   pofileLikes?: Prisma.LikesUncheckedCreateNestedManyWithoutProfileInput
@@ -956,6 +987,7 @@ export type ProfileUpdateWithoutFollowingsInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   pofileLikes?: Prisma.LikesUpdateManyWithoutProfileNestedInput
@@ -980,6 +1012,7 @@ export type ProfileUncheckedUpdateWithoutFollowingsInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   pofileLikes?: Prisma.LikesUncheckedUpdateManyWithoutProfileNestedInput
@@ -1015,6 +1048,7 @@ export type ProfileUpdateWithoutFollowersInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
   pofileLikes?: Prisma.LikesUpdateManyWithoutProfileNestedInput
@@ -1039,6 +1073,7 @@ export type ProfileUncheckedUpdateWithoutFollowersInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
   pofileLikes?: Prisma.LikesUncheckedUpdateManyWithoutProfileNestedInput
@@ -1062,6 +1097,7 @@ export type ProfileCreateWithoutPostsInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -1086,6 +1122,7 @@ export type ProfileUncheckedCreateWithoutPostsInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -1126,6 +1163,7 @@ export type ProfileUpdateWithoutPostsInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -1150,6 +1188,7 @@ export type ProfileUncheckedUpdateWithoutPostsInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -1174,6 +1213,7 @@ export type ProfileCreateWithoutSavedPostsInput = {
   story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -1198,6 +1238,7 @@ export type ProfileUncheckedCreateWithoutSavedPostsInput = {
   story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -1238,6 +1279,7 @@ export type ProfileUpdateWithoutSavedPostsInput = {
   story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -1262,6 +1304,7 @@ export type ProfileUncheckedUpdateWithoutSavedPostsInput = {
   story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -1286,6 +1329,7 @@ export type ProfileCreateWithoutReelsInput = {
   story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -1310,6 +1354,7 @@ export type ProfileUncheckedCreateWithoutReelsInput = {
   story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -1350,6 +1395,7 @@ export type ProfileUpdateWithoutReelsInput = {
   story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -1374,6 +1420,7 @@ export type ProfileUncheckedUpdateWithoutReelsInput = {
   story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -1398,6 +1445,7 @@ export type ProfileCreateWithoutStoryInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -1422,6 +1470,7 @@ export type ProfileUncheckedCreateWithoutStoryInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -1462,6 +1511,7 @@ export type ProfileUpdateWithoutStoryInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -1486,6 +1536,7 @@ export type ProfileUncheckedUpdateWithoutStoryInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -1510,6 +1561,7 @@ export type ProfileCreateWithoutStoriesViewedInput = {
   story?: Prisma.StoryCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -1534,6 +1586,7 @@ export type ProfileUncheckedCreateWithoutStoriesViewedInput = {
   story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -1574,6 +1627,7 @@ export type ProfileUpdateWithoutStoriesViewedInput = {
   story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -1598,6 +1652,7 @@ export type ProfileUncheckedUpdateWithoutStoriesViewedInput = {
   story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -1623,6 +1678,7 @@ export type ProfileCreateWithoutPofileLikesInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -1647,6 +1703,7 @@ export type ProfileUncheckedCreateWithoutPofileLikesInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -1687,6 +1744,7 @@ export type ProfileUpdateWithoutPofileLikesInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -1711,6 +1769,7 @@ export type ProfileUncheckedUpdateWithoutPofileLikesInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -1735,6 +1794,7 @@ export type ProfileCreateWithoutProfileCommentesInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -1759,6 +1819,7 @@ export type ProfileUncheckedCreateWithoutProfileCommentesInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -1799,6 +1860,7 @@ export type ProfileUpdateWithoutProfileCommentesInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -1823,6 +1885,7 @@ export type ProfileUncheckedUpdateWithoutProfileCommentesInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -1847,6 +1910,7 @@ export type ProfileCreateWithoutReceivedNotificationsInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
   pofileLikes?: Prisma.LikesCreateNestedManyWithoutProfileInput
@@ -1871,6 +1935,7 @@ export type ProfileUncheckedCreateWithoutReceivedNotificationsInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
   pofileLikes?: Prisma.LikesUncheckedCreateNestedManyWithoutProfileInput
@@ -1911,6 +1976,7 @@ export type ProfileUpdateWithoutReceivedNotificationsInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
   pofileLikes?: Prisma.LikesUpdateManyWithoutProfileNestedInput
@@ -1935,6 +2001,123 @@ export type ProfileUncheckedUpdateWithoutReceivedNotificationsInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
+  followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
+  followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
+  pofileLikes?: Prisma.LikesUncheckedUpdateManyWithoutProfileNestedInput
+  profileCommentes?: Prisma.CommentsUncheckedUpdateManyWithoutProfileNestedInput
+  chats?: Prisma.ChatMemberUncheckedUpdateManyWithoutProfileNestedInput
+  admin?: Prisma.ChatUncheckedUpdateManyWithoutCreatorNestedInput
+}
+
+export type ProfileCreateWithoutJobInput = {
+  id?: string
+  name: string
+  isActive?: boolean
+  bio?: string | null
+  avatarUrl?: string | null
+  cloudId?: string | null
+  isPrivate?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutProfileInput
+  posts?: Prisma.PostCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryCreateNestedOneWithoutProfileInput
+  reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
+  savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
+  storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
+  followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
+  followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
+  pofileLikes?: Prisma.LikesCreateNestedManyWithoutProfileInput
+  profileCommentes?: Prisma.CommentsCreateNestedManyWithoutProfileInput
+  chats?: Prisma.ChatMemberCreateNestedManyWithoutProfileInput
+  admin?: Prisma.ChatCreateNestedManyWithoutCreatorInput
+}
+
+export type ProfileUncheckedCreateWithoutJobInput = {
+  id?: string
+  userId: string
+  name: string
+  isActive?: boolean
+  bio?: string | null
+  avatarUrl?: string | null
+  cloudId?: string | null
+  isPrivate?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutProfileInput
+  story?: Prisma.StoryUncheckedCreateNestedOneWithoutProfileInput
+  reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
+  savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
+  storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
+  followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
+  followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
+  pofileLikes?: Prisma.LikesUncheckedCreateNestedManyWithoutProfileInput
+  profileCommentes?: Prisma.CommentsUncheckedCreateNestedManyWithoutProfileInput
+  chats?: Prisma.ChatMemberUncheckedCreateNestedManyWithoutProfileInput
+  admin?: Prisma.ChatUncheckedCreateNestedManyWithoutCreatorInput
+}
+
+export type ProfileCreateOrConnectWithoutJobInput = {
+  where: Prisma.ProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProfileCreateWithoutJobInput, Prisma.ProfileUncheckedCreateWithoutJobInput>
+}
+
+export type ProfileUpsertWithoutJobInput = {
+  update: Prisma.XOR<Prisma.ProfileUpdateWithoutJobInput, Prisma.ProfileUncheckedUpdateWithoutJobInput>
+  create: Prisma.XOR<Prisma.ProfileCreateWithoutJobInput, Prisma.ProfileUncheckedCreateWithoutJobInput>
+  where?: Prisma.ProfileWhereInput
+}
+
+export type ProfileUpdateToOneWithWhereWithoutJobInput = {
+  where?: Prisma.ProfileWhereInput
+  data: Prisma.XOR<Prisma.ProfileUpdateWithoutJobInput, Prisma.ProfileUncheckedUpdateWithoutJobInput>
+}
+
+export type ProfileUpdateWithoutJobInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cloudId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutProfileNestedInput
+  posts?: Prisma.PostUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUpdateOneWithoutProfileNestedInput
+  reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
+  savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
+  storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
+  followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
+  followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
+  pofileLikes?: Prisma.LikesUpdateManyWithoutProfileNestedInput
+  profileCommentes?: Prisma.CommentsUpdateManyWithoutProfileNestedInput
+  chats?: Prisma.ChatMemberUpdateManyWithoutProfileNestedInput
+  admin?: Prisma.ChatUpdateManyWithoutCreatorNestedInput
+}
+
+export type ProfileUncheckedUpdateWithoutJobInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cloudId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  posts?: Prisma.PostUncheckedUpdateManyWithoutProfileNestedInput
+  story?: Prisma.StoryUncheckedUpdateOneWithoutProfileNestedInput
+  reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
+  savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
+  storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
   pofileLikes?: Prisma.LikesUncheckedUpdateManyWithoutProfileNestedInput
@@ -1959,6 +2142,7 @@ export type ProfileCreateWithoutAdminInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -1983,6 +2167,7 @@ export type ProfileUncheckedCreateWithoutAdminInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -2023,6 +2208,7 @@ export type ProfileUpdateWithoutAdminInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -2047,6 +2233,7 @@ export type ProfileUncheckedUpdateWithoutAdminInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -2071,6 +2258,7 @@ export type ProfileCreateWithoutChatsInput = {
   reels?: Prisma.ReelCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowCreateNestedManyWithoutFollowerInput
@@ -2095,6 +2283,7 @@ export type ProfileUncheckedCreateWithoutChatsInput = {
   reels?: Prisma.ReelUncheckedCreateNestedManyWithoutProfileInput
   savedPosts?: Prisma.SavePostUncheckedCreateNestedManyWithoutProfileInput
   storiesViewed?: Prisma.StoryViewsUncheckedCreateNestedManyWithoutViewerInput
+  job?: Prisma.JobUncheckedCreateNestedManyWithoutProfileInput
   receivedNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutReceiverInput
   followers?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowingInput
   followings?: Prisma.FollowUncheckedCreateNestedManyWithoutFollowerInput
@@ -2135,6 +2324,7 @@ export type ProfileUpdateWithoutChatsInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -2159,6 +2349,7 @@ export type ProfileUncheckedUpdateWithoutChatsInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -2194,6 +2385,7 @@ export type ProfileUpdateWithoutUserInput = {
   reels?: Prisma.ReelUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUpdateManyWithoutFollowerNestedInput
@@ -2218,6 +2410,7 @@ export type ProfileUncheckedUpdateWithoutUserInput = {
   reels?: Prisma.ReelUncheckedUpdateManyWithoutProfileNestedInput
   savedPosts?: Prisma.SavePostUncheckedUpdateManyWithoutProfileNestedInput
   storiesViewed?: Prisma.StoryViewsUncheckedUpdateManyWithoutViewerNestedInput
+  job?: Prisma.JobUncheckedUpdateManyWithoutProfileNestedInput
   receivedNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutReceiverNestedInput
   followers?: Prisma.FollowUncheckedUpdateManyWithoutFollowingNestedInput
   followings?: Prisma.FollowUncheckedUpdateManyWithoutFollowerNestedInput
@@ -2249,6 +2442,7 @@ export type ProfileCountOutputType = {
   reels: number
   savedPosts: number
   storiesViewed: number
+  job: number
   receivedNotifications: number
   followers: number
   followings: number
@@ -2263,6 +2457,7 @@ export type ProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   reels?: boolean | ProfileCountOutputTypeCountReelsArgs
   savedPosts?: boolean | ProfileCountOutputTypeCountSavedPostsArgs
   storiesViewed?: boolean | ProfileCountOutputTypeCountStoriesViewedArgs
+  job?: boolean | ProfileCountOutputTypeCountJobArgs
   receivedNotifications?: boolean | ProfileCountOutputTypeCountReceivedNotificationsArgs
   followers?: boolean | ProfileCountOutputTypeCountFollowersArgs
   followings?: boolean | ProfileCountOutputTypeCountFollowingsArgs
@@ -2308,6 +2503,13 @@ export type ProfileCountOutputTypeCountSavedPostsArgs<ExtArgs extends runtime.Ty
  */
 export type ProfileCountOutputTypeCountStoriesViewedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.StoryViewsWhereInput
+}
+
+/**
+ * ProfileCountOutputType without action
+ */
+export type ProfileCountOutputTypeCountJobArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.JobWhereInput
 }
 
 /**
@@ -2377,6 +2579,7 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   reels?: boolean | Prisma.Profile$reelsArgs<ExtArgs>
   savedPosts?: boolean | Prisma.Profile$savedPostsArgs<ExtArgs>
   storiesViewed?: boolean | Prisma.Profile$storiesViewedArgs<ExtArgs>
+  job?: boolean | Prisma.Profile$jobArgs<ExtArgs>
   receivedNotifications?: boolean | Prisma.Profile$receivedNotificationsArgs<ExtArgs>
   followers?: boolean | Prisma.Profile$followersArgs<ExtArgs>
   followings?: boolean | Prisma.Profile$followingsArgs<ExtArgs>
@@ -2436,6 +2639,7 @@ export type ProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   reels?: boolean | Prisma.Profile$reelsArgs<ExtArgs>
   savedPosts?: boolean | Prisma.Profile$savedPostsArgs<ExtArgs>
   storiesViewed?: boolean | Prisma.Profile$storiesViewedArgs<ExtArgs>
+  job?: boolean | Prisma.Profile$jobArgs<ExtArgs>
   receivedNotifications?: boolean | Prisma.Profile$receivedNotificationsArgs<ExtArgs>
   followers?: boolean | Prisma.Profile$followersArgs<ExtArgs>
   followings?: boolean | Prisma.Profile$followingsArgs<ExtArgs>
@@ -2461,6 +2665,7 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     reels: Prisma.$ReelPayload<ExtArgs>[]
     savedPosts: Prisma.$SavePostPayload<ExtArgs>[]
     storiesViewed: Prisma.$StoryViewsPayload<ExtArgs>[]
+    job: Prisma.$JobPayload<ExtArgs>[]
     receivedNotifications: Prisma.$NotificationPayload<ExtArgs>[]
     followers: Prisma.$FollowPayload<ExtArgs>[]
     followings: Prisma.$FollowPayload<ExtArgs>[]
@@ -2880,6 +3085,7 @@ export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends runtime.
   reels<T extends Prisma.Profile$reelsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$reelsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   savedPosts<T extends Prisma.Profile$savedPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$savedPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavePostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   storiesViewed<T extends Prisma.Profile$storiesViewedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$storiesViewedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StoryViewsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  job<T extends Prisma.Profile$jobArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$jobArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$JobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   receivedNotifications<T extends Prisma.Profile$receivedNotificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$receivedNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   followers<T extends Prisma.Profile$followersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$followersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   followings<T extends Prisma.Profile$followingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$followingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FollowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3439,6 +3645,30 @@ export type Profile$storiesViewedArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.StoryViewsScalarFieldEnum | Prisma.StoryViewsScalarFieldEnum[]
+}
+
+/**
+ * Profile.job
+ */
+export type Profile$jobArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Job
+   */
+  select?: Prisma.JobSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Job
+   */
+  omit?: Prisma.JobOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.JobInclude<ExtArgs> | null
+  where?: Prisma.JobWhereInput
+  orderBy?: Prisma.JobOrderByWithRelationInput | Prisma.JobOrderByWithRelationInput[]
+  cursor?: Prisma.JobWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.JobScalarFieldEnum | Prisma.JobScalarFieldEnum[]
 }
 
 /**
