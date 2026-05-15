@@ -50,76 +50,81 @@ export default function Hero() {
       </section>
 
       {/* 2. ARCHITECTURE / FEATURES GRID */}
-      <section id="features" className="py-24 sm:py-32 bg-secondary/30 border-y border-border/50 relative overflow-hidden">
-         {/* Subtle pattern background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+      <section id="features" className="py-24 sm:py-32 bg-secondary/10 border-y border-border/40 relative overflow-hidden">
+         {/* Glowing orb background for less dullness */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-50 dark:opacity-20"></div>
         
         <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
           <div className="mx-auto max-w-2xl lg:text-center mb-16">
-            <h2 className="text-base font-semibold leading-7 text-primary tracking-wide uppercase">Deploy Faster</h2>
-            <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Everything you need in a modern platform</p>
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500 pb-2">
+              Everything you need in a modern platform
+            </h2>
             <p className="mt-6 text-lg leading-8 text-muted-foreground">
               Built from the ground up with a robust NestJS backend and a highly responsive Next.js frontend, featuring enterprise-level system architecture.
             </p>
           </div>
 
-          <div className="mx-auto max-w-2xl lg:max-w-none">
+          <div className="mx-auto max-w-2xl lg:max-w-none mt-16">
             <dl className="grid max-w-xl grid-cols-1 gap-8 lg:max-w-none lg:grid-cols-2">
               {/* Feature 1 */}
-              <Card className="border border-border/50 bg-background/60 backdrop-blur-md shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-primary/20 group">
-                <CardHeader>
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+              <Card className="border border-border/40 bg-gradient-to-br from-background/80 to-background/40 backdrop-blur-xl shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-primary/30 hover:border-primary/50 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <CardHeader className="relative z-10">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors shadow-inner">
                     <MessageCircle className="h-7 w-7 text-primary" />
                   </div>
                   <CardTitle className="text-xl">Real-Time Messaging</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
+                <CardContent className="relative z-10">
+                  <CardDescription className="text-base text-muted-foreground/90">
                     Experience instant direct and group chats powered by WebSockets (Socket.io) and Redis. Features live presence tracking and real-time read receipts.
                   </CardDescription>
                 </CardContent>
               </Card>
 
               {/* Feature 2 */}
-              <Card className="border border-border/50 bg-background/60 backdrop-blur-md shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-primary/20 group">
-                <CardHeader>
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+              <Card className="border border-border/40 bg-gradient-to-br from-background/80 to-background/40 backdrop-blur-xl shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-primary/30 hover:border-primary/50 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <CardHeader className="relative z-10">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors shadow-inner">
                     <Layers className="h-7 w-7 text-primary" />
                   </div>
                   <CardTitle className="text-xl">Polymorphic Interactions</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
+                <CardContent className="relative z-10">
+                  <CardDescription className="text-base text-muted-foreground/90">
                     Advanced database design utilizing Prisma ORM allowing seamless likes and deeply nested comments (threading & replies) across Posts, Reels, and Stories.
                   </CardDescription>
                 </CardContent>
               </Card>
 
               {/* Feature 3 */}
-              <Card className="border border-border/50 bg-background/60 backdrop-blur-md shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-primary/20 group">
-                <CardHeader>
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+              <Card className="border border-border/40 bg-gradient-to-br from-background/80 to-background/40 backdrop-blur-xl shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-primary/30 hover:border-primary/50 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <CardHeader className="relative z-10">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors shadow-inner">
                     <Zap className="h-7 w-7 text-primary" />
                   </div>
                   <CardTitle className="text-xl">Background Processing</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
+                <CardContent className="relative z-10">
+                  <CardDescription className="text-base text-muted-foreground/90">
                     High-performance media handling utilizing BullMQ message queues. Ephemeral stories and high-res post uploads process reliably in the background without blocking the main thread.
                   </CardDescription>
                 </CardContent>
               </Card>
 
               {/* Feature 4 */}
-              <Card className="border border-border/50 bg-background/60 backdrop-blur-md shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-primary/20 group">
-                <CardHeader>
-                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+              <Card className="border border-border/40 bg-gradient-to-br from-background/80 to-background/40 backdrop-blur-xl shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-primary/30 hover:border-primary/50 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <CardHeader className="relative z-10">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors shadow-inner">
                     <Shield className="h-7 w-7 text-primary" />
                   </div>
                   <CardTitle className="text-xl">Enterprise Security</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
+                <CardContent className="relative z-10">
+                  <CardDescription className="text-base text-muted-foreground/90">
                     Bulletproof authentication flows with strict separation of Auth (User) and Social (Profile) domains. Includes stateless JWTs, Redis-backed sessions, and Nodemailer OTPs.
                   </CardDescription>
                 </CardContent>
