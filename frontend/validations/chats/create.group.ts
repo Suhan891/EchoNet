@@ -12,7 +12,7 @@ export const groupSchema = z.object({
 
   profiles: z
     .array(z.uuid())
-    .min(1, "Atleast single profile has to be selected"),
+    .min(2, "Atleast 2 profiles has to be selected"),
 });
 
 export type groupType = z.infer<typeof groupSchema>;
