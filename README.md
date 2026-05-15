@@ -64,6 +64,7 @@
 
 ### 🔐 Authentication & Security
 - Complete registration and login flows with email-based OTP verification (Nodemailer).
+- **Advanced Password Recovery:** Secure forgot-password pipeline utilizing stateless JWTs combined with Redis caching to enforce OTP cooldowns, track retry limits, and securely manage verification state.
 - Secure JWT-based session management utilizing Access & Refresh tokens.
 
 ### 👤 Profile & Social Graph
