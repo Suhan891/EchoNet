@@ -19,7 +19,6 @@ import {
   StoryCreateEvent,
   VideoMedia,
 } from './dto/story.create.dto';
-import { authUserDto } from 'src/auth/tokens/token.dto';
 import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
@@ -32,11 +31,7 @@ export class StoryService {
     private notificationService: NotificationService,
   ) {}
 
-  async createStory(
-    slides: ParsedSlideDto[],
-    profile: profileDto,
-    user: authUserDto,
-  ) {
+  async createStory(slides: ParsedSlideDto[], profile: profileDto) {
     const existingStory = await this.prisma.story.findUnique({
       where: { profileId: profile.id },
       select: {
@@ -90,9 +85,10 @@ export class StoryService {
     await this.cacheService.delByPattern(`story:${profile.id}`); // Invalidate all story caches for profile
     return await this.prisma.job.create({
       data: {
-        userId: user.userId,
+        profileId: profile.id,
         jobId: jobId[0],
         name: JobName.STORY,
+        storyId: story.id,
         status: JobStatus.PROGRESS,
       },
       select: {
@@ -155,24 +151,7 @@ export class StoryService {
         mediaType: true,
         mediaUrl: true,
         duration: true,
-        order: true, // later be removed => Instead order by created at
-        // likes: {
-        //   select: {
-        //     id: true,
-        //     profileId: true,
-        //   },
-        // },
-        // storyViews: {
-        //   select: {
-        //     id: true,
-        //     viewer: {
-        //       select: {
-        //         name: true,
-        //         avatarUrl: true,
-        //       },
-        //     },
-        //   },
-        // },
+        order: true,
         _count: {
           select: {
             likes: true,

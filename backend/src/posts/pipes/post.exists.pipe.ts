@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
+import { Injectable, PipeTransform } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PostDto } from '../dto/posts.dto';
 
@@ -7,11 +7,10 @@ export class PostExistsPipe implements PipeTransform {
   constructor(private prisma: PrismaService) {}
 
   async transform(postId: string): Promise<PostDto> {
-    const post = await this.prisma.post.findUnique({
+    const post = await this.prisma.post.findUniqueOrThrow({
       where: { id: postId },
       select: { id: true, profileId: true },
     });
-    if (!post) throw new BadRequestException('No such Post exists');
     return post;
   }
 }
