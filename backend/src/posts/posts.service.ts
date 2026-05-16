@@ -66,10 +66,11 @@ export class PostsService {
 
     return await this.prisma.job.create({
       data: {
-        userId: profile.user.id,
+        profileId: profile.id,
         jobId: jobId[0],
         name: JobName.POST,
         status: JobStatus.PROGRESS,
+        postId: post.id,
       },
       select: {
         id: true,

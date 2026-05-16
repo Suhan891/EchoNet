@@ -73,7 +73,7 @@ export class PostsController {
     return await this.postService.getAllPost(profile, paginatedData);
   }
 
-  @Put('remove-post')
+  @Put('remove/:postId')
   @ResponseMessage('Post data removed')
   async removePost(
     @Param('postId', ParseUUIDPipe, PostExistsPipe) post: PostDto,
