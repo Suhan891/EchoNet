@@ -15,7 +15,7 @@ import { useState } from "react";
 export default function ChatPage() {
   const [chat, setChat] = useState<"PRIVATE" | "GROUP">();
   return (
-    <div className="flex flex-col gap-8 w-full max-w-3xl p-4 items-center">
+    <div className="flex flex-col gap-8 w-full max-w-5xl p-4 items-center">
       <div className="w-full max-w-sm">
         <Select onValueChange={(value: "PRIVATE" | "GROUP") => setChat(value)}>
           <SelectTrigger className="w-full">
