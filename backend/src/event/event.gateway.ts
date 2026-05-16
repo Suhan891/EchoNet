@@ -1,4 +1,5 @@
 import {
+  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -11,36 +12,56 @@ import { Server } from 'socket.io';
 import { EventService } from './event.service';
 //import { UseFilters, UseInterceptors } from 'node_modules/@nestjs/common';
 
+import { forwardRef, Inject } from '@nestjs/common';
+
 @WebSocketGateway()
 export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  constructor(private eventService: EventService) {}
+  constructor(
+    @Inject(forwardRef(() => EventService)) private eventService: EventService,
+  ) {}
 
   async handleConnection(client: AuthenticatedSocket) {
-    //const userId = client.data.userId;
+    // const userId = client.data.userId;
     const profileId = client.data.profileId;
-    await this.eventService.createOnline(profileId);
-    const onlineProfiles = await this.eventService.getAllOnline();
-    client.broadcast.emit('joined', profileId);
-    client.emit('active_profiles', onlineProfiles);
+    if (profileId) {
+      await client.join(profileId);
+      await this.eventService.createOnline(profileId);
+      const onlineProfiles = await this.eventService.getAllOnline();
+      client.broadcast.emit('joined', profileId);
+      client.emit('active_profiles', onlineProfiles);
+    }
   }
 
   async handleDisconnect(client: AuthenticatedSocket) {
-    //const userId = client.data.userId;
+    // const userId = client.data.userId;
     const profileId = client.data.profileId;
-    await this.eventService.markOffline(profileId); // Sending all profiles that this profileId is inactive
-    this.server.emit('left', profileId);
+    if (profileId) {
+      await client.leave(profileId);
+      await this.eventService.markOffline(profileId); // Sending all profiles that this profileId is inactive
+      this.server.emit('left', profileId);
+    }
   }
 
-  // Server sends
-  sendNotification(profileId: string, payload: unknown) {
-    this.server.to(profileId).emit('new_notification', payload);
+  sendNotification(profileId: string, purpose?: string) {
+    this.server.to(profileId).emit('notification', purpose);
   }
 
-  // @SubscribeMessage('create_chat')
-  // handleMessage(@MessageBody() profileId: string, client: AuthenticatedSocket) {
-  //   // Call a event => To bull mq for notification
-  // }
+  sendMsg(profileId: string, chatId: string, content: string) {
+    this.server.to(profileId).emit('message', { chatId, content });
+  }
+
+  @SubscribeMessage('chat_texting')
+  handleMessage(
+    @MessageBody() chatId: string,
+    @ConnectedSocket() client: AuthenticatedSocket,
+  ) {
+    this.server.emit(`chat:${chatId}`, client.data.profileId);
+  }
+
+  sendTexting(profileId: string, name: string) {
+    this.server.to(profileId).emit('texting', name);
+  }
 }
