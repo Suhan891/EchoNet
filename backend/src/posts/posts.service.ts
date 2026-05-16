@@ -8,7 +8,6 @@ import { FindPostQueryDto } from './dto/pagination-filtering.dto';
 import { CloudinaryService } from 'src/common/file-upload/cloudinary.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JobName, JobStatus } from 'src/generated/prisma/enums';
-import { OthersPost } from './dto/result';
 
 @Injectable()
 export class PostsService {
@@ -154,7 +153,7 @@ export class PostsService {
   async getOthersPost(othersProf: OthersPostDto, profile: profileDto) {
     const key = `profile:${profile.id}:${othersProf.id}:posts`;
     //await this.cacheService.delete(key);
-    const cachedPosts = await this.cacheService.get<OthersPost[]>(key);
+    const cachedPosts = await this.cacheService.get(key);
     if (cachedPosts) return cachedPosts;
     if (othersProf.id === profile.id)
       throw new BadRequestException(' Invalid profile id for this route ');

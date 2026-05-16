@@ -12,6 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ProfileService } from './profile.service';
+import { PaginationQueryDto } from 'src/common/pagination/pagination.dto';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 import { NoProfile } from './decorator/no-profile';
 import { CreateProfileDto, UpdateProfileDto } from './dto/profile.dto';
@@ -28,6 +29,7 @@ import { ProfileGaurd } from './gaurds/profile.gaurd';
 import { AvatarProps } from './dto/avatar';
 import { ValidateOthersProfile } from './pipes/validate.profile';
 import { ValidateToggleProfile } from './pipes/validate.toggle.profile';
+import type { otherProfileDto } from './dto/other-prof';
 
 @Controller('profile')
 @UseGuards(ProfileGaurd)
@@ -98,14 +100,15 @@ export class ProfileController {
     return await this.profileService.activateProfile(user, profile, newProf);
   }
 
-  @Post('remove-profile') // Several changes has to be done
+  @Post('remove/:profileId')
   @ResponseMessage('Profile Deleted Successfully')
   async deleteProfile(
     @currentProfile() profile: profileDto,
-    @Query('profileId', ParseUUIDPipe, ValidateProfileExists) profileId: string,
+    @Param('profileId', ParseUUIDPipe, ValidateProfileExists)
+    otherProfile: otherProfileDto,
     @CurrentUser() user: authUserDto,
   ) {
-    return await this.profileService.removeProfile(profile, profileId, user);
+    return await this.profileService.removeProfile(profile, otherProfile, user);
   }
 
   @Get('other/:profileId')
@@ -120,7 +123,10 @@ export class ProfileController {
 
   @Get('all')
   @ResponseMessage('All Profiles received')
-  async allProfiles(@currentProfile() profile: profileDto) {
-    return await this.profileService.getAllProfile(profile);
+  async allProfiles(
+    @currentProfile() profile: profileDto,
+    @Query() paginatedData: PaginationQueryDto,
+  ) {
+    return await this.profileService.getAllProfile(profile, paginatedData);
   }
 }
