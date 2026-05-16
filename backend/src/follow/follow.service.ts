@@ -51,6 +51,7 @@ export class FollowService {
     await this.cacheService.delete(`follow:${profileId}:followers`);
 
     await this.cacheService.delete(`profile:${profile.id}`);
+    await this.cacheService.delete(`profile:${profileId}`);
     await this.cacheService.delByPattern(`posts:global`);
   }
 
