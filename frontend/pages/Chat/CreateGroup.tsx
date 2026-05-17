@@ -28,34 +28,62 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
-import { useAllProfileForGroup } from "@/hooks/useChat";
+import { useAllProfileForGroup, useCreateGroup } from "@/hooks/useChat";
 import { CreateChatDto } from "@/types/chat";
+import { queryKeys } from "@/utils/query.key";
 import { groupSchema, groupType } from "@/validations/chats/create.group";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { Upload } from "lucide-react";
 import { Fragment } from "react";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function CreateGroup() {
   const anchor = useComboboxAnchor();
   const { data, isSuccess, isLoading, isError, error } =
     useAllProfileForGroup();
 
-  const { control, handleSubmit } = useForm<groupType>({
+  const { control, handleSubmit, reset } = useForm<groupType>({
     resolver: zodResolver(groupSchema),
   });
   const watchGroup = useWatch({
     control,
     defaultValue: {
       media: undefined,
-      name: '',
-      profiles: []
-    }
-  })
-  const isAllowed = watchGroup.media === undefined || watchGroup.name === null || watchGroup.profiles?.length === 0 || watchGroup.profiles === undefined
+      name: "",
+      profiles: [],
+    },
+  });
+  const isAllowed =
+    watchGroup.media === undefined ||
+    watchGroup.name === null ||
+    (watchGroup.profiles?.length ?? 0) < 2
 
+  const queryClient = useQueryClient();
+
+  const groupChat = useCreateGroup();
   const onSubmit: SubmitHandler<groupType> = (data) => {
-    console.log(data);
+    const formData = new FormData();
+    formData.append(`name`, data.name);
+    formData.append(`avatar`, data.media);
+    data.profiles.forEach(prof => {
+      formData.append(`profiles`, prof);
+    });
+    groupChat.mutate(formData, {
+      onSuccess: (result) => {
+        toast.success(result.message);
+        console.log(data);
+      },
+      onError: (err) => {
+        toast.error(err.message);
+        console.error(err);
+      },
+      onSettled: () => {
+        reset();
+        queryClient.invalidateQueries({queryKey: [queryKeys.CHAT]})
+      },
+    });
   };
 
   if (isLoading) return <Spinner className="size-6" />;
@@ -200,22 +228,24 @@ export default function CreateGroup() {
                         </ComboboxList>
                       </ComboboxContent>
                     </Combobox>
-
+                    <FieldDescription>Select atleast two profiles</FieldDescription>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
                   </Field>
                 )}
               />
-              <Field className="mt-4">
-                <Button
-                disabled={isAllowed}
-                  type="submit"
-                  className="w-full max-w-sm bg-blue-600 hover:bg-blue-500 text-white"
-                >
-                  Continue
-                </Button>
-              </Field>
+              {!isAllowed && (
+                <Field className="mt-4">
+                  <Button
+                    disabled={groupChat.isPending}
+                    type="submit"
+                    className="w-full max-w-sm bg-blue-600 hover:bg-blue-500 text-white"
+                  >
+                    Continue
+                  </Button>
+                </Field>
+              )}
             </form>
           </FieldGroup>
         </FieldSet>

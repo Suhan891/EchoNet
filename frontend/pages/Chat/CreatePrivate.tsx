@@ -23,17 +23,20 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
-import { useAllProfileForPrivate } from "@/hooks/useChat";
+import { useAllProfileForPrivate, useCreatePrivate } from "@/hooks/useChat";
 import { CreateChatDto } from "@/types/chat";
+import { queryKeys } from "@/utils/query.key";
 import { privateSchema, privateType } from "@/validations/chats/create.private";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function CreatePrivate() {
   const { data, isSuccess, isLoading, isError, error } =
     useAllProfileForPrivate();
 
-  const { control, handleSubmit} = useForm<privateType>({
+  const { control, handleSubmit, reset} = useForm<privateType>({
     resolver: zodResolver(privateSchema),
     defaultValues: {
       profile: ""
@@ -46,9 +49,26 @@ export default function CreatePrivate() {
     },
   });
   const isSelected = !!watch.profile;
+  const privateChat = useCreatePrivate()
+  const queryClient = useQueryClient()
 
   const onSubmit: SubmitHandler<privateType> = (data) => {
     console.log(data);
+    privateChat.mutate(data.profile,{
+      onSuccess: (result) => {
+        toast.success(result.message)
+        console.log(data);
+      },
+      onError: (err) => {
+        toast.error(err.message)
+        console.error(err);
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({queryKey: ['PRIVATE']})
+        queryClient.invalidateQueries({queryKey: [queryKeys.CHAT]})
+        reset()
+      }
+    })
   };
 
   if (isLoading) return <Spinner className="size-6" />;
@@ -119,6 +139,7 @@ export default function CreatePrivate() {
                   <Button
                     type="submit"
                     className="w-full max-w-sm bg-blue-600 hover:bg-blue-500 text-white"
+                    disabled={privateChat.isPending}
                   >
                     Continue
                   </Button>
