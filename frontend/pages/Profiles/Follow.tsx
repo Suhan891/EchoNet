@@ -18,10 +18,11 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useFollowReq } from "@/features/Common/follow.request";
 import { useStore } from "@/stores/Store";
+import { useUserStore } from "@/stores/UserStore";
 interface FollowProps {
   open: boolean;
   setOpen: (followerOpen: boolean) => void;
@@ -38,6 +39,7 @@ export default function Follow({ open, setOpen, type, id }: FollowProps) {
     isSuccess,
     error,
   } = useFollow(profileId, { type, id });
+  const onlineProfiles = useUserStore(state => state.onlineProfiles);
   const isOngoingFollow = useFollowReq()
   const setFollowReq = useStore(state => state.setFollowReq);
   return (
@@ -57,6 +59,7 @@ export default function Follow({ open, setOpen, type, id }: FollowProps) {
                 const isFollowing =
                   (f.follower && followings.includes(f.follower.id)) ||
                   (f.following && followings.includes(f.following.id));
+                  const isOnline = onlineProfiles.includes(f.follower ? f.follower.id : f.following ? f.following.id : "")
                 return (
                   <CommandItem key={f.id}>
                     {f.follower && (
@@ -67,6 +70,7 @@ export default function Follow({ open, setOpen, type, id }: FollowProps) {
                             <AvatarFallback>
                               {f.follower.name.charAt(0)}
                             </AvatarFallback>
+                            <AvatarBadge className={isOnline ? "bg-green-600 dark:bg-green-800" : "bg-gray-600 dark:bg-gray-800"} />
                           </Avatar>
                         </ItemMedia>
                         <ItemContent>

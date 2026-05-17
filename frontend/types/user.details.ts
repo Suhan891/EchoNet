@@ -1,3 +1,5 @@
+import { Socket } from "socket.io-client";
+
 export enum Role {
   "ADMIN",
   "USER",
@@ -22,7 +24,7 @@ export interface authAllProfiles {
   name: string;
 }
 interface Job {
-  name: 'POST' | 'STORY';
+  name: "POST" | "STORY";
   id: string;
   status: "PROGRESS" | "FAILED";
 }
@@ -36,13 +38,22 @@ export interface AuthState {
   username: string;
   role: Role;
   profiles: authAllProfiles[];
-  jobs: Job[],
+  onlineProfiles: string[];
+  socket?: Socket;
+  jobs: Job[];
+
   setUserId: (userId: string) => void;
   setEmail: (email: string) => void;
   setRole: (role: Role) => void;
   setUserName: (name: string) => void;
   setProfile: (profiles: authAllProfiles[]) => void;
-  setJob: (job: Job ) => void
-  updateJobStatus: (id: string, status: "PROGRESS" | "FAILED") => void
-  removeJob: (id: string) => void
+
+  setSocket: (socket: any) => void;
+  setOnlineProfiles: (profiles: string[]) => void;
+  addOnlineProfile: (profileId: string) => void;
+  removeOnlineProfile: (profileId: string) => void;
+
+  setJob: (job: Job) => void;
+  updateJobStatus: (id: string, status: "PROGRESS" | "FAILED") => void;
+  removeJob: (id: string) => void;
 }

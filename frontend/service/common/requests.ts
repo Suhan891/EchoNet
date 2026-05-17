@@ -1,7 +1,7 @@
 import { RequestDto } from "@/types/common";
 import axiosInstance from "./starter";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL
 
 export const getUrl = () => {
     return `${API_BASE}`;
