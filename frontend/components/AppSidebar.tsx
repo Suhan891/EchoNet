@@ -1,6 +1,20 @@
 "use client";
 import { ChevronUp, CloudBackup, Plus } from "lucide-react";
 import Cookie from "js-cookie";
+import { Trash2Icon } from "lucide-react";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Sidebar,
   SidebarContent,
@@ -30,12 +44,11 @@ import { items } from "@/utils/bar.icons";
 import { useUserStore } from "@/stores/UserStore";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { usePathname, useRouter } from "next/navigation";
-import { AlertDialogDestructive } from "./AlertDiialog";
 import CreateProfile from "@/pages/Profile/CreateProfile";
-import { useToggleProfile } from "@/hooks/useProfile";
+import { useRemoveProfile, useToggleProfile } from "@/hooks/useProfile";
 import { toast } from "sonner";
-import { deleteProfileCookie } from "@/service/common/cookies";
 import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/utils/query.key";
 
 function AppSidebar() {
   const pathname = usePathname();
@@ -64,6 +77,22 @@ function AppSidebar() {
     });
   };
 
+  const removeProfile = useRemoveProfile();
+
+  const handleRemove = (id: string) => {
+    removeProfile.mutate(id, {
+      onSuccess: (result) => {
+        console.log(result.data);
+        toast.success(result.message);
+      },
+      onError: (err) => {
+        console.error(err.error)
+        toast.error(err.message);
+      },
+      onSettled: () => queryClient.invalidateQueries({queryKey: [queryKeys.USER]})
+    })
+  }
+
   const inactiveProfiles = profiles.filter(
     (profile) => profile.id !== activeProfile?.id,
   );
@@ -72,7 +101,6 @@ function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-
             <SidebarMenuButton asChild>
               <Link href={"/"} className="flex items-center gap-2">
                 <Image src={"/vercel.svg"} alt="logo" width={20} height={20} />
@@ -151,18 +179,38 @@ function AppSidebar() {
                           Activate
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <AlertDialogDestructive
-                          title="Delete Profile"
-                          description="This shall delete all data linked with the profile"
-                        >
-                          <DropdownMenuItem
-                            onSelect={(e) => e.preventDefault()}
-                            variant="destructive"
-                            className="text-red-500 focus:text-red-500"
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </AlertDialogDestructive>
+
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                                variant="destructive"
+                                className="text-red-500 focus:text-red-500"
+                                disabled={removeProfile.isPending}
+                              >
+                                Delete
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent size="sm">
+                              <AlertDialogHeader>
+                                <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+                                  <Trash2Icon />
+                                </AlertDialogMedia>
+                                <AlertDialogTitle>Delete Profile</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This shall remove all posts and story with the profile
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel variant="outline">
+                                  Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction variant="destructive" onClick={() => handleRemove(profile.id)}>
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                       </DropdownMenuSubContent>
                     </DropdownMenuSub>
                   ))}
