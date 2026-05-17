@@ -23,6 +23,8 @@ export function useProfileDetails(): boolean {
   const setReels = useProfileStore((s) => s.setReels);
   const setSavedPosts = useProfileStore((s) => s.setSavedPosts);
   const setIsPrivate = useProfileStore((state) => state.setIsPrivate);
+  const setJob = useUserStore((s) => s.setJob);
+  const upJob = useUserStore((s) => s.updateJobStatus);
 
   const storeAvatar = useProfileStore((s) => s.avatarUrl);
   const storeId = useProfileStore((s) => s.id);
@@ -35,8 +37,15 @@ export function useProfileDetails(): boolean {
   const storeReels = useProfileStore((state) => state.reels);
   const storeSavedPosts = useProfileStore((state) => state.savedPosts);
   const storeIsPrivate = useProfileStore((state) => state.isPrivate);
+  const storeJob = useUserStore((s) => s.jobs);
 
-  const { data: profile, isSuccess, isError, error, isLoading } = useMyProfile(userId);
+  const {
+    data: profile,
+    isSuccess,
+    isError,
+    error,
+    isLoading,
+  } = useMyProfile(userId);
 
   useEffect(() => {
     if (!userId) return;
@@ -61,7 +70,8 @@ export function useProfileDetails(): boolean {
         );
       if (storeName !== profile.data.name) setName(profile.data.name);
       if (storeBio !== profile.data.bio) setBio(profile.data.bio);
-      if (storeStory !== profile.data.story?.id) setStory(profile.data.story?.id ?? undefined);
+      if (storeStory !== profile.data.story?.id)
+        setStory(profile.data.story?.id ?? undefined);
       if (storePosts !== profile.data._count.posts)
         setPosts(profile.data._count.posts);
       if (storeReels !== profile.data._count.reels)
@@ -72,6 +82,18 @@ export function useProfileDetails(): boolean {
         );
       if (storeIsPrivate !== profile.data.isPrivate)
         setIsPrivate(profile.data.isPrivate);
+      if (profile.data.job) {
+        profile.data.job.forEach((j) => {
+          const isPresent = storeJob.some((jb) => jb.id === j.id);
+          if (isPresent) upJob(j.id, j.status);
+          if (!isPresent)
+            setJob({
+              id: j.id,
+              name: j.storyId ? "STORY" : "POST",
+              status: j.status,
+            });
+        });
+      }
     }
   }, [
     userId,
@@ -82,6 +104,8 @@ export function useProfileDetails(): boolean {
     router,
     storeAvatar,
     storeId,
+    storeJob,
+    upJob,
     storeFollowers,
     storeFollowings,
     storeName,
@@ -102,6 +126,7 @@ export function useProfileDetails(): boolean {
     setReels,
     setSavedPosts,
     setIsPrivate,
+    setJob,
   ]);
   return isLoading;
 }
