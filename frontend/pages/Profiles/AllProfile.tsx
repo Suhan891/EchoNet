@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,8 @@ import { toast } from "sonner";
 
 export default function AllProfiles({ profiles }: { profiles: AllProfiles[] }) {
   const followings = useProfileStore((state) => state.followings);
-  const activeProfileId = useProfileStore((state) => state.id);
+
+  const onlineProfiles = useUserStore(state => state.onlineProfiles)
 
   //const follow = useCreateFolllow();
   const isOngoingFollow = useFollowReq();
@@ -34,26 +35,6 @@ export default function AllProfiles({ profiles }: { profiles: AllProfiles[] }) {
     console.log("Profile Id CLicked", profileId);
     router.push(`/profiles/${profileId}`);
   };
-  // const handleFollow = (profileId: string) => {
-  //   follow.mutate(profileId, {
-  //     onSuccess: (result) => {
-  //       console.log(result.data);
-  //       toast.success(result.message);
-
-  //       // Invalidate active user's profile and the general profiles list
-  //       queryClient.invalidateQueries({ queryKey: [userId] });
-  //       queryClient.invalidateQueries({ queryKey: [activeProfileId, queryKeys.PROFILE] });
-
-  //       // Invalidate BOTH target user's and active user's follow data
-  //       queryClient.invalidateQueries({ queryKey: [queryKeys.FOLLOW, profileId] });
-  //       queryClient.invalidateQueries({ queryKey: [queryKeys.FOLLOW, activeProfileId] });
-  //     },
-  //     onError: (errors) => {
-  //       console.error(errors.error);
-  //       toast.error(errors.message);
-  //     },
-  //   });
-  // };
   return (
     <div className="flex flex-col w-full max-w-2xl mx-auto gap-6 p-4">
       <FieldGroup className="w-full flex justify-center mb-8">
@@ -72,6 +53,7 @@ export default function AllProfiles({ profiles }: { profiles: AllProfiles[] }) {
       <ItemGroup className="flex flex-col gap-3">
         {profiles.map((profile) => {
           const isFollow = !!followings.includes(profile.id);
+          const isOnline = onlineProfiles.includes(profile.id)
           return (
             <Item
               key={profile.id}
@@ -84,6 +66,7 @@ export default function AllProfiles({ profiles }: { profiles: AllProfiles[] }) {
                     <AvatarFallback className="bg-primary/10 text-primary">
                       {profile.name.charAt(0)}
                     </AvatarFallback>
+                    <AvatarBadge className={isOnline ? "bg-green-600 dark:bg-green-800" : "bg-gray-600 dark:bg-gray-800"} />
                   </Avatar>
                 </ItemMedia>
 
