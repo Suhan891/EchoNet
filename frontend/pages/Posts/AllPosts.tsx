@@ -1,6 +1,6 @@
 "use client";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
@@ -42,6 +42,7 @@ import { useAllPosts } from "@/hooks/usePost";
 import { cn } from "@/lib/utils";
 import { useProfileStore } from "@/stores/ProfileStore";
 import { useStore } from "@/stores/Store";
+import { useUserStore } from "@/stores/UserStore";
 import { queryKeys } from "@/utils/query.key";
 import { searchSchema, searchType } from "@/validations/profile/create.avatar";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -95,6 +96,8 @@ export default function AllPosts() {
   const followings = useProfileStore((state) => state.followings);
   const savedPosts = useProfileStore((state) => state.savedPosts);
 
+  const onlineProfiles = useUserStore(state => state.onlineProfiles);
+
   if (isLoading)
     return (
       <div className="h-screen w-full flex justify-center items-center">
@@ -146,6 +149,7 @@ export default function AllPosts() {
                 const isLiked = !!post.likes.some(
                   (l) => l.profileId === profileId,
                 );
+                const isOnline = onlineProfiles.includes(post.profile.id)
                 return (
                   <Card
                     key={post.id}
@@ -159,6 +163,7 @@ export default function AllPosts() {
                             <AvatarFallback>
                               {post.profile.name.charAt(0)}
                             </AvatarFallback>
+                            <AvatarBadge className={isOnline ? "bg-green-600 dark:bg-green-800" : "bg-gray-600 dark:bg-gray-800"} />
                           </Avatar>
                           <span className="font-semibold text-sm">
                             {post.profile.name}

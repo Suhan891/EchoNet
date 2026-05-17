@@ -25,6 +25,11 @@ import Image from "next/image";
 import { useState } from "react";
 import CreatePost from "./CreatePost";
 import { useStore } from "@/stores/Store";
+import { useRemovePost } from "@/hooks/usePost";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/utils/query.key";
+import { toast } from "sonner";
+import LikesView from "../Hero/Likes";
 
 interface PostsProp {
   posts: PostRequestData[];
@@ -35,14 +40,30 @@ export default function ViewPost({ posts, isOwn }: PostsProp) {
   const [openLike, setOpenLike] = useState<boolean>(false);
   const postsCount = useProfileStore((state) => state.posts);
   const [open, setOpen] = useState(false);
-
+  const profileId = useProfileStore((state) => state.id);
   const setLike = useStore((state) => state.setLikeReq);
-  const setFollow = useStore(state => state.setFollowReq)
   const handleLike = (id: string) => {
     if (isOwn) return setOpenLike(!openLike);
-    setLike({ type: 'POST', id });
+    setLike({ type: "POST", id });
   };
-  const handleFollow = (id: string) => setFollow({type: 'FOLLOW', id})
+  const removePost = useRemovePost();
+  const queryClient = useQueryClient();
+  const handleRemove = (id: string) => {
+    removePost.mutate(id, {
+      onSuccess: (result) => {
+        console.log(result.data);
+        toast.success(result.message);
+      },
+      onError: (err) => {
+        console.error(err.error);
+        toast.error(err.message);
+      },
+      onSettled: () =>
+        queryClient.invalidateQueries({
+          queryKey: [profileId, queryKeys.POSTS],
+        }),
+    });
+  };
   return (
     <div className="flex flex-col gap-5 w-full max-w-3xl mx-auto">
       {posts.map((post) => (
@@ -84,7 +105,14 @@ export default function ViewPost({ posts, isOwn }: PostsProp) {
               </div>
             </Carousel>
           </CardContent>
-
+          {openLike && (
+            <LikesView
+              open={openLike}
+              setOpen={setOpenLike}
+              format={{ id: post.id, type: "POST" }}
+              count={post._count.likes}
+            />
+          )}
           <CardFooter className="flex w-full justify-between items-center pt-4">
             <div className="flex gap-2">
               <Toggle
@@ -107,7 +135,11 @@ export default function ViewPost({ posts, isOwn }: PostsProp) {
                 <Button variant="secondary" size="sm">
                   Update
                 </Button>
-                <Button variant="destructive" size="sm">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleRemove(post.id)}
+                >
                   Delete
                 </Button>
               </div>
