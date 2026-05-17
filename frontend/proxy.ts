@@ -8,7 +8,7 @@ export default function proxy(request: NextRequest) {
     if (path === '/')
         return NextResponse.next()
 
-    const isPublic = PUBLIC.includes(path)
+    const isPublic = PUBLIC.some(p => path === p || path.startsWith(`${p}/`))
     const token = request.cookies.get('accessToken')?.value
 
     if (!token && isPublic)
