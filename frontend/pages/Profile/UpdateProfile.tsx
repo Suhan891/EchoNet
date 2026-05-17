@@ -77,10 +77,11 @@ export default function UpdateProfile({
         console.log(result.data);
         toast.success(result.message);
         setOpen(false);
+        querClient.invalidateQueries({ queryKey: [userId] });
         if (result.data.bio !== bio) setBio(result.data.bio);
         if (result.data.name !== name) {
           querClient.invalidateQueries({ queryKey: [queryKeys.USER] });
-          querClient.invalidateQueries({ queryKey: [userId] });
+          
         }
       },
       onError: (errors) => {

@@ -183,7 +183,7 @@ export default function Slide({
                 return (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldContent>
-                      <FieldLabel className="mb-2 pl-1">
+                      <FieldLabel className="mb-2 pl-1" htmlFor={`video-${item.id}`}>
                         Video(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`video-${item.id}`}>
@@ -218,7 +218,7 @@ export default function Slide({
                 return (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldContent>
-                      <FieldLabel className="mb-2 pl-1">
+                      <FieldLabel className="mb-2 pl-1" htmlFor={`audio-${item.id}`}>
                         Audio(required)
                       </FieldLabel>
                       <FieldLabel htmlFor={`audio-${item.id}`}>
