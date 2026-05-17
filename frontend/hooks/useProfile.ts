@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { CreateProfile, GetAllProfiles, GetOthersProfile, GetOwnprofile, ToggleProfile, UpdateAvatar, UpdatePrivacy, UpdateProfile } from "@/service/profile";
+import { CreateProfile, GetAllProfiles, GetOthersProfile, GetOwnprofile, RemoveProfile, ToggleProfile, UpdateAvatar, UpdatePrivacy, UpdateProfile } from "@/service/profile";
 import { ErrorResponse, SuccessResponse } from "@/types/common";
 import { OwnProfileResponse, UpProfileResult } from "@/types/profile.details";
 import { queryKeys } from "@/utils/query.key";
@@ -21,7 +21,11 @@ export function useCreateProfile() {
     mutationFn: (payload) => CreateProfile(payload),
   });
 }
-
+export function useRemoveProfile() {
+  return useMutation<SuccessResponse<null>,ErrorResponse,string>({
+    mutationFn: (payload) => RemoveProfile(payload)
+  })
+}
 export function usePrivacy() {
   return useMutation<SuccessResponse<{isPrivate: boolean}>, ErrorResponse>({
     mutationFn: () => UpdatePrivacy()

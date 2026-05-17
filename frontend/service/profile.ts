@@ -29,6 +29,9 @@ export async function UpdateAvatar(payload: FormData) {
 export function CreateProfile(payload: FormData) {
   return postJson("create", payload);
 }
+export function RemoveProfile(profileId: string) {
+  return postJson(`remove/${profileId}`, undefined)
+}
 
 export async function ToggleProfile(profileId: string) {
   return postJson(`activate/${profileId}`, undefined);
