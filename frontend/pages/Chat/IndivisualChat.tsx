@@ -29,9 +29,9 @@ import {
 } from "@/components/ui/empty";
 import { useProfileStore } from "@/stores/ProfileStore";
 import { ChatsMsgsDto } from "@/types/chat";
-import { Amphora, CloudAlert, Eye, Send } from "lucide-react";
+import { Amphora, CloudAlert, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useAddMessage, useChatApproval } from "@/hooks/useChat";
 import { useQueryClient } from "@tanstack/react-query";
@@ -40,7 +40,8 @@ import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { messageSchema, messageType } from "@/validations/chats/message";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserStore } from "@/stores/UserStore";
-import { queryKeys } from "@/utils/query.key";
+import ViewMsg from "./ViewMsg";
+import ChatMembers from "./ChatMembers";
 
 export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
   const profileId = useProfileStore((state) => state.id);
@@ -72,6 +73,13 @@ export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
     if (!socket || !isWritting) return;
     socket.emit("chat_texting", data.id);
   }, [socket, isWritting, data.id]);
+
+  const [membersOpen, setMembersOpen] = useState(false);
+  const [viewMsg, setViewMsg] = useState({
+    open: false,
+    msgId: "",
+    count: 0,
+  });
 
   useEffect(() => {
     if (!socket) return;
@@ -112,14 +120,13 @@ export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
       onSuccess: (result) => {
         toast.success(result.message);
         console.log(result.data);
-        reset()
+        reset();
       },
       onError: (err) => {
         toast.error(err.message);
         console.error(err.error);
       },
-      onSettled: () =>
-        queryClient.invalidateQueries({ queryKey: [queryKeys.CHAT, data.id] }),
+      onSettled: () => queryClient.invalidateQueries({ queryKey: [data.id] }),
     });
   };
   const getOtherMembers =
@@ -142,7 +149,12 @@ export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
 
   return (
     <div className="flex flex-col h-full relative bg-[#0c0f14] min-h-[600px] pr-75">
-      <Item className="sticky top-0 z-10 flex items-center w-full p-4 md:px-6 border-b border-white/10 bg-[#0c0f14]/80 backdrop-blur-md">
+      <Item
+        className="sticky top-0 z-10 flex items-center w-full p-4 md:px-6 border-b border-white/10 bg-[#0c0f14]/80 backdrop-blur-md"
+        onClick={() => {
+          if (data.type === "GROUP") setMembersOpen(true);
+        }}
+      >
         <ItemMedia>
           <Avatar className="size-10 border border-white/10">
             <AvatarImage
@@ -175,15 +187,17 @@ export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
             )}
           </ItemDescription>
         </ItemContent>
-        <ItemActions>
-          <Button
-            variant="destructive"
-            className="rounded-full px-6 bg-red-500/10 text-red-500 hover:bg-red-500/20 border-0"
-            onClick={() => setApprove(true)}
-          >
-            Block
-          </Button>
-        </ItemActions>
+        {data.creatorId !== profileId && (
+          <ItemActions>
+            <Button
+              variant="destructive"
+              className="rounded-full px-6 bg-red-500/10 text-red-500 hover:bg-red-500/20 border-0"
+              onClick={() => setApprove(true)}
+            >
+              Block
+            </Button>
+          </ItemActions>
+        )}
       </Item>
 
       <AlertDialog open={approve} onOpenChange={(open) => setApprove(open)}>
@@ -214,6 +228,15 @@ export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
         </AlertDialogContent>
       </AlertDialog>
 
+      {membersOpen && (
+        <ChatMembers
+          isAdmin={data.creatorId === profileId}
+          chatId={data.id}
+          open={membersOpen}
+          setOpen={setMembersOpen}
+        />
+      )}
+
       {!approve && (
         <>
           {data.message.length === 0 ? (
@@ -243,6 +266,15 @@ export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
                   <Item
                     key={msg.id}
                     className={`flex gap-3 w-full ${isOwn ? "flex-row-reverse" : "flex-row"}`}
+                    onClick={() => {
+                      if (msg.senderId === profileId) {
+                        setViewMsg({
+                          open: true,
+                          msgId: msg.id,
+                          count: msg._count.members,
+                        });
+                      }
+                    }}
                   >
                     <ItemMedia className="shrink-0 mt-auto">
                       <Avatar className="size-8 border border-white/10">
@@ -265,7 +297,7 @@ export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
                         </span>
                       )}
 
-                      <div className="flex items-center gap-2 group">
+                      <div className="flex items-end gap-2 group">
                         <ItemContent
                           className={`p-3.5 ${
                             isOwn
@@ -278,17 +310,15 @@ export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
                           </ItemDescription>
                         </ItemContent>
 
-                        {/* {isOwn && (
-                          <ItemActions className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="size-8 rounded-full text-gray-400 hover:text-white hover:bg-white/10"
-                            >
-                              <Eye className="size-4" />
-                            </Button>
-                          </ItemActions>
-                        )} */}
+                        {/* Clean, formatted timestamp that fades in on hover */}
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity mb-1 shrink-0">
+                          <span className="text-[11px] text-gray-500 whitespace-nowrap select-none">
+                            {new Date(msg.createdAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </Item>
@@ -296,8 +326,19 @@ export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
               })}
             </ItemGroup>
           )}
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="p-4 bg-[#0c0f14] border-t border-white/10 mt-auto shrink-0">
+          {viewMsg.open && (
+            <ViewMsg
+              msgId={viewMsg.msgId}
+              open={viewMsg.open}
+              setOpen={(open) => setViewMsg((prev) => ({ ...prev, open }))}
+              count={viewMsg.count}
+            />
+          )}
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="sticky bottom-0 z-50 w-full pr-5.75"
+          >
+            <div className="p-4 pb-6 bg-[#0c0f14] border-t border-white/10 mt-auto shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
               <div className="max-w-4xl mx-auto flex gap-3 items-center bg-white/5 border border-white/10 rounded-full p-1.5 pl-4 focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all">
                 <Input
                   placeholder="Type a message..."
@@ -308,7 +349,7 @@ export default function IndivisualChat({ data }: { data: ChatsMsgsDto }) {
                   type="submit"
                   size="icon"
                   disabled={!isWritting || addMsg.isPending}
-                  className="rounded-full bg-blue-600 hover:bg-blue-500 text-white size-10 shrink-0 shadow-md transition-transform hover:scale-105"
+                  className="rounded-full bg-blue-600 hover:bg-blue-500 text-white size-10 shrink-0 shadow-md transition-transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                 >
                   <Send className="size-4 ml-0.5" />
                 </Button>
