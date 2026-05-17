@@ -50,7 +50,7 @@ export default function Navbar() {
   const avatarUrl = activeProfile?.avatarUrl;
   const name = activeProfile?.name;
   return (
-    <nav className="sticky top-0 z-50 flex w-full items-center justify-between p-4 md:px-6 pointer-events-none">
+    <nav className="sticky top-0 z-50 flex w-full items-center justify-between p-4 pb-0 md:px-6 pointer-events-none">
       <div className="pointer-events-auto">
         <SidebarTrigger className="h-10 w-10 rounded-md border border-border bg-background shadow-sm" />
       </div>

@@ -4,10 +4,11 @@ import { LikeRequest, LikesData } from "@/types/like&comment";
 import { queryKeys } from "@/utils/query.key";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-export function useLikeViews(profileId: string, data: LikeRequest) {
+export function useLikeViews(profileId: string, data: LikeRequest, count: number) {
   return useQuery<SuccessResponse<LikesData[]>, ErrorResponse>({
     queryKey: [profileId, queryKeys.LIKE],
     queryFn: () => getProfiles(data),
+    enabled: count > 1,
   });
 }
 

@@ -1,9 +1,9 @@
-import { CreateStoryRequest, GetStory, GetStoryMedia, RemoveStroy, StoriesOwnRequest } from "@/service/story";
+import { CreateStoryRequest, GetStory, GetStoryMedia, RemoveStroy } from "@/service/story";
 import { ErrorResponse, JobCreate, SuccessResponse } from "@/types/common";
 import { StoryData } from "@/types/stores";
 import { StoryDto } from "@/types/story.detils";
 import { queryKeys } from "@/utils/query.key";
-import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export function useCreateStory() {
     return useMutation<SuccessResponse<JobCreate>,ErrorResponse,FormData>({
@@ -13,12 +13,6 @@ export function useCreateStory() {
 export function useDeleteStory() {
     return useMutation<SuccessResponse<null>,ErrorResponse>({
         mutationFn:() => RemoveStroy()
-    })
-}
-export function useOwnStory(profileId: string) {
-    return useSuspenseQuery<SuccessResponse<StoryData[]>,ErrorResponse>({
-        queryKey: [profileId, queryKeys.STORY],
-        queryFn: () => StoriesOwnRequest(),
     })
 }
 export function useStories(storyId: string) {
