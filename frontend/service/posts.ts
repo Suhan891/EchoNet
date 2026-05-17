@@ -8,6 +8,9 @@ async function postJson(path: string, payload: unknown) {
 async function getJson(path: string) {
   return Request(`/posts/${path}`, { method: 'GET', body: undefined});
 }
+async function putJson(path: string, payload: unknown) {
+  return Request(`/posts/${path}`, { method: "PUT", body: payload });
+}
 
 export async function CreatePost(data: FormData) {
     return postJson(`create`, data)
@@ -17,6 +20,9 @@ export async function GetOwnPosts() {
 }
 export async function GetOthersPost(payload:PostReelDto) {
   return getJson(`others/${payload.profileId}`)
+}
+export async function RemovePost(postId: string) {
+  return putJson(`remove/${postId}`, undefined);
 }
 export async function GetAllPosts(payload:PaginatedReqDto) {
   if(payload.name) return getJson(`all?name=${payload.name}`)

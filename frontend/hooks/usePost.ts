@@ -1,4 +1,4 @@
-import { CreatePost, GetAllPosts, GetOthersPost, GetOwnPosts, GetSavedPosts, UpdateSavePost } from "@/service/posts";
+import { CreatePost, GetAllPosts, GetOthersPost, GetOwnPosts, GetSavedPosts, RemovePost, UpdateSavePost } from "@/service/posts";
 import { ErrorResponse, JobCreate, PaginatedReqDto, SuccessResponse } from "@/types/common";
 import { PostReelDto } from "@/types/profiles";
 import { AllPosts, PostRequestData, SavedPosts } from "@/types/post";
@@ -15,6 +15,11 @@ export function useOwnPosts(profileId: string) {
         queryKey: [profileId, queryKeys.POSTS],
         queryFn: () => GetOwnPosts(),
         enabled: !!profileId
+    })
+}
+export function useRemovePost() {
+    return useMutation<SuccessResponse<null>,ErrorResponse, string>({
+        mutationFn: (payload) => RemovePost(payload)
     })
 }
 
