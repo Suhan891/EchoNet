@@ -10,7 +10,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Amphora } from "lucide-react";
+import { Amphora, CloudAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CreateStory from "@/pages/Story/Create";
 import { useUserStore } from "@/stores/UserStore";
@@ -23,7 +23,9 @@ export default function StoryLayout({
   const jobs = useUserStore((state) => state.jobs);
   const activeJob = jobs.find((job) => job.name === "STORY");
 
-  if (!activeJob && !story) {
+  const updateJobStatus = useUserStore((state) => state.updateJobStatus);
+
+  if (activeJob?.name !== "STORY" && !story) {
     return (
       <div className="h-screen p-10">
         <Empty className="border border-dashed">
@@ -44,11 +46,39 @@ export default function StoryLayout({
       </div>
     );
   }
-  if(activeJob?.status === 'FAILED') {
-    // Later error page asking for retry
-  }
+  if (activeJob?.name === "STORY" && activeJob.status === "FAILED")
+    return (
+      <div className="h-screen p-10">
+        <Empty className="border border-dashed">
+          <EmptyHeader>
+            <EmptyMedia variant={"icon"}>
+              <CloudAlert />
+            </EmptyMedia>
+            <EmptyTitle>Story Upload Failed</EmptyTitle>
+            <EmptyDescription>
+              Retry the upload or cancel the job
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button
+              variant={"link"}
+              onClick={() => updateJobStatus(activeJob.id, "RETRY")}
+            >
+              Retry
+            </Button>
+            <Button
+              variant={"destructive"}
+              onClick={() => updateJobStatus(activeJob.id, "CANCELLED")}
+            >
+              Cancel
+            </Button>
+          </EmptyContent>
+        </Empty>
+        {open && <CreateStory open={open} setOpen={setOpen} />}
+      </div>
+    );
 
-  if (activeJob?.status === 'PROGRESS')
+  if (activeJob?.name === "STORY" && activeJob.status === "PROGRESS")
     return (
       <div className="min-w-2xl">
         {" "}
