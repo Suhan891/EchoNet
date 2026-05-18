@@ -19,12 +19,21 @@ export class JobsController {
     return await this.jobService.jobStatus(profile, jobData);
   }
 
-  @Put('retry')
+  @Put(':id/retry')
   @ResponseMessage('Job restarted successfully')
   async retryJob(
     @currentProfile() profile: profileDto,
     @Param('id', ParseUUIDPipe, JobValidatePipe) jobData: JobData,
   ) {
     return await this.jobService.jobRetry(profile, jobData);
+  }
+
+  @Put(':id/cancel')
+  @ResponseMessage('Job cancelled successfully')
+  async cancelJob(
+    @currentProfile() profile: profileDto,
+    @Param('id', ParseUUIDPipe, JobValidatePipe) jobData: JobData,
+  ) {
+    return await this.jobService.jobCancel(profile, jobData);
   }
 }
