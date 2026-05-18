@@ -41,14 +41,6 @@ export class StoryService {
     });
     if (existingStory) await this.deleteStory(existingStory.id, profile.id);
 
-    // if (existingStory && existingStory.expiresAt >= new Date(Date.now()))
-    //   throw new BadRequestException(
-    //     'You already have a existing story still not expired',
-    //   );
-    // if (existingStory && existingStory.expiresAt < new Date(Date.now())) {
-    //   await this.deleteStory(existingStory.id, profile.id);
-    // }
-
     const story = await this.prisma.story.create({
       data: {
         profileId: profile.id,

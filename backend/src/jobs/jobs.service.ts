@@ -6,12 +6,16 @@ import { Queue } from 'bullmq';
 import { JobStatus } from 'src/generated/prisma/enums';
 import { profileDto } from 'src/profile/dto/profile.dto';
 import { AppCacheService } from 'src/common/caching/redis.cache';
+import { StoryService } from 'src/story/story.service';
+import { PostsService } from 'src/posts/posts.service';
 
 @Injectable()
 export class JobsService {
   constructor(
     private prisma: PrismaService,
     private cacheService: AppCacheService,
+    private storyService: StoryService,
+    private postService: PostsService,
     @InjectQueue('story-task') private storyQueue: Queue,
   ) {}
 
@@ -45,26 +49,50 @@ export class JobsService {
     };
   }
 
+  async jobCancel(profile: profileDto, jobData: JobData) {
+    if (profile.id !== jobData.profileId)
+      throw new BadRequestException('You are not allowed to cancel others job');
+
+    if (jobData.status !== 'FAILED')
+      throw new BadRequestException('You can only cancel failed jobs');
+
+    const failedJob = await this.prisma.job.update({
+      where: { id: jobData.id },
+      data: { status: 'CANCELLED' },
+      select: {
+        id: true,
+        storyId: true,
+        name: true,
+        postId: true,
+      },
+    });
+
+    if (failedJob.name === 'STORY' && failedJob.storyId) {
+      await this.storyService.deleteStory(failedJob.storyId, profile.id);
+    }
+    if (failedJob.name === 'POST' && failedJob.postId) {
+      await this.postService.deletePost(failedJob.postId);
+    }
+
+    await this.cacheService.delete(`profile:${profile.id}`);
+  }
+
   async jobRetry(profile: profileDto, jobData: JobData) {
     if (profile.id !== jobData.profileId)
       throw new BadRequestException(
         'You are not allowed to restart others job',
       );
 
-    if (jobData.status === 'SUCCESS')
-      throw new BadRequestException('Job is already successfull');
-
-    if (jobData.status === 'PROGRESS')
-      throw new BadRequestException('Job is in progress');
+    if (jobData.status !== 'FAILED')
+      throw new BadRequestException('You can only retry failed jobs');
 
     const job = await this.storyQueue.getJob(jobData.jobId);
     if (!job) {
-      // Means success , as it deletes after success
       await this.JobStatusUpdate(jobData.id, 'SUCCESS', profile.id);
-      throw new BadRequestException('Job is already successfull');
+      throw new BadRequestException('Job is already completed');
     }
 
-    await job.retry('failed'); // As it was a failed job
+    await job.retry('failed');
     return this.JobStatusUpdate(jobData.id, 'PROGRESS', profile.id);
   }
 
@@ -73,8 +101,7 @@ export class JobsService {
     status: JobStatus,
     profileId: string,
   ) {
-    if (status === 'SUCCESS')
-      await this.cacheService.delete(`profile:${profileId}`);
+    await this.cacheService.delete(`profile:${profileId}`);
     return await this.prisma.job.update({
       where: { id },
       data: { status },
