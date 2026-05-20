@@ -1,98 +1,99 @@
 <div align="center">
   <h1>🌌 EchoNet</h1>
-  <p>A modern, full-stack social media platform designed for seamless content sharing, user interaction, and real-time engagement.</p>
+  <p><strong>A modern, full-stack social media platform designed for seamless content sharing, user interaction, and real-time engagement.</strong></p>
   
-  [![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
-  [![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-  [![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
-  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-  [![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)](https://redis.io/)
-  [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://socket.io/)
-  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+  <p>
+    <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white" alt="NestJS" /></a>
+    <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" /></a>
+    <a href="https://react.dev/"><img src="https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19" /></a>
+    <a href="https://www.prisma.io/"><img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" /></a>
+    <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
+    <a href="https://redis.io/"><img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" /></a>
+    <a href="https://socket.io/"><img src="https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white" alt="Socket.io" /></a>
+    <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS_4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" /></a>
+  </p>
 </div>
 
 ---
 
-## 🚀 Tech Stack
+## 🚀 Overview
 
-### ⚙️ Backend
-- **Framework:** NestJS (v11)
-- **Database:** PostgreSQL with Prisma ORM (v7)
-- **Caching & Background Jobs:** Redis, BullMQ (Queue processing for stories & posts)
-- **Real-Time:** Socket.io (Event Gateway for Live Chat & Online Status)
-- **Storage:** Cloudinary (Images & Videos)
-- **Auth & Security:** JWT (Access/Refresh), bcrypt, Nodemailer (OTP Verification)
+EchoNet is a highly scalable, feature-rich social media application that mirrors the complexity of modern platforms like Instagram and Twitter. Built with a powerful **NestJS backend** and a blazing-fast **Next.js 16 / React 19 frontend**, it leverages background job processing, real-time WebSockets, and advanced caching to deliver a premium user experience.
 
-### 🎨 Frontend
-- **Framework:** Next.js (v16 App Router) & React 19
-- **Styling:** Tailwind CSS v4, shadcn/ui, Radix UI
-- **State Management:** Zustand (Global State), TanStack Query v5 (Server State)
+---
+
+## 💻 Tech Stack
+
+### ⚙️ Backend (NestJS v11)
+- **Core Framework:** NestJS with modular architecture
+- **Database:** PostgreSQL managed via Prisma ORM v7
+- **Caching & Queues:** Redis & BullMQ (Background Workers & Flow Producers)
+- **Real-Time:** Socket.io (Event Gateway for Messaging & Presence)
+- **Media Storage:** Cloudinary (Images & Videos)
+- **Authentication:** JWT (Access/Refresh), bcrypt, Nodemailer (OTP Verification)
+
+### 🎨 Frontend (Next.js 16)
+- **Framework:** Next.js (App Router, Parallel & Intercepted Routes) & React 19
+- **Styling:** Tailwind CSS v4, shadcn/ui, Radix UI primitives
+- **State Management:** Zustand (Client State), TanStack React Query v5 (Server State)
 - **Forms & Validation:** React Hook Form + Zod
 - **Real-Time Client:** Socket.io-client
 
 ---
 
-## 🏗️ Architecture Highlights
+## 🏗️ Architecture & Engineering Highlights
 
-- **Custom NestJS Pipeline** — Global guard chain with decorator-based route 
-  protection. Typed pipes validate and fetch entities before controllers receive 
-  them. Param decorators inject authenticated user and active profile directly 
-  into controller methods.
-- **Multi-Profile System** — One user account supports multiple profiles with 
-  header-based switching via `x-profile-id`, mirroring YouTube's channel model. 
-  ProfileGuard handles ownership verification and profile attachment per request.
-- **Async Media Processing** — Parent/child BullMQ job flow processes story and 
-  reel media in background workers with concurrency of 5. Base64 buffer 
-  serialization handles Redis transport. Frontend polls job status with full 
-  retry support on failure.
-- **Hybrid Messaging Architecture** — HTTP POST for message persistence to 
-  PostgreSQL, Socket.io for real-time delivery to recipient rooms. Redis tracks 
-  online presence with automatic 24hr TTL expiry as safety net.
-- **Polymorphic Interactions** — Single Likes table handles Posts, Reels, and 
-  Stories via nullable foreign keys with composite unique constraints preventing 
-  duplicates at DB level.
-- **Redis Caching Layer** — Pattern-based cache invalidation across auth, 
-  profile, feed, and follow layers. Cache-first reads with targeted TTL 
-  management reduce DB load on hot paths.
-- **Consistent API Contract** — Global ResponseInterceptor wraps all responses 
-  in typed envelope. GlobalExceptionFilter catches all errors including 
-  unexpected crashes, returning consistent shape to frontend.
+- **Advanced Background Processing (BullMQ) & Job Management**
+  A sophisticated BullMQ job flow asynchronously processes story and reel media in background workers. It utilizes a dedicated `JobsService` where the frontend can poll a job's progress in real-time to display loading states. If a job fails, users are presented with options to explicitly retry the job, or cancel it entirely (which safely cleans up the aborted Post/Story from the database).
+  
+- **Multi-Profile System**
+  One user account supports multiple profiles with header-based switching (`x-profile-id`), mirroring YouTube's channel model. Custom `ProfileGuard` and decorators handle ownership verification and inject the active profile directly into controller methods.
+
+- **Custom NestJS Pipeline & Security**
+  Global guard chain with decorator-based route protection. Typed pipes validate and fetch entities (users, posts, chats) before controllers receive them, ensuring secure and predictable data flow.
+
+- **Hybrid Real-Time Messaging Architecture**
+  Leverages HTTP POST for message persistence to PostgreSQL, while simultaneously broadcasting via Socket.io for sub-millisecond real-time delivery to recipient rooms. Includes Redis-backed online presence tracking with automatic TTL expiry.
+
+- **Polymorphic Interactions**
+  A unified `Likes` and `Comments` table architecture handles Posts, Reels, and Stories via nullable foreign keys with composite unique constraints, preventing duplicates at the database level and keeping queries incredibly fast.
+
+- **High-Performance Redis Caching Layer**
+  Pattern-based cache invalidation across auth, profile, feed, and follow layers. Cache-first reads with targeted TTL management drastically reduce database load on high-traffic endpoints.
+
+- **Resilient Error Handling & Consistent API Contracts**
+  A global `ResponseInterceptor` wraps all responses in a strictly typed envelope. A global `ExceptionFilter` catches all errors (including panics and timeouts), returning a consistent shape to the frontend and displaying user-friendly toast notifications.
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
 ### 🔐 Authentication & Security
-- Complete registration and login flows with email-based OTP verification (Nodemailer).
-- **Advanced Password Recovery:** Secure forgot-password pipeline utilizing stateless JWTs combined with Redis caching to enforce OTP cooldowns, track retry limits, and securely manage verification state.
-- Secure JWT-based session management utilizing Access & Refresh tokens.
+- **Secure Onboarding:** Complete registration and login flows with email-based OTP verification via Nodemailer.
+- **Advanced Password Recovery:** Secure forgot-password pipeline utilizing stateless JWTs, combined with Redis caching to enforce OTP cooldowns, track retry limits, and securely manage verification state.
+- **Session Management:** Secure JWT-based sessions utilizing HttpOnly cookies for Access & Refresh tokens.
 
 ### 👤 Profile & Social Graph
-- Distinct `User` (auth-focused) and `Profile` (social-focused) architecture.
-- Self-referential follow system mapping out complex Followers/Following relationships.
-- Modular profile dashboards utilizing Next.js parallel routes (`@posts`, `@reels`, `@savedPosts`).
-- Advanced caching and invalidation strategies utilizing Redis for high-performance profile and feed fetching.
+- **Dual Entity Model:** Distinct `User` (auth-focused) and `Profile` (social-focused) schemas.
+- **Self-Referential Graph:** Follow system mapping out complex Followers/Following relationships with optimized Prisma queries.
+- **Modular Dashboards:** Next.js parallel routes (`@posts`, `@reels`, `@savedPosts`) for highly interactive profile views.
 
 ### 📸 Content & Media
-- **Posts & Reels:** Image and video upload capabilities with rich captions.
-- **Stories:** Expiring media with views tracking. Processed reliably using background BullMQ workers.
-- **Polymorphic Interactions:** Seamless Like and Commenting architecture across Posts, Reels, and Stories. Includes nested commenting (threading & replies).
-- **Bookmarking:** Save and organize favorite posts.
+- **Rich Posts & Reels:** Image and video upload capabilities with metadata and captions.
+- **Stories:** Expiring media (24h TTL) with view tracking, reliably processed via BullMQ workers.
+- **Nested Commenting:** Robust commenting architecture supporting endless threading and replies.
+- **Bookmarking:** Save and organize favorite posts into private collections.
 
-### 💬 Real-Time Messaging & Presence
-- **Live Chat:** Direct one-on-one (Private) and Group chats built on Socket.io.
-- **Real-Time Presence:** Online status tracking and live event broadcasting.
-- **Message Tracking:** Read receipts and structured message views.
-
-### 🔔 Notifications
-- Event-driven notifications schema tracking interactions (Likes, Follows, Comments, and New Chats).
+### 💬 Real-Time Chat & Presence
+- **Live Messaging:** Direct 1-on-1 and Group chats built on Socket.io.
+- **Presence Engine:** Real-time online status tracking and live typing indicators.
+- **Smart Queries:** Optimized querying to prevent duplicate private chats between identical participants.
 
 ---
 
-## 🚧 Work in Progress (Upcoming Features)
-
-* **Infinite Feed & Timeline:** Infinite scrolling implementation on the frontend to consume aggregated Reel APIs.
-* **Admin Dashboard:** Interfaces for moderation and platform management based on existing `Role.ADMIN` schemas.
+## 🚧 Roadmap & Upcoming Features
+- [ ] **Admin Dashboard:** Interfaces for content moderation, user management, and platform analytics based on existing `Role.ADMIN` schemas.
+- [ ] **Reels Frontend:** Dedicated frontend interface and playback experience for short-form video Reels.
 
 ---
 
@@ -100,29 +101,29 @@
 
 ```text
 EchoNet/
-├── backend/                # NestJS Application
-│   ├── prisma/             # Database schema and migrations
+├── backend/                # NestJS API Server
+│   ├── prisma/             # Schema definitions and migrations
 │   ├── src/
-│   │   ├── auth/           # Authentication & OTP logic
-│   │   ├── user/           # User management
-│   │   ├── profile/        # Bios, Avatars, Follow logic
+│   │   ├── auth/           # Auth, JWT, OTP pipelines
+│   │   ├── user/           # User lifecycle management
+│   │   ├── profile/        # Bios, Avatars, Social Graph
 │   │   ├── posts/          # Image post handling
-│   │   ├── reels/          # Video processing
-│   │   ├── story/          # Expiring media & queues
-│   │   ├── comment/        # Nested commenting system
+│   │   ├── reels/          # Video processing pipelines
+│   │   ├── story/          # Expiring media & BullMQ Queues
+│   │   ├── comment/        # Nested threading system
 │   │   ├── like/           # Polymorphic interactions
-│   │   ├── chat/           # Real-Time Messaging logic
-│   │   └── event/          # Socket.io Event Gateway
+│   │   ├── chat/           # Messaging persistence
+│   │   └── event/          # Socket.io Real-time Gateway
 │   └── ...
-└── frontend/               # Next.js Application
-    ├── app/                # App Router (Parallel & Intercepted routes)
-    ├── components/         # UI components (shadcn/ui)
-    ├── features/           # Feature-specific logic
+└── frontend/               # Next.js Web Client
+    ├── app/                # App Router structure
+    ├── components/         # Reusable shadcn/ui components
+    ├── features/           # Domain-specific logic
     ├── hooks/              # Custom React hooks (e.g., useAuth)
-    ├── stores/             # Zustand state stores
-    ├── service/            # Axios API integration & Query keys
-    ├── validations/        # Zod schemas for forms
-    └── pages/              # Additional component structuring
+    ├── stores/             # Zustand global state slices
+    ├── service/            # Axios interceptors & TanStack Query keys
+    ├── validations/        # Zod schemas for form safety
+    └── pages/              # Additional structured views
 ```
 
 ---
@@ -130,11 +131,12 @@ EchoNet/
 ## 🛠️ Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- PostgreSQL
-- Redis Server
-- Cloudinary Account
-- SMTP Server (for emails)
+Ensure you have the following installed on your local machine:
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [PostgreSQL](https://www.postgresql.org/) (Running locally or via Docker)
+- [Redis](https://redis.io/) (Running locally or via Docker)
+- A [Cloudinary](https://cloudinary.com/) account for media uploads
+- An SMTP Server (e.g., Gmail App Passwords, Resend, SendGrid)
 
 ### Backend Setup
 1. Navigate to the `backend` directory:
@@ -145,16 +147,17 @@ EchoNet/
    ```bash
    npm install
    ```
-3. Configure your `.env` variables. Create a `.env` file and add the following keys:
+3. Configure environment variables. Create a `.env` file based on `.env.example`:
    ```env
-   DATABASE_URL="postgresql://user:pass@localhost:5432/dbname"
+   DATABASE_URL="postgresql://postgres:password@localhost:5432/echonet"
    REDIS_URL="redis://localhost:6379"
-   JWT_SECRET="your_jwt_secret"
-   CLOUDINARY_URL="cloudinary://..."
+   JWT_SECRET="your_super_secret_jwt_key"
+   CLOUDINARY_URL="cloudinary://API_KEY:API_SECRET@CLOUD_NAME"
    SMTP_HOST="smtp.example.com"
-   # Add other necessary keys...
+   SMTP_USER="your_email@example.com"
+   SMTP_PASS="your_email_password"
    ```
-4. Run migrations to sync your schema:
+4. Run migrations to sync the database schema:
    ```bash
    npx prisma migrate dev
    ```
@@ -172,17 +175,18 @@ EchoNet/
    ```bash
    npm install
    ```
-3. Configure your `.env.local` variables:
+3. Configure environment variables. Create a `.env.local` file:
    ```env
    NEXT_PUBLIC_API_BASE_URL="http://localhost:3000"
    NEXT_PUBLIC_SOCKET_URL="http://localhost:3000"
    ```
-4. Start the frontend development server:
+4. Start the development server:
    ```bash
    npm run dev
    ```
 
 ---
+
 <div align="center">
   <p>Built with ❤️</p>
 </div>
