@@ -17,6 +17,7 @@ export class JobsService {
     private storyService: StoryService,
     private postService: PostsService,
     @InjectQueue('story-task') private storyQueue: Queue,
+    @InjectQueue('posts-task') private postQueue: Queue,
   ) {}
 
   async jobStatus(profile: profileDto, jobData: JobData) {
@@ -24,6 +25,9 @@ export class JobsService {
       throw new BadRequestException(
         'You are not allowed to view others status',
       );
+    if (jobData.status === 'CANCELLED')
+      throw new BadRequestException('This job has been cancelled');
+
     if (jobData.status === 'SUCCESS' || jobData.status === 'FAILED') {
       return {
         id: true,
@@ -31,7 +35,10 @@ export class JobsService {
         status: jobData.status,
       };
     }
-    const job = await this.storyQueue.getJob(jobData.jobId);
+    const job =
+      jobData.name === 'STORY'
+        ? await this.storyQueue.getJob(jobData.jobId)
+        : await this.postQueue.getJob(jobData.jobId);
     if (!job) {
       return await this.JobStatusUpdate(jobData.id, 'SUCCESS', profile.id);
     }

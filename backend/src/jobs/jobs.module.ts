@@ -9,7 +9,7 @@ import { PostsModule } from 'src/posts/posts.module';
 
 @Module({
   imports: [
-    BullModule.registerQueue({ name: 'story-task' }),
+    BullModule.registerQueue({ name: 'story-task' }, { name: 'posts-task' }),
     CommonModule,
     StoryModule,
     PostsModule,
