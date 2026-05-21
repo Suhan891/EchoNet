@@ -1,11 +1,17 @@
-import { GetJobStatus } from "@/service/jobs";
+import { CancelJob, GetJobStatus, RetryJob } from "@/service/jobs";
 import { ErrorResponse, JobStatus, SuccessResponse } from "@/types/common";
 import { queryKeys } from "@/utils/query.key";
-import { useQueries, UseQueryOptions } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueries,
+  UseQueryOptions,
+} from "@tanstack/react-query";
 
 export function useJobStatus(jobIds: string[]) {
   return useQueries({
-    queries: jobIds.map<UseQueryOptions<SuccessResponse<JobStatus>, ErrorResponse>>((jobId) => ({
+    queries: jobIds.map<
+      UseQueryOptions<SuccessResponse<JobStatus>, ErrorResponse>
+    >((jobId) => ({
       queryKey: [queryKeys.JOBS, jobId],
       queryFn: () => GetJobStatus(jobId),
       enabled: !!jobId,
@@ -14,5 +20,17 @@ export function useJobStatus(jobIds: string[]) {
         return false;
       },
     })),
+  });
+}
+
+export function useRetryJob() {
+  return useMutation<SuccessResponse<JobStatus>, ErrorResponse, string>({
+    mutationFn: (payload) => RetryJob(payload),
+  });
+}
+
+export function useCancelJob() {
+  return useMutation<SuccessResponse<null>, ErrorResponse, string>({
+    mutationFn: (payload) => CancelJob(payload),
   });
 }

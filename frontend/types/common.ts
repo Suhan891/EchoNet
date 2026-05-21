@@ -23,7 +23,7 @@ export interface JobCreate {
 export interface JobStatus {
   id: string;
   name: "STORY" | "POST";
-  status: "PROGRESS" | "SUCCESS" | "FAILED";
+  status: "PROGRESS" | "SUCCESS" | "FAILED" | "CANCELLED";
 }
 
 export interface PaginatedReqDto {

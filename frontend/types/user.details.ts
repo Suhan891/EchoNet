@@ -26,12 +26,8 @@ export interface authAllProfiles {
 interface Job {
   name: "POST" | "STORY";
   id: string;
-  status: "PROGRESS" | "FAILED";
+  status: "PROGRESS" | "FAILED" | "CANCELLED" | "RETRY";
 }
-// interface StatusUpdate {
-//   id: string;
-//   status: "PROGRESS" | "SUCCESS" | "FAILED";
-// }
 export interface AuthState {
   userId: string;
   email: string;
@@ -54,6 +50,6 @@ export interface AuthState {
   removeOnlineProfile: (profileId: string) => void;
 
   setJob: (job: Job) => void;
-  updateJobStatus: (id: string, status: "PROGRESS" | "FAILED") => void;
+  updateJobStatus: (id: string, status: "PROGRESS" | "FAILED" | "CANCELLED" | "RETRY") => void;
   removeJob: (id: string) => void;
 }
