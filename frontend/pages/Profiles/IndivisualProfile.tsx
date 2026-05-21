@@ -5,7 +5,12 @@ import { ProfileDto } from "@/types/profiles";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import Follow from "./Follow";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -17,22 +22,39 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Lock, Plus } from "lucide-react";
+import { Lock, MessageSquarePlus, Plus } from "lucide-react";
 import PostAndReel from "./PostReel";
-import { Field } from "@/components/ui/field";
 import { useStore } from "@/stores/Store";
 import { useFollowReq } from "@/features/Common/follow.request";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useUserStore } from "@/stores/UserStore";
+import { useRouter } from "next/navigation";
 export default function IndivisualProfile({
   profile,
 }: {
   profile: ProfileDto;
 }) {
   const [open, setOpen] = useState(false);
-  const profileId = useProfileStore((state) => state.id);
+  //const profileId = useProfileStore((state) => state.id);
   const followings = useProfileStore((state) => state.followings);
-  const followers = useProfileStore((state) => state.followers);
+  //const followers = useProfileStore((state) => state.followers);
   const isOngoingFollow = useFollowReq();
   const setFollowReq = useStore((state) => state.setFollowReq);
+
+  const onlineProfiles = useUserStore((state) => state.onlineProfiles);
+  const isOnline = onlineProfiles.includes(profile.id);
+
   const [follow, setFollow] = useState<FollowDto>({
     type: "FOLLOWERS",
     id: profile.id,
@@ -45,6 +67,11 @@ export default function IndivisualProfile({
     setOpen(!open);
     console.log("Profiles", profile);
   };
+  const router = useRouter();
+  const handleStoryView = (id: string | null) => {
+    if (!isFollowing || !id) return;
+    return router.push(`/profiles/${profile.id}/${id}`);
+  };
   const isFollowing = !!followings.includes(profile.id);
   const isAllowed = !profile.isPrivate || isFollowing;
   return (
@@ -52,9 +79,13 @@ export default function IndivisualProfile({
       <div className="relative max-w-3xl mx-auto p-4 md:p-8 text-foreground font-sans">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10">
           <Button
+            onClick={() =>
+              handleStoryView(profile.story ? profile.story.id : null)
+            }
             className={cn(
               "shrink-0 rounded-full transition-all duration-200 border-none bg-transparent p-0 mt-8",
-              profile.story &&
+              isFollowing &&
+                profile.story &&
                 "ring-2 ring-offset-2 ring-offset-background ring-amber-500 hover:scale-105 cursor-pointer",
             )}
           >
@@ -66,6 +97,13 @@ export default function IndivisualProfile({
                 className="object-cover"
               />
               <AvatarFallback>{profile.name || "U"}</AvatarFallback>
+              <AvatarBadge
+                className={
+                  isOnline
+                    ? "bg-green-600 dark:bg-green-800"
+                    : "bg-gray-600 dark:bg-gray-800"
+                }
+              />
             </Avatar>
           </Button>
 
@@ -115,7 +153,27 @@ export default function IndivisualProfile({
           />
         )}
         <div className="flex gap-2 -ml-2.5">
-          <Button variant={"secondary"}>Message</Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant={"secondary"}>Message</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent size="sm">
+              <AlertDialogHeader>
+                <AlertDialogMedia>
+                  <MessageSquarePlus />
+                </AlertDialogMedia>
+                <AlertDialogTitle>Chat not yet created</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Do you want to allow to create a chat
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Don&apos;t allow</AlertDialogCancel>
+                <AlertDialogAction>Allow</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          {/* <Button variant={"secondary"}>Message</Button> */}
           <Button
             variant={"secondary"}
             disabled={isOngoingFollow}

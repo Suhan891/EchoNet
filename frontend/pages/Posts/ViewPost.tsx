@@ -16,11 +16,19 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Toggle } from "@/components/ui/toggle";
 import { useProfileStore } from "@/stores/ProfileStore";
 import { PostRequestData } from "@/types/post";
 import { MAX_ALLOWED_POST_ADD } from "@/utils/constants";
-import { Heart, MessageSquareText, Plus } from "lucide-react";
+import { CloudAlert, Heart, MessageSquareText, Plus } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import CreatePost from "./CreatePost";
@@ -30,6 +38,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/utils/query.key";
 import { toast } from "sonner";
 import LikesView from "../Hero/Likes";
+import { useUserStore } from "@/stores/UserStore";
+import { Spinner } from "@/components/ui/spinner";
 
 interface PostsProp {
   posts: PostRequestData[];
@@ -64,8 +74,50 @@ export default function ViewPost({ posts, isOwn }: PostsProp) {
         }),
     });
   };
+  const postJobs = useUserStore((state) =>
+    state.jobs.filter((job) => job.name === "POST"),
+  );
+  const updateJob = useUserStore((state) => state.updateJobStatus);
   return (
     <div className="flex flex-col gap-5 w-full max-w-3xl mx-auto">
+      {isOwn &&
+        postJobs.length &&
+        postJobs.map((job) => (
+          <Empty className="border border-dashed" key={job.id}>
+            {job.status === "PROGRESS" ? (
+              <EmptyContent>
+                <Spinner className="size-6" /> File is Uploading
+              </EmptyContent>
+            ) : (
+              <>
+                <EmptyHeader>
+                  <EmptyMedia variant={"icon"}>
+                    <CloudAlert />
+                  </EmptyMedia>
+                  <EmptyTitle>Post Upload Failed</EmptyTitle>
+                  <EmptyDescription>
+                    Retry the upload or cancel the job
+                  </EmptyDescription>
+                </EmptyHeader>
+
+                <EmptyContent>
+                  <Button
+                    variant={"link"}
+                    onClick={() => updateJob(job.id, "RETRY")}
+                  >
+                    Retry
+                  </Button>
+                  <Button
+                    variant={"destructive"}
+                    onClick={() => updateJob(job.id, "CANCELLED")}
+                  >
+                    Cancel
+                  </Button>
+                </EmptyContent>
+              </>
+            )}
+          </Empty>
+        ))}
       {posts.map((post) => (
         <Card
           key={post.id}

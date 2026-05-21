@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/empty";
 import CreatePost from "@/pages/Posts/CreatePost";
 import { useProfileStore } from "@/stores/ProfileStore";
+import { useUserStore } from "@/stores/UserStore";
 import { Amphora } from "lucide-react";
 import { useState } from "react";
 
@@ -19,9 +20,12 @@ export default function PostLayout({
   children: React.ReactNode;
 }) {
   const posts = useProfileStore((s) => s.posts);
+  const postJobs = useUserStore((state) =>
+    state.jobs.filter((job) => job.name === "POST"),
+  );
   const [open, setOpen] = useState(false);
   if (open) return <CreatePost open={open} setOpen={setOpen} />;
-  if (!posts)
+  if (!postJobs.length && !posts)
     return (
       <Empty className="border border-dashed">
         <EmptyHeader>
