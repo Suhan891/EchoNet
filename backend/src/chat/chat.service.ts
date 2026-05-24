@@ -129,6 +129,10 @@ export class ChatService {
 
     await this.notifyService.createNotification(notify);
 
+    await this.cacheService.delete(
+      `profile:${profile.id}:${otherProfile.id}:details`,
+    );
+
     await this.cacheService.delete(`profile:${profile.id}:chat:personal`);
 
     await this.cacheService.delete(`profile:${otherProfile.id}:chats`);
@@ -141,6 +145,8 @@ export class ChatService {
     data: GroupChatDto,
   ) {
     const ValidatedProfile = data.profiles.map(async (prof) => {
+      if (profile.id === prof)
+        throw new ForbiddenException('You cannot add yourself again');
       return await this.prisma.profile.findUniqueOrThrow({
         where: { id: prof },
         select: { isPrivate: true, id: true },
@@ -199,7 +205,7 @@ export class ChatService {
       throw new ForbiddenException('Be the admin to add members');
     const key = `profile:${profile.id}:new:members`;
     const cachedOtherProf = await this.cacheService.get(key);
-    //if (cachedOtherProf) return cachedOtherProf;
+    if (cachedOtherProf) return cachedOtherProf;
     const profiles = await this.prisma.profile.findMany({
       where: {
         NOT: {

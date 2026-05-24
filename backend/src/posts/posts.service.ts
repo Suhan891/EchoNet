@@ -61,7 +61,7 @@ export class PostsService {
 
     const key = `profile:${profile.id}`;
     await this.cacheService.delete(key);
-    await this.cacheService.delByPattern(`posts:global`);
+    //await this.cacheService.delByPattern(`posts:global`);
 
     return await this.prisma.job.create({
       data: {
@@ -92,7 +92,7 @@ export class PostsService {
   }
 
   async getOwnPosts(profile: profileDto) {
-    const key = `profile:${profile.id}:${profile.id}:posts`;
+    const key = `profile:${profile.id}:posts`;
     const catchedPosts = await this.cacheService.get(key);
     if (catchedPosts) return catchedPosts;
     const posts = await this.prisma.post.findMany({
@@ -121,8 +121,7 @@ export class PostsService {
         createdAt: 'desc',
       },
     });
-    await this.cacheService.set<typeof posts>(key, posts, 1000 * 60 * 10);
-    console.log('Without cached: ,Own post data:', posts);
+    await this.cacheService.set<typeof posts>(key, posts, 60 * 10);
     return posts;
   }
 
@@ -131,6 +130,10 @@ export class PostsService {
       throw new BadRequestException('You are not allowed to remove');
 
     await this.deletePost(post.id);
+
+    await this.cacheService.delete(`profile:${profile.id}:posts`); // On own posts cached data
+    await this.cacheService.delete(`${profile.id}:posts`); // On others account
+
     await this.cacheService.delete(`profile:${profile.id}`);
   }
 
@@ -151,10 +154,6 @@ export class PostsService {
   }
 
   async getOthersPost(othersProf: OthersPostDto, profile: profileDto) {
-    const key = `profile:${profile.id}:${othersProf.id}:posts`;
-    //await this.cacheService.delete(key);
-    const cachedPosts = await this.cacheService.get(key);
-    if (cachedPosts) return cachedPosts;
     if (othersProf.id === profile.id)
       throw new BadRequestException(' Invalid profile id for this route ');
 
@@ -168,6 +167,11 @@ export class PostsService {
       if (!following)
         throw new BadRequestException('Follow to view the profile');
     }
+
+    const key = `${othersProf.id}:posts`;
+    const cachedPosts = await this.cacheService.get(key);
+    if (cachedPosts) return cachedPosts;
+
     const posts = await this.prisma.post.findMany({
       where: { profileId: othersProf.id },
       select: {

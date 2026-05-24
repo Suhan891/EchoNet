@@ -57,6 +57,8 @@ export class PostProcessor extends WorkerHost {
       select: { followerId: true },
     });
 
+    await this.cacheService.delByPattern(`posts:global`); // To remove all cached posts data after success
+
     const notifyFollowers = followers.map(async (prof) => {
       if (prof.followerId)
         await this.notificationService.createNotification({
