@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { useCreateStory } from "@/hooks/useStory";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUserStore } from "@/stores/UserStore";
 
 export default function Create({
@@ -56,7 +57,10 @@ export default function Create({
     control,
     name: "slides",
   });
-  const setJob = useUserStore((state) => state.setJob);
+
+  const queryClient = useQueryClient()
+  const userId = useUserStore(state => state.userId);
+
   const onSubmit: SubmitHandler<storyType> = (data) => {
     console.log(data);
     const formData = new FormData();
@@ -88,12 +92,7 @@ export default function Create({
     story.mutate(formData, {
       onSuccess: (result) => {
         console.log(result.data);
-        setJob({
-          id: result.data.id,
-          name: result.data.name,
-          status: result.data.status,
-        });
-
+        
         toast.success(result.message);
         reset();
         setOpen(false);
@@ -102,6 +101,7 @@ export default function Create({
         toast.error(error.message);
         console.error(error.error);
       },
+      onSettled: () => queryClient.invalidateQueries({queryKey:[userId]})
     });
   };
   const watchSlides = useWatch({

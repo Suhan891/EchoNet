@@ -4,6 +4,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { queryKeys } from "@/utils/query.key";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 export function useJobStatusUpdate() {
   const jobs = useUserStore((state) => state.jobs);
@@ -77,13 +78,16 @@ export function useJobStatusUpdate() {
             queryClient.invalidateQueries({
               queryKey: [userId, queryKeys.PROFILE],
             });
-            queryClient.invalidateQueries({
-              queryKey: [queryKeys.POSTS],
-            }); // To invalidate existing post
+            if (jobData.data.name === "POST") {
+              return queryClient.invalidateQueries({
+                queryKey: [queryKeys.POSTS],
+              });
+            }
           }
         }
         if (isError) {
           console.error(error.error);
+          toast.error(error.message);
         }
       });
     }

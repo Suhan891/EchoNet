@@ -12,7 +12,7 @@ export function useCreatePost() {
 }
 export function useOwnPosts(profileId: string) {
     return useQuery<SuccessResponse<PostRequestData[]>, ErrorResponse>({
-        queryKey: [profileId, queryKeys.POSTS],
+        queryKey: [queryKeys.POSTS, profileId],
         queryFn: () => GetOwnPosts(),
         enabled: !!profileId
     })

@@ -53,7 +53,6 @@ export default function CreatePrivate() {
   const queryClient = useQueryClient()
 
   const onSubmit: SubmitHandler<privateType> = (data) => {
-    console.log(data);
     privateChat.mutate(data.profile,{
       onSuccess: (result) => {
         toast.success(result.message)

@@ -8,7 +8,7 @@ const postImages = z.object({
 });
 export const createPostSchema = z.object({
   caption: z.string().min(3, "Minimum 3 charecters are required"),
-  description: z.string().min(10, "Minimum 10 chreacters are required").optional(),
+  description: z.string().optional(),
   images: z
     .array(postImages)
     .min(1, "Single image upload is required")

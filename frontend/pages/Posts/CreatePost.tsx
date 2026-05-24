@@ -35,6 +35,7 @@ import ImagePreview from "./ImagePreview";
 import { useCreatePost } from "@/hooks/usePost";
 import { toast } from "sonner";
 import { useUserStore } from "@/stores/UserStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -53,7 +54,6 @@ interface CreatePostProps {
 export default function CreatePost({ open, setOpen }: CreatePostProps) {
   const appendTileId = useId();
   const posts = useCreatePost();
-  const setJob = useUserStore((state) => state.setJob);
   const {
     register,
     control,
@@ -68,6 +68,8 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
       images: [],
     },
   });
+  const queryClient = useQueryClient()
+  const userId = useUserStore(state => state.userId)
 
   const { append, remove, fields } = useFieldArray({
     control,
@@ -85,16 +87,9 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
     data.images.forEach((image) => {
       formData.append("postMedia", image.file);
     });
-    console.log("Data: ", data);
-    console.log("Form data: ", formData);
     posts.mutate(formData, {
       onSuccess: (result) => {
         console.log(result);
-        setJob({
-          id: result.data.id,
-          name: result.data.name,
-          status: result.data.status,
-        });
         toast.success(result.message);
         handleClose()
       },
@@ -102,6 +97,7 @@ export default function CreatePost({ open, setOpen }: CreatePostProps) {
         console.error(error);
         toast.error(error.message);
       },
+      onSettled: () => queryClient.invalidateQueries({queryKey:[userId]})
     });
   };
 

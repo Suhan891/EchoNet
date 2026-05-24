@@ -41,6 +41,8 @@ import LikesView from "../Hero/Likes";
 import { useUserStore } from "@/stores/UserStore";
 import { Spinner } from "@/components/ui/spinner";
 
+const CAROUSEL_OPTS = { align: "start" } as const;
+
 interface PostsProp {
   posts: PostRequestData[];
   isOwn: boolean;
@@ -50,11 +52,12 @@ export default function ViewPost({ posts, isOwn }: PostsProp) {
   const [openLike, setOpenLike] = useState<boolean>(false);
   const postsCount = useProfileStore((state) => state.posts);
   const [open, setOpen] = useState(false);
-  const profileId = useProfileStore((state) => state.id);
+  const userId = useUserStore(state => state.userId)
   const setLike = useStore((state) => state.setLikeReq);
   const handleLike = (id: string) => {
     if (isOwn) return setOpenLike(!openLike);
-    setLike({ type: "POST", id });
+
+    setLike({ type: "POST", id }); // Proper invalidation not happening here 
   };
   const removePost = useRemovePost();
   const queryClient = useQueryClient();
@@ -68,20 +71,23 @@ export default function ViewPost({ posts, isOwn }: PostsProp) {
         console.error(err.error);
         toast.error(err.message);
       },
-      onSettled: () =>
+      onSettled: () =>{
         queryClient.invalidateQueries({
-          queryKey: [profileId, queryKeys.POSTS],
-        }),
+          queryKey: [queryKeys.POSTS],
+        })
+        queryClient.invalidateQueries({
+          queryKey: [userId],
+        })
+        }
     });
   };
-  const postJobs = useUserStore((state) =>
-    state.jobs.filter((job) => job.name === "POST"),
-  );
+  const jobs = useUserStore((state) => state.jobs);
+  const postJobs = jobs.filter((job) => job.name === "POST")
   const updateJob = useUserStore((state) => state.updateJobStatus);
   return (
     <div className="flex flex-col gap-5 w-full max-w-3xl mx-auto">
       {isOwn &&
-        postJobs.length &&
+        !!postJobs.length &&
         postJobs.map((job) => (
           <Empty className="border border-dashed" key={job.id}>
             {job.status === "PROGRESS" ? (
@@ -129,7 +135,7 @@ export default function ViewPost({ posts, isOwn }: PostsProp) {
           </CardHeader>
 
           <CardContent className="px-4">
-            <Carousel opts={{ align: "start" }} className="w-full">
+            <Carousel opts={CAROUSEL_OPTS} className="w-full">
               <CarouselContent className="-ml-2">
                 {post.postPhoto.map((photo) => (
                   <CarouselItem
