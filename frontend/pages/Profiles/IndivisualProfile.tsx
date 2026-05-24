@@ -40,6 +40,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "next/navigation";
+import { useCreatePrivate } from "@/hooks/useChat";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/utils/query.key";
 export default function IndivisualProfile({
   profile,
 }: {
@@ -65,7 +69,6 @@ export default function IndivisualProfile({
       type,
     });
     setOpen(!open);
-    console.log("Profiles", profile);
   };
   const router = useRouter();
   const handleStoryView = (id: string | null) => {
@@ -74,6 +77,26 @@ export default function IndivisualProfile({
   };
   const isFollowing = !!followings.includes(profile.id);
   const isAllowed = !profile.isPrivate || isFollowing;
+
+  const privChat = !!profile.chats.length ? profile.chats[0].chatId : "";
+  const [openCreatePriv, setOpenCreatePriv] = useState(false);
+  const privateChat = useCreatePrivate();
+  const queryClient = useQueryClient();
+  const handleCreatePrivateChat = () => {
+    privateChat.mutate(profile.name, {
+      onSuccess: (result) => {
+        toast.success(result.message);
+        setOpenCreatePriv(false);
+        queryClient.invalidateQueries({ queryKey: [queryKeys.PROFILE] });
+        queryClient.invalidateQueries({ queryKey: ["PRIVATE"] });
+        queryClient.invalidateQueries({ queryKey: [queryKeys.CHAT] });
+      },
+      onError: (err) => {
+        toast.error(err.message);
+        console.error(err);
+      },
+    });
+  };
   return (
     <main>
       <div className="relative max-w-3xl mx-auto p-4 md:p-8 text-foreground font-sans">
@@ -153,27 +176,16 @@ export default function IndivisualProfile({
           />
         )}
         <div className="flex gap-2 -ml-2.5">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant={"secondary"}>Message</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent size="sm">
-              <AlertDialogHeader>
-                <AlertDialogMedia>
-                  <MessageSquarePlus />
-                </AlertDialogMedia>
-                <AlertDialogTitle>Chat not yet created</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Do you want to allow to create a chat
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Don&apos;t allow</AlertDialogCancel>
-                <AlertDialogAction>Allow</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-          {/* <Button variant={"secondary"}>Message</Button> */}
+          <Button
+            variant={"secondary"}
+            onClick={() =>
+              privChat
+                ? router.push(`/chats/${privChat}`)
+                : setOpenCreatePriv(true)
+            }
+          >
+            Message
+          </Button>
           <Button
             variant={"secondary"}
             disabled={isOngoingFollow}
@@ -183,6 +195,25 @@ export default function IndivisualProfile({
           </Button>
         </div>
       </div>
+      <AlertDialog open={openCreatePriv} onOpenChange={setOpenCreatePriv}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogMedia>
+              <MessageSquarePlus />
+            </AlertDialogMedia>
+            <AlertDialogTitle>No presence of private chat</AlertDialogTitle>
+            <AlertDialogDescription>
+              Do you confirm to create a private chat
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Don&apos;t create</AlertDialogCancel>
+            <AlertDialogAction onClick={() => handleCreatePrivateChat()}>
+              Create
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Tabs defaultValue="posts" className="">
         <TabsList className="w-full max-w-4xl mx-auto flex justify-center gap-8 border-t border-border bg-transparent rounded-none h-14 p-0">

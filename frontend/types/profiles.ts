@@ -12,6 +12,9 @@ export interface ProfileDto {
   story?: {
     id: string;
   };
+  chats: {
+    chatId: string;
+  }[];
   _count: {
     posts: number;
     reels: number;

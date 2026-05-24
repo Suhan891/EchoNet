@@ -349,6 +349,21 @@ export class ProfileService {
         id: true,
         bio: true,
         isPrivate: true,
+        chats: {
+          select: {
+            chatId: true,
+          },
+          where: {
+            chat: {
+              members: {
+                some: {
+                  profileId: ownProfile.id,
+                },
+              },
+              type: 'PRIVATE',
+            },
+          },
+        },
         story: {
           select: {
             ...(isFollow ? { id: true } : { expiresAt: true }),
