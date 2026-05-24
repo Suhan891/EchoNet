@@ -16,7 +16,7 @@ export function useJobStatus(jobIds: string[]) {
       queryFn: () => GetJobStatus(jobId),
       enabled: !!jobId,
       refetchInterval: (query) => {
-        if (query.state.data?.data.status === "PROGRESS") return 3000;
+        if (query.state.data?.data.status === "PROGRESS") return 2000;
         return false;
       },
     })),

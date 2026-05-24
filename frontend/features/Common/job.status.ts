@@ -64,8 +64,10 @@ export function useJobStatusUpdate() {
             jobData.data.status !== "CANCELLED" &&
             jobData.data.status !== job.status
           )
-            updateJobStatus(jobData.data.id, jobData.data.status);
-          console.log(jobData.data);
+            updateJobStatus(
+              jobData.data.id,
+              jobData.data.status as "PROGRESS" | "FAILED" | "RETRY",
+            );
 
           if (
             jobData.data.status === "SUCCESS" ||
@@ -75,6 +77,9 @@ export function useJobStatusUpdate() {
             queryClient.invalidateQueries({
               queryKey: [userId, queryKeys.PROFILE],
             });
+            queryClient.invalidateQueries({
+              queryKey: [queryKeys.POSTS],
+            }); // To invalidate existing post
           }
         }
         if (isError) {

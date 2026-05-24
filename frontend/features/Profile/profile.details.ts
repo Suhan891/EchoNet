@@ -37,7 +37,6 @@ export function useProfileDetails(): boolean {
   const storeReels = useProfileStore((state) => state.reels);
   const storeSavedPosts = useProfileStore((state) => state.savedPosts);
   const storeIsPrivate = useProfileStore((state) => state.isPrivate);
-  const storeJob = useUserStore((s) => s.jobs);
 
   const {
     data: profile,
@@ -83,15 +82,18 @@ export function useProfileDetails(): boolean {
       if (storeIsPrivate !== profile.data.isPrivate)
         setIsPrivate(profile.data.isPrivate);
       if (profile.data.job) {
+        const currentJobs = useUserStore.getState().jobs;
         profile.data.job.forEach((j) => {
-          const isPresent = storeJob.some((jb) => jb.id === j.id);
-          if (isPresent) upJob(j.id, j.status);
-          if (!isPresent)
+          const existing = currentJobs.find((jb) => jb.id === j.id);
+          if (existing) {
+            if (existing.status !== j.status) upJob(j.id, j.status);
+          } else {
             setJob({
               id: j.id,
               name: j.storyId ? "STORY" : "POST",
               status: j.status,
             });
+          }
         });
       }
     }
@@ -104,8 +106,6 @@ export function useProfileDetails(): boolean {
     router,
     storeAvatar,
     storeId,
-    storeJob,
-    upJob,
     storeFollowers,
     storeFollowings,
     storeName,
@@ -127,6 +127,7 @@ export function useProfileDetails(): boolean {
     setSavedPosts,
     setIsPrivate,
     setJob,
+    upJob,
   ]);
   return isLoading;
 }
