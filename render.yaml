@@ -50,6 +50,7 @@ services:
   - type: keyvalue
     name: my-managed-redis
     plan: free
+    ipAllowList: []
 
 databases:
   - name: my-managed-postgres
