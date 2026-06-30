@@ -3,11 +3,11 @@ services:
   - type: web
     name: frontend-service
     runtime: image
-    image: docker.io/suhan06/social_media_frontend:latest
+    image:
+      name: docker.io/suhan06/social_media_frontend:latest
     plan: free
-    port: 3000
+    dockerPort: 3000
     envVars:
-      # Automatically fetches the live public URL of your backend container
       - key: BACKEND_URL
         fromService:
           type: web
@@ -18,9 +18,10 @@ services:
   - type: web
     name: backend-service
     runtime: image
-    image: docker.io/suhan06/social_media_backend:latest
+    image:
+      name: docker.io/suhan06/social_media_backend:latest
     plan: free
-    port: 3000
+    dockerPort: 3000
     preDeployCommand: npx prisma migrate deploy
     envVars:
       - fromGroup: backend-secrets 
@@ -37,13 +38,13 @@ services:
           name: my-managed-postgres
           property: connectionString
 
-      # Redis Split Variables
+      # Corrected Redis Mappings
       - key: REDIS_HOST
-        fromKeyValue:
+        fromRedis:
           name: my-managed-redis
           property: host
       - key: REDIS_PORT
-        fromKeyValue:
+        fromRedis:
           name: my-managed-redis
           property: port
 
@@ -52,7 +53,7 @@ databases:
     plan: free
     postgresMajorVersion: "16"
 
-keyValues:
+redis:
   - name: my-managed-redis
     plan: free
 
