@@ -3,7 +3,7 @@ services:
   - type: web
     name: frontend-service
     runtime: image
-    image: docker.io/your-dockerhub-username/frontend:latest
+    image: docker.io/suhan06/social_media_frontend:latest
     plan: free
     port: 3000
     envVars:
@@ -18,7 +18,7 @@ services:
   - type: web
     name: backend-service
     runtime: image
-    image: docker.io/your-dockerhub-username/backend:latest
+    image: docker.io/suhan06/social_media_backend:latest
     plan: free
     port: 3000
     preDeployCommand: npx prisma migrate deploy
