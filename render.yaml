@@ -7,11 +7,12 @@ services:
       url: docker.io/suhan06/social_media_frontend:latest
     plan: free
     envVars:
+      - key: PORT
+        value: "3000"
       - key: BACKEND_URL
         fromService:
           type: web
           name: backend-service
-          property: url
 
   # Backend Web Service
   - type: web
@@ -20,15 +21,15 @@ services:
     image:
       url: docker.io/suhan06/social_media_backend:latest
     plan: free
-    preDeployCommand: npx prisma migrate deploy
     envVars:
       - fromGroup: backend-secrets 
-
+      - key: PORT
+        value: "3000"
+      # FIXED: Omitted the invalid 'property: url' line
       - key: FRONTEND_URL
         fromService:
           type: web
           name: frontend-service
-          property: url
 
       # Prisma Connection String
       - key: DATABASE_URL
@@ -36,7 +37,7 @@ services:
           name: my-managed-postgres
           property: connectionString
 
-      # Corrected Key Value / Valkey Redis Mappings
+      # Key Value Redis Mappings
       - key: REDIS_HOST
         fromService:
           type: keyvalue
@@ -48,7 +49,7 @@ services:
           name: my-managed-redis
           property: port
 
-  # Corrected Managed Redis Service Definition
+  # Managed Redis Service Definition
   - type: keyvalue
     name: my-managed-redis
     plan: free
@@ -57,6 +58,7 @@ databases:
   - name: my-managed-postgres
     plan: free
     postgresMajorVersion: "16"
+    ipAllowList: []
 
 envVarGroups:
   - name: backend-secrets
