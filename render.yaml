@@ -7,6 +7,8 @@ services:
       url: docker.io/suhan06/social_media_frontend:latest
     plan: free
     envVars:
+      - key: PORT
+        value: "3000"
       - key: BACKEND_URL
         fromService:
           type: web
@@ -22,6 +24,8 @@ services:
     plan: free
     envVars:
       - fromGroup: backend-secrets 
+      - key: PORT
+        value: "3001"
       - key: FRONTEND_URL
         fromService:
           type: web
