@@ -6,8 +6,6 @@ services:
     image:
       url: docker.io/suhan06/social_media_frontend:latest
     plan: free
-    docker:
-      port: 3000
     envVars:
       - key: BACKEND_URL
         fromService:
@@ -22,8 +20,6 @@ services:
     image:
       url: docker.io/suhan06/social_media_backend:latest
     plan: free
-    docker:
-      port: 3000
     preDeployCommand: npx prisma migrate deploy
     envVars:
       - fromGroup: backend-secrets 
