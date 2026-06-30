@@ -4,9 +4,10 @@ services:
     name: frontend-service
     runtime: image
     image:
-      name: docker.io/suhan06/social_media_frontend:latest
+      url: docker.io/suhan06/social_media_frontend:latest
     plan: free
-    dockerPort: 3000
+    docker:
+      port: 3000
     envVars:
       - key: BACKEND_URL
         fromService:
@@ -19,9 +20,10 @@ services:
     name: backend-service
     runtime: image
     image:
-      name: docker.io/suhan06/social_media_backend:latest
+      url: docker.io/suhan06/social_media_backend:latest
     plan: free
-    dockerPort: 3000
+    docker:
+      port: 3000
     preDeployCommand: npx prisma migrate deploy
     envVars:
       - fromGroup: backend-secrets 
@@ -38,24 +40,27 @@ services:
           name: my-managed-postgres
           property: connectionString
 
-      # Corrected Redis Mappings
+      # Corrected Key Value / Valkey Redis Mappings
       - key: REDIS_HOST
-        fromRedis:
+        fromService:
+          type: keyvalue
           name: my-managed-redis
           property: host
       - key: REDIS_PORT
-        fromRedis:
+        fromService:
+          type: keyvalue
           name: my-managed-redis
           property: port
+
+  # Corrected Managed Redis Service Definition
+  - type: keyvalue
+    name: my-managed-redis
+    plan: free
 
 databases:
   - name: my-managed-postgres
     plan: free
     postgresMajorVersion: "16"
-
-redis:
-  - name: my-managed-redis
-    plan: free
 
 envVarGroups:
   - name: backend-secrets
