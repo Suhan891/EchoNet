@@ -1,0 +1,60 @@
+services:
+  # Frontend Web Service
+  - type: web
+    name: frontend-service
+    runtime: image
+    image: docker.io/your-dockerhub-username/frontend:latest
+    plan: free
+    port: 3000
+    envVars:
+      # Automatically fetches the live public URL of your backend container
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: backend-service
+          property: url
+
+  # Backend Web Service
+  - type: web
+    name: backend-service
+    runtime: image
+    image: docker.io/your-dockerhub-username/backend:latest
+    plan: free
+    port: 3000
+    preDeployCommand: npx prisma migrate deploy
+    envVars:
+      - fromGroup: backend-secrets 
+
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: frontend-service
+          property: url
+
+      # Prisma Connection String
+      - key: DATABASE_URL
+        fromDatabase:
+          name: my-managed-postgres
+          property: connectionString
+
+      # Redis Split Variables
+      - key: REDIS_HOST
+        fromKeyValue:
+          name: my-managed-redis
+          property: host
+      - key: REDIS_PORT
+        fromKeyValue:
+          name: my-managed-redis
+          property: port
+
+databases:
+  - name: my-managed-postgres
+    plan: free
+    postgresMajorVersion: "16"
+
+keyValues:
+  - name: my-managed-redis
+    plan: free
+
+envVarGroups:
+  - name: backend-secrets
