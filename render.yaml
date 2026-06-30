@@ -3,41 +3,34 @@ services:
   - type: web
     name: frontend-service
     runtime: image
-    image:
-      url: docker.io/suhan06/social_media_frontend:latest
+    image: docker.io/suhan06/social_media_frontend:latest
     plan: free
     envVars:
-      - key: PORT
-        value: "3000"
       - key: BACKEND_URL
         fromService:
           type: web
           name: backend-service
+          property: host
 
   # Backend Web Service
   - type: web
     name: backend-service
     runtime: image
-    image:
-      url: docker.io/suhan06/social_media_backend:latest
+    image: docker.io/suhan06/social_media_backend:latest
     plan: free
     envVars:
       - fromGroup: backend-secrets 
-      - key: PORT
-        value: "3000"
-      # FIXED: Omitted the invalid 'property: url' line
+
       - key: FRONTEND_URL
         fromService:
           type: web
           name: frontend-service
-
-      # Prisma Connection String
+          property: host
       - key: DATABASE_URL
         fromDatabase:
           name: my-managed-postgres
           property: connectionString
 
-      # Key Value Redis Mappings
       - key: REDIS_HOST
         fromService:
           type: keyvalue
@@ -49,7 +42,6 @@ services:
           name: my-managed-redis
           property: port
 
-  # Managed Redis Service Definition
   - type: keyvalue
     name: my-managed-redis
     plan: free
