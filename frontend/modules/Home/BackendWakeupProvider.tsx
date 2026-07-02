@@ -1,17 +1,30 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { Loader2, ServerCrash } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { toast } from 'sonner';
-import { getUrl } from '@/service/common/requests';
+import { toast } from "sonner";
+import { getUrl } from "@/service/common/requests";
+import axiosInstance from "@/service/common/starter";
 
-export default function BackendWakeUpProvider({ children }: { children: React.ReactNode }) {
+export default function BackendWakeUpProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [isAwake, setIsAwake] = useState(false);
   const [progress, setProgress] = useState(10);
   const [hasError, setHasError] = useState(false);
-  const [statusText, setStatusText] = useState('Connecting to application backend...');
+  const [statusText, setStatusText] = useState(
+    "Connecting to application backend...",
+  );
 
   useEffect(() => {
     let progressInterval: NodeJS.Timeout;
@@ -28,19 +41,20 @@ export default function BackendWakeUpProvider({ children }: { children: React.Re
 
     const wakeBackend = async () => {
       try {
-        const res = await fetch(`${getUrl()}/health`);
-        if (res.ok) {
+        const { data } = await axiosInstance.get(`${getUrl()}/health`);
+        if (data.success) {
           setProgress(100);
-          // Small delay so user sees 100% complete before transition
-          setTimeout(() => setIsAwake(true), 400); 
-          toast.success('Server is alive')
+          setTimeout(() => setIsAwake(true), 400);
+          toast.success("Server is alive");
         } else {
-          throw new Error('Server returned unhealthy status');
+          throw new Error("Server returned unhealthy status");
         }
       } catch (error) {
-        setStatusText('Backend is waking up from sleep mode, please stand by (takes ~30s)...');
+        setStatusText(
+          "Backend is waking up from sleep mode, please stand by (takes ~30s)...",
+        );
         setTimeout(wakeBackend, 5000); // Retry polling every 5 seconds
-        toast.error('Server has crashed')
+        toast.error("Server is inactive");
         console.error(error);
       }
     };
@@ -67,10 +81,15 @@ export default function BackendWakeUpProvider({ children }: { children: React.Re
           </CardHeader>
           <CardContent className="space-y-4">
             {/* shadcn Progress component */}
-            <Progress value={progress} className="h-2 w-full transition-all duration-500 ease-out" />
-            
+            <Progress
+              value={progress}
+              className="h-2 w-full transition-all duration-500 ease-out"
+            />
+
             <p className="text-center text-xs text-muted-foreground/70 font-medium">
-              {progress < 100 ? `Booting ecosystem resources... ${progress}%` : 'Connected successfully!'}
+              {progress < 100
+                ? `Booting ecosystem resources... ${progress}%`
+                : "Connected successfully!"}
             </p>
           </CardContent>
         </Card>
