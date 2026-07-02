@@ -8,7 +8,7 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 const axiosInstance = axios.create({
-  //baseURL: "/api",
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
