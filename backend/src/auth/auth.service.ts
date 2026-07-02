@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { randomUUID } from 'node:crypto';
 
 import { RegisterDto } from './dto/register.dto';
-import { EmailService } from 'src/common/email/email.service';
 import { JwtCreate, JwtVerify } from './tokens/token.service';
 import { CreateProfileDto } from 'src/profile/dto/profile.dto';
 import { verifyDto } from './dto/verify-email.dto';
@@ -21,12 +21,13 @@ import { EmailEvent } from './dto/async.work';
 import EventEmitter2 from 'eventemitter2';
 import { OtpVerificationService } from './services/opt.verification.service';
 import { NewPassDto, OtpVerifyDto, TokenDto } from './dto/password.reset.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
-    private mailService: EmailService,
+    private configService: ConfigService,
     private jwtCreate: JwtCreate,
     private jwtVerify: JwtVerify,
     private profileService: ProfileService,
@@ -62,7 +63,7 @@ export class AuthService {
     });
 
     const token = this.jwtCreate.emailVerifyToken({ sub: user.id });
-    const url = `http://localhost:3000/verify?token=${token}`;
+    const url = `${this.configService.getOrThrow('FRONTEND_URL')}/verify?token=${token}`;
     // await this.mailService.sendEmail({
     //   receipents: user.email,
     //   text: `Welcome ${user.username} to Social Media App`,
@@ -163,6 +164,7 @@ export class AuthService {
   async refreshHandler(user: RefreshAccessDto) {
     const key = `user:${user.id}`;
     await this.cacheService.delete(key);
+    await this.cacheService.delByPattern(key);
     return await this.prisma.user.findUnique({
       where: { id: user.id },
       select: {
@@ -174,7 +176,6 @@ export class AuthService {
   }
 
   async logout(user: authUserDto) {
-    console.log('User: ', user);
     const key = `user:${user.userId}`;
     await this.cacheService.delete(key);
     await this.prisma.user.update({
@@ -205,6 +206,8 @@ export class AuthService {
       },
     });
 
+    const requestId = randomUUID();
+
     if (!user) {
       // If this email is not registered => to make the user feel like it is present
       const token = this.jwtCreate.forgotPassToken({
@@ -212,6 +215,7 @@ export class AuthService {
         isValidUser: false,
         name: undefined,
         tokenVersion: 0,
+        requestId,
       });
       return token;
     }
@@ -219,7 +223,7 @@ export class AuthService {
     if (!user.isEmailVerified)
       throw new BadRequestException('Validate your email before reset');
 
-    const otp = await this.otpService.requestOTP(user.email);
+    const otp = await this.otpService.requestOTP(user.email, requestId);
     const eventData = {
       name: user.username,
       email: user.email,
@@ -232,6 +236,7 @@ export class AuthService {
       isValidUser: true,
       name: user.username,
       tokenVersion: user.tokenVersion,
+      requestId,
     });
     return token;
   }
@@ -240,17 +245,29 @@ export class AuthService {
     const payload = this.jwtVerify.forgotPassToken(data.token);
     if (!payload) throw new ForbiddenException('Invalid token');
     if (!payload.isValidUser) return; // Not a valid user
+
+    const { email, name, tokenVersion, requestId } = payload;
+
+    // Check token version against database first to ensure it's not an old token
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { tokenVersion: true },
+    });
+    if (!user || user.tokenVersion !== tokenVersion) {
+      throw new ForbiddenException('Token version has been rotated');
+    }
+
     const isVerified = await this.cacheService.get<boolean>(
-      `${payload.email}:verification`,
+      `${email}:${requestId}:verification`,
     );
     if (isVerified === null)
       throw new BadRequestException('Your session has expired');
 
-    const otp = await this.otpService.requestOTP(payload.email);
+    const otp = await this.otpService.requestOTP(email, requestId);
 
     const eventData = {
-      name: payload.name,
-      email: payload.email,
+      name,
+      email,
       url: otp,
     } as EmailEvent;
 
@@ -261,10 +278,23 @@ export class AuthService {
     const { token, otp } = data;
     const payload = this.jwtVerify.forgotPassToken(token);
     if (!payload) throw new ForbiddenException('Invalid token');
-    const { email, isValidUser } = payload;
+    const { email, isValidUser, tokenVersion, requestId } = payload;
     if (!isValidUser) throw new BadRequestException('Invalid otp'); // For those which is a wrong email => If attacker cannot guess the email
 
-    const isValidOtp = await this.otpService.verifyOtp(email, otp.toString());
+    // Check token version against database first to ensure it's not an old token
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { tokenVersion: true },
+    });
+    if (!user || user.tokenVersion !== tokenVersion) {
+      throw new ForbiddenException('Token version has been rotated');
+    }
+
+    const isValidOtp = await this.otpService.verifyOtp(
+      email,
+      requestId,
+      otp.toString(),
+    );
 
     return isValidOtp;
   }
@@ -274,12 +304,24 @@ export class AuthService {
     const payload = this.jwtVerify.forgotPassToken(token);
     if (!payload) throw new ForbiddenException('Invalid token');
 
-    const { email, isValidUser, tokenVersion } = payload;
+    const { email, isValidUser, tokenVersion, requestId } = payload;
     if (!isValidUser)
       throw new BadRequestException('Verification still not completed');
 
+    // Check current token version from database
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { tokenVersion: true },
+    });
+    if (!user) throw new BadRequestException('User not found');
+    if (user.tokenVersion !== tokenVersion) {
+      throw new ForbiddenException(
+        'Token version has been rotated. Please request a new password reset.',
+      );
+    }
+
     const isVerified = await this.cacheService.get<boolean>(
-      `${email}:verification`,
+      `${email}:${requestId}:verification`,
     );
 
     if (isVerified === null)
@@ -293,7 +335,7 @@ export class AuthService {
       where: { email },
       data: { password: hashedPassword, tokenVersion: tokenVersion + 1 },
     });
-    await this.cacheService.delete(`${email}:verification`);
+    await this.cacheService.delete(`${email}:${requestId}:verification`);
   }
 
   private hashPassword(password: string): string {

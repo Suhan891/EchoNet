@@ -1,10 +1,10 @@
 import { RequestDto } from "@/types/common";
 import axiosInstance from "./starter";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL
+// const API_BASE = process.env.NEXT_PUBLIC_API_URL
 
 export const getUrl = () => {
-    return `${API_BASE}`;
+    return `/api`;
 }
 
 export async function Request(path: string, requests: RequestDto) {
@@ -14,9 +14,8 @@ export async function Request(path: string, requests: RequestDto) {
         data: requests.body instanceof FormData ? requests.body : requests.body ? JSON.stringify(requests.body) : undefined,
     })
 
-    console.log(data);
     if(!data.success) 
-        throw new Error(data)
+        throw data
 
     return data
 }

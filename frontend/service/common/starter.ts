@@ -8,7 +8,7 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_REQUEST_APP_URL,
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -35,7 +35,6 @@ axiosInstance.interceptors.request.use(
     return request;
   },
   (error) => {
-    console.log("User request creation failed: ", error);
     return Promise.reject(error);
   },
 );

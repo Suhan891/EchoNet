@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -28,15 +29,21 @@ import { Throttle } from '@nestjs/throttler';
 import { NotActive } from 'src/profile/decorator/no-profile';
 import type { Response } from 'express';
 import { NewPassDto, OtpVerifyDto, TokenDto } from './dto/password.reset.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 @NoAccount(true)
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private configService: ConfigService,
+  ) {}
 
   @Throttle({ default: { ttl: 60 * 60 * 1000, limit: 20 } })
   @Post('register')
-  @ResponseMessage('User Registered. Please Verify Your Email')
+  @ResponseMessage(
+    'Please check your Inbox . Also check your spam folder if not found in inbox',
+  )
   async register(@Body() registerData: RegisterDto) {
     return this.authService.register(registerData);
   }
@@ -53,7 +60,7 @@ export class AuthController {
           fileType: 'jpg|jpeg|png|PNG',
         })
         .addMaxSizeValidator({
-          maxSize: 5 * 1024 * 1024, // 5MB
+          maxSize: 5 * 1024 * 1024,
         })
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -63,7 +70,7 @@ export class AuthController {
   ) {
     if (user.isEmailVerified === true) {
       return {
-        url: 'http://localhost:3000/login',
+        url: `${this.configService.getOrThrow('FRONTEND_URL')}/login`,
         statusCode: HttpStatus.PERMANENT_REDIRECT,
       };
     }
@@ -99,7 +106,10 @@ export class AuthController {
   @NoAccount(false)
   @NotActive()
   @ResponseMessage('Logged out successfully')
-  async logout(@CurrentUser() user: authUserDto, response: Response) {
+  async logout(
+    @CurrentUser() user: authUserDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     response.clearCookie('refreshToken');
     return this.authService.logout(user);
   }

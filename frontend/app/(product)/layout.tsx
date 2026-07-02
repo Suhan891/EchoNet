@@ -3,7 +3,7 @@ import AppSidebar from "@/components/AppSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
 import { useUserDetails } from "@/features/Auth/user.details";
-import Navbar from "@/pages/Hero/Navbar";
+import Navbar from "@/modules/Hero/Navbar";
 
 export default function AuthLayout({
   children,

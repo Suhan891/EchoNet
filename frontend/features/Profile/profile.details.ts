@@ -52,8 +52,6 @@ export function useProfileDetails(): boolean {
     if (isError) {
       console.error(error);
       toast.error(error?.message ?? "Profile details fetch failed");
-      deleteCookie();
-      router.push("/login");
       return;
     }
 

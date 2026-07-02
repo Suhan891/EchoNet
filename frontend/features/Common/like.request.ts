@@ -20,7 +20,7 @@ export function useLikeReq() {
             queryClient.invalidateQueries({ queryKey: [queryKeys.POSTS] });
             queryClient.invalidateQueries({ queryKey: [queryKeys.ALL_POSTS] });
           }
-          console.log(result);
+
         },
         onError: (errors) => {
           console.error(errors.error);

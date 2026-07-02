@@ -2,11 +2,14 @@ import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { EventGateway } from './event.gateway';
 import { Purpose } from 'src/generated/prisma/enums';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class EventService {
   constructor(
     private cacheService: AppCacheService,
+    private prisma: PrismaService,
     @Inject(forwardRef(() => EventGateway)) private emitEvent: EventGateway,
   ) {}
 
@@ -40,5 +43,19 @@ export class EventService {
 
   async markOffline(profileId: string) {
     return this.cacheService.delete(`online:${profileId}`);
+  }
+
+  // async validateProfile(profileId: string) {
+  //   const profile = await this.prisma.profile.count({
+  //     where: { id: profileId },
+  //   });
+  //   if (!profile) throw new WsException('Invalid Profile Id');
+  // }
+
+  async validateChat(chatId: string) {
+    const chat = await this.prisma.chat.count({
+      where: { id: chatId },
+    });
+    if (!chat) throw new WsException('Invalid Chat Id');
   }
 }

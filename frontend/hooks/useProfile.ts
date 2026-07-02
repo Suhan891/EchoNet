@@ -12,7 +12,7 @@ export function useMyProfile(userId: string) {
     queryKey: [userId, queryKeys.PROFILE],
     queryFn: () => GetOwnprofile(),
     enabled: !!userId && !!Cookies.get("profile"),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 15,
   });
 }
 

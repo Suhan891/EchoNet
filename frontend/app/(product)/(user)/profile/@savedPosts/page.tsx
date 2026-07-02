@@ -1,7 +1,7 @@
 "use client"
 import { Spinner } from "@/components/ui/spinner"
 import { useMySavedPosts } from "@/hooks/usePost"
-import SavedPost from "@/pages/Posts/SavedPost"
+import SavedPost from "@/modules/Posts/SavedPost"
 
 export default function SavedPostPage() {
 

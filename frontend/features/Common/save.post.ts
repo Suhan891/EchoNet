@@ -18,7 +18,7 @@ export function useSavePostReq() {
     if (savePostReq && !savePost.isPending) {
       savePost.mutate(savePostReq.mediaId, {
         onSuccess: (result) => {
-          console.log(result.data);
+
           toast.success(result.message);
 
           queryClient.invalidateQueries({ queryKey: [userId] });

@@ -40,12 +40,12 @@ export class TokenCreation implements NestInterceptor {
         };
         const refreshToken = this.tokenService.refreshToken(refreshData);
 
+        const isProd = process.env.NODE_ENV === 'production';
         response.cookie('refreshToken', refreshToken, {
           httpOnly: true,
-          secure: true,
-          sameSite: 'none',
+          secure: isProd,
+          sameSite: 'lax',
           path: '/',
-          domain: 'localhost',
           maxAge: 1000 * 60 * 60 * 24 * 7,
         });
 

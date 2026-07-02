@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import type { RedisClientType } from 'redis';
 
 @Injectable()
 export class AppCacheService {
   constructor(
-    // @Inject(CACHE_MANAGER) private cache: Cache,
     @Inject('REDIS_CLIENT') private redis: RedisClientType,
+    private config: ConfigService,
   ) {}
 
   async get<T>(key: string): Promise<T | null> {
@@ -14,7 +15,9 @@ export class AppCacheService {
   }
 
   async set<T>(key: string, value: T, ttl?: number) {
-    await this.redis.set(key, JSON.stringify(value), { EX: ttl ?? 60 });
+    await this.redis.set(key, JSON.stringify(value), {
+      EX: ttl || this.config.get<number>('REDIS_TTL', 60 * 60),
+    });
   }
 
   async increment(key: string) {

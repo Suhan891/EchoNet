@@ -1,6 +1,6 @@
 "use client";
 
-import ResetPassword from "@/pages/Auth/ResetPass";
+import ResetPassword from "@/modules/Auth/ResetPass";
 import { tokenSchema } from "@/validations/auth/password-reset";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";

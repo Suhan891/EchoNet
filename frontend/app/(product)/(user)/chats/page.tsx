@@ -8,8 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import CreateGroup from "@/pages/Chat/CreateGroup";
-import CreatePrivate from "@/pages/Chat/CreatePrivate";
+import CreateGroup from "@/modules/Chat/CreateGroup";
+import CreatePrivate from "@/modules/Chat/CreatePrivate";
 import { useState } from "react";
 
 export default function ChatPage() {

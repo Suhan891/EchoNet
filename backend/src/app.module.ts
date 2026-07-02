@@ -6,7 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ProfileModule } from './profile/profile.module';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ProfileGaurd } from './profile/gaurds/profile.gaurd';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FollowModule } from './follow/follow.module';
 import { PostsModule } from './posts/posts.module';
 import { StoryModule } from './story/story.module';
@@ -27,20 +27,26 @@ import { GlobaExceptionFilter } from './common/filters/http-exception.filter';
 import { EventModule } from './event/event.module';
 import { NotificationModule } from './notification/notification.module';
 import { ChatModule } from './chat/chat.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    BullModule.forRoot({
-      connection: {
-        host: 'localhost',
-        port: 6379,
-      },
-      defaultJobOptions: {
-        removeOnFail: false,
-        removeOnComplete: true,
-      },
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          host: configService.get<string>('REDIS_HOST', 'redis'),
+          port: configService.get<number>('REDIS_PORT', 6379),
+        },
+        defaultJobOptions: {
+          removeOnFail: false,
+          removeOnComplete: true,
+        },
+      }),
+      inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
     EventEmitterModule.forRoot({
       global: true,
       wildcard: false,

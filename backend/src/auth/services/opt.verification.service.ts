@@ -17,19 +17,19 @@ export class OtpVerificationService {
   private readonly SHORT_COOLDOWN_TIME = 60;
   private readonly LONG_COOLDOWN_TIME = 3600;
 
-  private async storeOtp(email: string, hashedOtp: string) {
+  private async storeOtp(email: string, requestId: string, hashedOtp: string) {
     await this.cacheService.set<string>(
-      `${email}:otp`,
+      `${email}:${requestId}:otp`,
       hashedOtp,
       this.OTP_EXPIRATION_TIME,
     );
     await this.cacheService.set<number>(
-      `${email}:otp_retry_count`,
+      `${email}:${requestId}:otp_retry_count`,
       0,
       this.OTP_EXPIRATION_TIME,
     );
     await this.cacheService.set<boolean>(
-      `${email}:verification`,
+      `${email}:${requestId}:verification`,
       false,
       24 * 60 * 60,
     );
@@ -64,49 +64,58 @@ export class OtpVerificationService {
     }
   }
 
-  async requestOTP(email: string) {
+  async requestOTP(email: string, requestId: string) {
     await this.isOnCooldown(email);
 
     const requests = await this.cacheService.get<number>(`${email}:requests`);
-    if (requests && requests > this.MAX_REQUESTS)
+    if (requests !== null && requests > this.MAX_REQUESTS)
       throw new ForbiddenException('You have crossed the daily limit');
 
     const otp = randomInt(100000, 1000000).toString();
     const hashedOtp = bcrypt.hashSync(otp, 10);
 
-    await this.storeOtp(email, hashedOtp);
-    if (requests) await this.cacheService.increment(`${email}:requests`);
-    if (!requests)
-      await this.cacheService.set<number>(`${email}:requests`, 0, 24 * 60 * 60);
+    await this.storeOtp(email, requestId, hashedOtp);
+    if (requests !== null) {
+      await this.cacheService.increment(`${email}:requests`);
+    } else {
+      await this.cacheService.set<number>(`${email}:requests`, 1, 24 * 60 * 60);
+    }
 
     await this.applyCooldown(email, this.SHORT_COOLDOWN_TIME);
     return otp;
   }
 
-  async verifyOtp(email: string, otp: string) {
-    const hashedOtp = await this.cacheService.get<string>(`${email}:otp`);
+  async verifyOtp(email: string, requestId: string, otp: string) {
+    const hashedOtp = await this.cacheService.get<string>(
+      `${email}:${requestId}:otp`,
+    );
     if (!hashedOtp) throw new BadRequestException('Your otp has expired');
 
     const retryCount =
-      (await this.cacheService.get<number>(`${email}:otp_retry_count`)) ?? 0;
+      (await this.cacheService.get<number>(
+        `${email}:${requestId}:otp_retry_count`,
+      )) ?? 0;
 
-    if (retryCount > this.MAX_RETRY_COUNT) {
-      await this.cacheService.delete(`${email}:otp`);
+    if (retryCount >= this.MAX_RETRY_COUNT) {
+      await this.cacheService.delete(`${email}:${requestId}:otp`);
       throw new ForbiddenException('Max retry count attempted');
     }
 
     const isVerified = await bcrypt.compare(otp, hashedOtp);
     if (!isVerified) {
-      await this.cacheService.increment(`${email}:otp_retry_count`);
+      await this.cacheService.increment(
+        `${email}:${requestId}:otp_retry_count`,
+      );
       if (retryCount + 1 >= this.MAX_RETRY_COUNT) {
         await this.applyCooldown(email, this.LONG_COOLDOWN_TIME);
       }
       throw new BadRequestException('Invalid otp');
     }
 
-    await this.cacheService.delByPattern(`${email}`);
+    await this.cacheService.delete(`${email}:${requestId}:otp`);
+    await this.cacheService.delete(`${email}:${requestId}:otp_retry_count`);
     await this.cacheService.set<boolean>(
-      `${email}:verification`,
+      `${email}:${requestId}:verification`,
       true,
       24 * 60 * 60,
     );

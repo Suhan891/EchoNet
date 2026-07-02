@@ -44,7 +44,7 @@ import { items } from "@/utils/bar.icons";
 import { useUserStore } from "@/stores/UserStore";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { usePathname, useRouter } from "next/navigation";
-import CreateProfile from "@/pages/Profile/CreateProfile";
+import CreateProfile from "@/modules/Profile/CreateProfile";
 import { useRemoveProfile, useToggleProfile } from "@/hooks/useProfile";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -65,7 +65,6 @@ function AppSidebar() {
   const handleActivate = (profileId: string) => {
     toggleProfile.mutate(profileId, {
       onSuccess: (result) => {
-        console.log(result.data);
         Cookie.set("profile", profileId, { expires: 7, path: "/" });
         toast.success(result.message);
         queryClient.invalidateQueries();
@@ -82,7 +81,6 @@ function AppSidebar() {
   const handleRemove = (id: string) => {
     removeProfile.mutate(id, {
       onSuccess: (result) => {
-        console.log(result.data);
         toast.success(result.message);
       },
       onError: (err) => {

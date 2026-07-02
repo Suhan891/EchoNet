@@ -4,6 +4,7 @@ import {
   UploadApiErrorResponse,
   UploadApiResponse,
 } from 'cloudinary';
+import { ConfigService } from '@nestjs/config';
 import * as streamifier from 'streamifier';
 type CloudinaryUploadResult = {
   public_id: string;
@@ -16,11 +17,16 @@ type CloudinaryUploadResult = {
 @Injectable()
 export class CloudinaryService implements OnModuleInit {
   private cloudinary = cloud;
+  constructor(private configService: ConfigService) {}
   onModuleInit() {
     this.cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
+      cloud_name: this.configService.getOrThrow<string>(
+        'CLOUDINARY_CLOUD_NAME',
+      ),
+      api_key: this.configService.getOrThrow<string>('CLOUDINARY_API_KEY'),
+      api_secret: this.configService.getOrThrow<string>(
+        'CLOUDINARY_API_SECRET',
+      ),
     });
   }
 

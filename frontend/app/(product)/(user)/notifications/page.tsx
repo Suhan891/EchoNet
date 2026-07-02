@@ -1,4 +1,4 @@
-import AllNoifications from "@/pages/Notification/AllNotifications";
+import AllNoifications from "@/modules/Notification/AllNotifications";
 
 export default function NotificationPage() {
     return <AllNoifications />

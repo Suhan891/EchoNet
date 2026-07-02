@@ -1,10 +1,18 @@
-import { Controller, Get, Param, ParseUUIDPipe, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { ResponseMessage } from 'src/common/decorators/response-message';
 import { currentProfile } from 'src/profile/decorator/get-profile';
 import type { profileDto } from 'src/profile/dto/profile.dto';
 import { NotificationPipe } from './pipe/validate.notification';
-import type { NotifyType } from './dto/notification.dto';
+import type { NotifyRemoveDto, NotifyType } from './dto/notification.dto';
+import { NotifyRemovePipe } from './pipe/notification.pipe';
 
 @Controller('notification')
 export class NotificationController {
@@ -23,5 +31,14 @@ export class NotificationController {
     @Param('id', ParseUUIDPipe, NotificationPipe) data: NotifyType,
   ) {
     return await this.notifyService.getNoificationData(profile, data);
+  }
+
+  @Post('/remove/:id')
+  @ResponseMessage('Notification data removed')
+  async removeNotification(
+    @Param('id', ParseUUIDPipe, NotifyRemovePipe) data: NotifyRemoveDto,
+    @currentProfile() profile: profileDto,
+  ) {
+    return await this.notifyService.deleteNotification(profile, data);
   }
 }

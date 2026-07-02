@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/empty";
 import { Amphora, CloudAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import CreateStory from "@/pages/Story/Create";
+import CreateStory from "@/modules/Story/Create";
 import { useUserStore } from "@/stores/UserStore";
 
 export default function StoryLayout({

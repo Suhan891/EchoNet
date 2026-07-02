@@ -20,7 +20,6 @@ export function useFollowReq() {
     if (followReq && !follow.isPending) {
       follow.mutate(followReq.profileId, {
         onSuccess: (result) => {
-          console.log(result.data);
           toast.success(result.message);
 
           queryClient.invalidateQueries({ queryKey: [userId] });

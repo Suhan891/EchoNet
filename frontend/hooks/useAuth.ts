@@ -56,7 +56,7 @@ export function useMyself() {
   return useQuery<SuccessResponse<UserResponse>, ErrorResponse>({
     queryKey: [queryKeys.USER],
     queryFn: () => GetUser(),
-    staleTime: 1000 * 60 * 10,
+    staleTime: 1000 * 60 * 20, // Cached data for 20 min 
     enabled: !!Cookies.get("accessToken"),
   });
 }

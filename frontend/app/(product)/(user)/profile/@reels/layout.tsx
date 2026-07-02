@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -32,5 +32,5 @@ export default function ReelsLayout({
         </EmptyContent>
       </Empty>
     );
-  return { children };
+  return <>{children}</>;
 }

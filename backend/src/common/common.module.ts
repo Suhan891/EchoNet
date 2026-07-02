@@ -11,10 +11,17 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { RoleGaurd } from './gaurds/roles.gaurd';
 import { RedisProvider } from './caching/redis.provider';
+import { BullModule } from '@nestjs/bullmq';
+import { ScheduleWorker } from './tasks/task.worker';
+import { TasksService } from './tasks/task.schedule';
 
 @Global()
 @Module({
-  imports: [PassportModule, JwtModule.register({})],
+  imports: [
+    PassportModule,
+    JwtModule.register({}),
+    BullModule.registerQueue({ name: 'clear' }),
+  ],
   providers: [
     CloudinaryService,
     RedisProvider,
@@ -25,6 +32,8 @@ import { RedisProvider } from './caching/redis.provider';
     JwtStrategy,
     ResponseInterceptor,
     GlobaExceptionFilter,
+    ScheduleWorker,
+    TasksService,
     AppCacheService,
   ],
   exports: [

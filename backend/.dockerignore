@@ -1,0 +1,39 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Build output
+dist
+
+# Environment files (never bake secrets into image)
+.env
+.env.*
+!.env.example
+
+# Dev/test artifacts
+coverage
+.nyc_output
+jest.config.*
+*.spec.ts
+*.test.ts
+test/
+e2e/
+
+# Editor & OS artifacts
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker itself
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Docs
+README.md
+*.md

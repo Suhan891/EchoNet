@@ -386,7 +386,7 @@ export class ProfileService {
       },
     });
     await this.cacheService.set<typeof profile>(key, profile, 1000 * 60 * 10);
-    console.log(profile);
+
     return profile;
   }
 

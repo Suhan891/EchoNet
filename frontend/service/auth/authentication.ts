@@ -16,8 +16,15 @@ async function requests(path: string, request: RequestDto) {
     headers,
     body: isFormData ? request.body as FormData : JSON.stringify(request.body),
   });
+
+  if (!response.ok) {
+    let errorBody: unknown;
+    try { errorBody = await response.json(); } 
+    catch { errorBody = { message: response.statusText }; }
+    throw errorBody;
+  }
+
   const result = await response.json();
-  console.log(result)
 
   if (!result.success) {
     throw result;

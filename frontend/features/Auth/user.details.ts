@@ -5,7 +5,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { deleteCookie, setProfileCookie } from "@/service/common/cookies";
-import Cookie from "js-cookie";
+// import Cookie from "js-cookie";
 
 export function useUserDetails() {
   const router = useRouter();
@@ -25,9 +25,7 @@ export function useUserDetails() {
   useEffect(() => {
     if (isError) {
       console.error(error);
-      deleteCookie();
       toast.error(error.message ?? "Something went wrong");
-      router.push("/login");
       return;
     }
 
@@ -37,8 +35,10 @@ export function useUserDetails() {
       );
       //const storeActiveProfile = storeProfiles.find((p) => p.isActive === true);
 
-      if (activeProfile)
-        Cookie.set("profile", activeProfile.id, { expires: (30 / 1440), path: "/" });
+      if (activeProfile){
+        setProfileCookie(activeProfile.id)
+        //Cookie.set("profile", activeProfile.id, { expires: (30 / 1440), path: "/" });
+      }
 
       if (storeEmail !== user.data.email) setEmail(user.data.email);
       if (storeUserId !== user.data.id) setUserId(user.data.id);

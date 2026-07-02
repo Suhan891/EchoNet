@@ -1,8 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { AppCacheService } from 'src/common/caching/redis.cache';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { profileDto } from 'src/profile/dto/profile.dto';
-import { Format, NotifyDto, NotifyType } from './dto/notification.dto';
+import {
+  Format,
+  NotifyDto,
+  NotifyRemoveDto,
+  NotifyType,
+} from './dto/notification.dto';
 import { EventService } from 'src/event/event.service';
 
 @Injectable()
@@ -63,8 +68,6 @@ export class NotificationService {
   async createNotification(data: NotifyDto) {
     await this.cacheService.delete(`profile:${data.receiverId}:notification`);
     if (data.format.type === 'MESSAGE') {
-      console.log('Creating notification for message');
-      console.log(data);
       const existing = await this.prisma.notification.findFirst({
         where: {
           chatId: data.format.chatId,
@@ -97,11 +100,13 @@ export class NotificationService {
     await this.eventService.emitNotification(data.receiverId, data.format.type);
   }
 
-  async deleteNotification(data: { receiverId: string; id: string }) {
+  async deleteNotification(profile: profileDto, data: NotifyRemoveDto) {
+    if (data.receiverId !== profile.id)
+      throw new ForbiddenException('You are not allowed');
     await this.prisma.notification.delete({
-      where: { receiverId: data.receiverId, id: data.id },
+      where: { id: data.id },
     });
-    await this.eventService.emitNotification(data.receiverId);
+    await this.cacheService.delete(`profile:${profile.id}:notification`);
   }
 
   async clearNotifyCacheOfFollowers(profileid: string) {

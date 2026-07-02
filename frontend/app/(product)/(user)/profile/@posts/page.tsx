@@ -1,7 +1,7 @@
 "use client"
 import { useOwnPosts } from "@/hooks/usePost";
-import PostsSkeleton from "@/pages/Posts/Skeleton";
-import ViewPost from "@/pages/Posts/ViewPost";
+import PostsSkeleton from "@/modules/Posts/Skeleton";
+import ViewPost from "@/modules/Posts/ViewPost";
 import { useProfileStore } from "@/stores/ProfileStore";
 
 export default function Postpage() {

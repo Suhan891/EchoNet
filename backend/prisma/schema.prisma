@@ -101,6 +101,8 @@ model Post {
   description String?
   postPhoto   PostMedia[]
 
+  job Job?
+
   notify Notification[] @relation("PostNotify")
 
   likes    Likes[]
@@ -162,6 +164,8 @@ model Story {
   isReady   Boolean  @default(false) // Later be removed => And have One to Many with Jobs
 
   storyMedia StoryMedia[]
+
+  job Job?
 
   notify Notification[] @relation("StoryNotify")
 
@@ -309,8 +313,11 @@ model Job {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
-  storyId String?
-  postId  String?
+  storyId String? @unique
+  postId  String? @unique
+
+  story Story? @relation(fields: [storyId],references: [id], onDelete: Cascade)
+  post Post? @relation(fields: [postId],references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 }

@@ -15,6 +15,7 @@ export interface passResetDto {
   name?: string;
   isValidUser: boolean;
   tokenVersion: number;
+  requestId: string;
 }
 
 export interface UserProfile {

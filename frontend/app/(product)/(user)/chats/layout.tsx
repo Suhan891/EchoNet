@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { useAllchat } from "@/hooks/useChat";
-import AllChats from "@/pages/Chat/AllChats";
+import AllChats from "@/modules/Chat/AllChats";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 

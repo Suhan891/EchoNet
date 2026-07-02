@@ -44,7 +44,7 @@ export class NotificationPipe implements PipeTransform {
         id: notification.id,
         isRead: notification.isRead,
       };
-    console.log(notification);
+
     if (notification.purpose === 'MESSAGE' && notification.chatId)
       return {
         format: { type: 'CHAT', chatId: notification.chatId },

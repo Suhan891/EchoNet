@@ -10,11 +10,19 @@ import {
 import type { AuthenticatedSocket } from './dto/event.dto';
 import { Server } from 'socket.io';
 import { EventService } from './event.service';
-//import { UseFilters, UseInterceptors } from 'node_modules/@nestjs/common';
 
-import { forwardRef, Inject } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  UseFilters,
+  UseInterceptors,
+} from '@nestjs/common';
+import { WsLoggerInterceptor } from './interceptor/socket.interceptor';
+import { WebSocketsExceptionFilter } from './filter/socket.filter';
 
 @WebSocketGateway()
+@UseInterceptors(new WsLoggerInterceptor())
+@UseFilters(new WebSocketsExceptionFilter())
 export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
@@ -24,7 +32,6 @@ export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   async handleConnection(client: AuthenticatedSocket) {
-    // const userId = client.data.userId;
     const profileId = client.data.profileId;
     if (profileId) {
       await client.join(profileId);
@@ -36,7 +43,6 @@ export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleDisconnect(client: AuthenticatedSocket) {
-    // const userId = client.data.userId;
     const profileId = client.data.profileId;
     if (profileId) {
       await client.leave(profileId);
@@ -54,10 +60,11 @@ export class EventGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('chat_texting')
-  handleMessage(
+  async handleMessage(
     @MessageBody() chatId: string,
     @ConnectedSocket() client: AuthenticatedSocket,
   ) {
+    await this.eventService.validateChat(chatId);
     this.server.emit(`chat:${chatId}`, client.data.profileId);
   }
 

@@ -1,4 +1,4 @@
-import ProfileHero from '@/pages/Profile/Hero'
+import ProfileHero from '@/modules/Profile/Hero'
 import React from 'react'
 
 export default function ProfilePage(){

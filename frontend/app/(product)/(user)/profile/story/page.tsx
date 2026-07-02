@@ -1,7 +1,7 @@
 "use client"
 import { useStories } from "@/hooks/useStory";
-import StorySkeleton from "@/pages/Story/Loading";
-import ViewStory from "@/pages/Story/ViewStory";
+import StorySkeleton from "@/modules/Story/Loading";
+import ViewStory from "@/modules/Story/ViewStory";
 import { useProfileStore } from "@/stores/ProfileStore";
 
 export default function StoryPage() {

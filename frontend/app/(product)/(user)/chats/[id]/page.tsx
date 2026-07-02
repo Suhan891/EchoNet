@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
 import { useAllChatMsgs } from "@/hooks/useChat";
-import IndivisualChat from "@/pages/Chat/IndivisualChat";
+import IndivisualChat from "@/modules/Chat/IndivisualChat";
 import { MessageCircleOff } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
@@ -37,7 +37,7 @@ export default function ChatPage() {
       </Empty>
     );
 
-  if (isLoading) return <Spinner className="size-8" />;
+  if (isLoading) return <div className="h-screen w-full flex justify-center items-center"><Spinner className="size-8" /></div>
 
   if (isSuccess) return <IndivisualChat data={data.data} />;
 }

@@ -98,6 +98,7 @@ export class EmailWorker extends WorkerHost {
       return this.logger.warn(
         `Job ${job.id} (${job.name}) retrying... attempt ${job.attemptsMade}/${maxAttempts}`,
       );
+
     return this.logger.error(`Email job failed: ${job.id}`, error.stack);
   }
 }

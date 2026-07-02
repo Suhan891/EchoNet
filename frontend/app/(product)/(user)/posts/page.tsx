@@ -1,4 +1,4 @@
-import AllPosts from "@/pages/Posts/AllPosts";
+import AllPosts from "@/modules/Posts/AllPosts";
 
 export default function PostsPage() {
   return <AllPosts />;

@@ -28,3 +28,8 @@ export interface NotifyDto {
   content: string;
   format: Format;
 }
+
+export interface NotifyRemoveDto {
+  id: string;
+  receiverId: string;
+}

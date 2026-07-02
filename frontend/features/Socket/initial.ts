@@ -8,7 +8,6 @@ export function useAvailProfiles() {
   useEffect(() => {
     if (!socket) return;
     socket.on("connect", () => {
-      console.log("Initial connections done: ", socket.id);
       socket.on("active_profiles", (data: string[]) => {
         useUserStore.getState().setOnlineProfiles(data);
       });

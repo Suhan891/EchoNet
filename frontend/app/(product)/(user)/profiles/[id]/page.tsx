@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetSpecificProfile } from "@/hooks/useProfile";
-import IndivisualProfile from "@/pages/Profiles/IndivisualProfile";
+import IndivisualProfile from "@/modules/Profiles/IndivisualProfile";
 import { User } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
@@ -41,7 +41,7 @@ export default function IndivisualProfilePage() {
     );
 
     if(isLoading)
-        return <Spinner className="size-8" />
+        return <div className="h-screen w-full flex justify-center items-center"><Spinner className="size-8" /></div>
 
   return <>{isSuccess && <IndivisualProfile profile={data.data} />}</>;
 }

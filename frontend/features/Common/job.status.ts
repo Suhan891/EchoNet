@@ -26,7 +26,7 @@ export function useJobStatusUpdate() {
       retryJobs.forEach((job) => {
         retry.mutate(job.id, {
           onSuccess: (result) => {
-            console.log(result);
+
             updateJobStatus(job.id, "PROGRESS");
             queryClient.invalidateQueries({
               queryKey: [userId, queryKeys.PROFILE],
@@ -43,7 +43,7 @@ export function useJobStatusUpdate() {
           cancel.mutate(job.id, {
             onSuccess: (result) => {
               removeJob(job.id);
-              console.log(result);
+
               queryClient.invalidateQueries({
                 queryKey: [userId, queryKeys.PROFILE],
               });

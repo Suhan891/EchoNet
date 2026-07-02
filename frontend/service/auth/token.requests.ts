@@ -13,13 +13,19 @@ async function requests(path: string,  request: RequestDto) {
         body: JSON.stringify(request.body),
         credentials: 'include',
     })
+
+    if (!response.ok) {
+        throw {
+            status: response.status,
+            message: "Request failed",
+        };
+    }
+
     const result = await response.json()
 
     if (!result.success) {
         throw result;
     }
-
-    console.log('Result: ', result);
     await setAuthToken(result.data.accessToken);
     return result;
 }

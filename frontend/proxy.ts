@@ -8,6 +8,12 @@ export default function proxy(request: NextRequest) {
     if (path === '/')
         return NextResponse.next()
 
+    // if (path.startsWith('/api')) {
+    //     const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:3001";
+    //     const targetUrl = new URL(request.nextUrl.pathname.replace(/^\/api/, '') + request.nextUrl.search, backendUrl);
+    //     return NextResponse.rewrite(targetUrl);
+    // }
+
     const isPublic = PUBLIC.some(p => path === p || path.startsWith(`${p}/`))
     const token = request.cookies.get('accessToken')?.value
 

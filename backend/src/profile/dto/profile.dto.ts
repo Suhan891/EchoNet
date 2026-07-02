@@ -63,3 +63,14 @@ export interface toggleProf {
   id: string;
   userId: string;
 }
+
+export interface ProfileGuardDto {
+  name: string;
+  bio: string | null;
+  id: string;
+  isActive: boolean;
+  user: {
+    id: string;
+  };
+  isPrivate: boolean;
+}

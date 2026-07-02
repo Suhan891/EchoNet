@@ -5,6 +5,8 @@ import { io, Socket } from "socket.io-client";
 import { useAvailProfiles } from "./initial";
 import { useUserStore } from "@/stores/UserStore";
 import { useCalls } from "./calls";
+import { toast } from "sonner";
+import { deleteCookie } from "@/service/common/cookies";
 
 export function useSocket() {
   const token = Cookie.get("accessToken");
@@ -16,25 +18,24 @@ export function useSocket() {
 
   useEffect(() => {
     if (!token || !profileId) return;
-    socketRef.current = io(process.env.NEXT_PUBLIC_REQUEST_APP_URL, {
+    const socketUrl = process.env.BACKEND_URL || process.env.BACKEND_URL || "https://backend-service-0rys.onrender.com" || `${window.location.protocol}//${window.location.hostname}:3001`;
+    socketRef.current = io(socketUrl, {
       auth: {
         token: `Bearer ${token}`,
         profileId,
       },
+      transports: ['websocket', 'polling'],
     });
 
-    // socketRef.current.on('connect_error', (error) => {
-    //   console.error('Socket connect_error:', error);
-    //   if (
-    //     error?.message === 'Invalid token' ||
-    //     error?.message === 'Token has expired' ||
-    //     error?.message === 'All conditions not satisfied'
-    //   ) {
-    //     Cookie.remove('accessToken');
-    //     Cookie.remove('profile');
-    //     window.location.href = '/login';
-    //   }
-    // });
+    socketRef.current.on('connect_error', (error) => {
+      toast.error(error.message);
+      // deleteCookie();
+      // window.location.href = '/login';
+    });
+
+    socketRef.current.on('exception', (errorMsg) => {
+      toast.error(errorMsg);
+    });
 
     useUserStore.getState().setSocket(socketRef.current);
 

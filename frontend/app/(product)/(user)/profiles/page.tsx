@@ -1,7 +1,7 @@
 "use client"
 import { useAllProfiles } from "@/hooks/useProfile";
-import AllProfiles from "@/pages/Profiles/AllProfile";
-import ProfilesSkeleton from "@/pages/Profiles/Skeleton";
+import AllProfiles from "@/modules/Profiles/AllProfile";
+import ProfilesSkeleton from "@/modules/Profiles/Skeleton";
 import { useProfileStore } from "@/stores/ProfileStore";
 
 export default function ProfilesPage() {

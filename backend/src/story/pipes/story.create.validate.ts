@@ -13,7 +13,6 @@ export class ParsedStoryPipe {
     const parsedFile = this.parseFile(files);
 
     const slide = this.merge(parseBody, parsedFile);
-    console.log('File data after merging: \n', slide);
 
     this.validateSlide(slide);
 

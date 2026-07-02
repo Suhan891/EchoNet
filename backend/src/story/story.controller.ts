@@ -34,7 +34,6 @@ export class StoryController {
     @Body() body: RawMultipartBody,
     @currentProfile() profile: profileDto,
   ) {
-    console.log('Files', files, body);
     const data = new ParsedStoryPipe().transform(files, body);
     return await this.storyService.createStory(data, profile);
   }
