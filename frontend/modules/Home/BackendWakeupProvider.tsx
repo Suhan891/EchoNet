@@ -5,6 +5,7 @@ import { Loader2, ServerCrash } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { toast } from 'sonner';
+import { getUrl } from '@/service/common/requests';
 
 export default function BackendWakeUpProvider({ children }: { children: React.ReactNode }) {
   const [isAwake, setIsAwake] = useState(false);
@@ -27,7 +28,7 @@ export default function BackendWakeUpProvider({ children }: { children: React.Re
 
     const wakeBackend = async () => {
       try {
-        const res = await fetch(`/api/health`);
+        const res = await fetch(`${getUrl()}/health`);
         if (res.ok) {
           setProgress(100);
           // Small delay so user sees 100% complete before transition

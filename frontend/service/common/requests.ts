@@ -4,7 +4,7 @@ import axiosInstance from "./starter";
 // const API_BASE = process.env.NEXT_PUBLIC_API_URL
 
 export const getUrl = () => {
-    return `/api`;
+    return `https://backend-service-0rys.onrender.com`;
 }
 
 export async function Request(path: string, requests: RequestDto) {
