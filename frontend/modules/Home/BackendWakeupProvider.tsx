@@ -12,7 +12,6 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { getUrl } from "@/service/common/requests";
-import axiosInstance from "@/service/common/starter";
 
 export default function BackendWakeUpProvider({
   children,
@@ -41,8 +40,9 @@ export default function BackendWakeUpProvider({
 
     const wakeBackend = async () => {
       try {
-        const { data } = await axiosInstance.get(`${getUrl()}/health`);
-        if (data.success) {
+        const response = await fetch(`${getUrl()}/health`);
+        const result = await response.json()
+        if (response.ok || result.success) {
           setProgress(100);
           setTimeout(() => setIsAwake(true), 400);
           toast.success("Server is alive");
